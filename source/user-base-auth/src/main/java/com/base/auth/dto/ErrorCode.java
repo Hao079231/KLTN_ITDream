@@ -79,38 +79,41 @@ public class ErrorCode {
     /**
      * Starting error code Lesson
      * */
-    public static final String TASK_ERROR_NOT_FOUND = "TASK-ERROR-0000";
-    public static final String TASK_ERROR_EXIST = "TASK-ERROR-0001";
-    public static final String TASK_ERROR_NOT_PARENT = "TASK-ERROR-0002";
-    public static final String TASK_ERROR_PARENT = "TASK-ERROR-0003";
-    public static final String TASK_ERROR_PARENT_NOT_FOUND = "TASK-ERROR-0004";
-    public static final String TASK_ERROR_PARENT_NOT_KIND_TASK = "TASK-ERROR-0005";
-    public static final String TASK_ERROR_FAIL = "TASK-ERROR-0006";
-    public static final String TASK_ERROR_NAME = "TASK-ERROR-0007";
+    public static final String LESSON_ERROR_NOT_FOUND = "LESSON-ERROR-0000";
+    public static final String LESSON_ERROR_EXIST = "LESSON-ERROR-0001";
+    public static final String LESSON_ERROR_POSITION = "LESSON-ERROR-0002";
+    public static final String LESSON_ERROR_SAME_CHAPTER = "LESSON-ERROR-0003";
+    public static final String LESSON_ERROR_CREATE = "LESSON-ERROR-0004";
 
     /**
      * Starting error code LessonQuestion
      * */
-    public static final String TASK_QUESTION_ERROR_NOT_FOUND = "TASK_QUESTION-ERROR-0000";
-    public static final String TASK_QUESTION_ERROR_EXIST = "TASK_QUESTION-ERROR-0001";
-    public static final String TASK_QUESTION_ERROR_NOT_CREATE = "TASK_QUESTION-ERROR-0002";
-    public static final String TASK_QUESTION_ERROR_NOT_UPDATE = "TASK_QUESTION-ERROR-0003";
-    public static final String TASK_QUESTION_ERROR_NOT_CREATE_OPTION = "TASK_QUESTION-ERROR-0004";
-    public static final String TASK_QUESTION_ERROR_OPTION_NOT_NULL = "TASK_QUESTION-ERROR-0005";
+    public static final String CHAPTER_ERROR_NOT_FOUND = "CHAPTER-ERROR-0000";
+    public static final String CHAPTER_ERROR_EXIST = "CHAPTER-ERROR-0001";
+
+    /**
+     * Starting error code LessonQuestion
+     * */
+    public static final String LESSON_QUESTION_ERROR_NOT_FOUND = "LESSON_QUESTION-ERROR-0000";
+    public static final String LESSON_QUESTION_ERROR_EXIST = "LESSON_QUESTION-ERROR-0001";
+    public static final String LESSON_QUESTION_ERROR_NOT_CREATE = "LESSON_QUESTION-ERROR-0002";
+    public static final String LESSON_QUESTION_ERROR_NOT_UPDATE = "LESSON_QUESTION-ERROR-0003";
+    public static final String LESSON_QUESTION_ERROR_NOT_CREATE_OPTION = "LESSON_QUESTION-ERROR-0004";
+    public static final String LESSON_QUESTION_ERROR_OPTION_NOT_NULL = "LESSON_QUESTION-ERROR-0005";
 
     /**
      * Starting error code LessonProgress
      * */
-    public static final String STUDENT_SUBTASK_PROGRESS_ERROR_NOT_FOUND = "STUDENT-SUBTASK-PROGRESS-ERROR-0000";
-    public static final String STUDENT_SUBTASK_PROGRESS_ERROR_EXIST = "STUDENT-SUBTASK-PROGRESS-ERROR-0001";
-    public static final String STUDENT_SUBTASK_PROGRESS_ERROR_NOT_COMPLETED = "STUDENT-SUBTASK-PROGRESS-ERROR-0002";
+    public static final String STUDENT_SUBLESSON_PROGRESS_ERROR_NOT_FOUND = "STUDENT-SUBLESSON-PROGRESS-ERROR-0000";
+    public static final String STUDENT_SUBLESSON_PROGRESS_ERROR_EXIST = "STUDENT-SUBLESSON-PROGRESS-ERROR-0001";
+    public static final String STUDENT_SUBLESSON_PROGRESS_ERROR_NOT_COMPLETED = "STUDENT-SUBLESSON-PROGRESS-ERROR-0002";
 
     /**
      * Starting error code CorrectAnswer
      * */
-    public static final String STUDENT_TASK_QUESTION_PROGRESS_ERROR_NOT_FOUND = "STUDENT-TASK-QUESTION-PROGRESS-ERROR-0000";
-    public static final String STUDENT_TASK_QUESTION_PROGRESS_ERROR_EXIST = "STUDENT-TASK-QUESTION-PROGRESS-ERROR-0001";
-    public static final String STUDENT_TASK_QUESTION_PROGRESS_ERROR_NOT_CREATE = "STUDENT-TASK-QUESTION-PROGRESS-ERROR-0002";
+    public static final String STUDENT_LESSON_QUESTION_PROGRESS_ERROR_NOT_FOUND = "STUDENT-LESSON-QUESTION-PROGRESS-ERROR-0000";
+    public static final String STUDENT_LESSON_QUESTION_PROGRESS_ERROR_EXIST = "STUDENT-LESSON-QUESTION-PROGRESS-ERROR-0001";
+    public static final String STUDENT_LESSON_QUESTION_PROGRESS_ERROR_NOT_CREATE = "STUDENT-LESSON-QUESTION-PROGRESS-ERROR-0002";
 
     /**
      * Starting error code Feedback

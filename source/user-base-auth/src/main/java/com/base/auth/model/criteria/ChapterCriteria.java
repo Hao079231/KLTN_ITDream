@@ -2,8 +2,6 @@ package com.base.auth.model.criteria;
 
 import com.base.auth.model.Chapter;
 import com.base.auth.model.Course;
-import com.base.auth.model.Educator;
-import com.base.auth.model.Lesson;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -17,27 +15,25 @@ import lombok.Data;
 import org.springframework.data.jpa.domain.Specification;
 
 @Data
-public class LessonCriteria {
-  @NotNull(message = "chapterId is required")
-  private Long chapterId;
+public class ChapterCriteria {
+  @NotNull(message = "courseId is required")
+  private Long courseId;
   private Integer status;
 
-  public Specification<Lesson> getSpecification() {
-    return new Specification<Lesson>() {
+  public Specification<Chapter> getSpecification() {
+    return new Specification<Chapter>() {
       private static final long serialVersionUID = 1L;
 
       @Override
-      public Predicate toPredicate(Root<Lesson> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+      public Predicate toPredicate(Root<Chapter> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
         List<Predicate> predicates = new ArrayList<>();
-
-        Join<Lesson, Chapter> joinChapter = root.join("chapter", JoinType.INNER);
-        predicates.add(cb.equal(joinChapter.get("id"), getChapterId()));
+        Join<Chapter, Course> courseJoin = root.join("course", JoinType.INNER);
+        predicates.add(cb.equal(courseJoin.get("id"), getCourseId()));
 
         if (getStatus() != null){
-          Join<Chapter, Course> courseJoin = joinChapter.join("course", JoinType.INNER);
           predicates.add(cb.equal(courseJoin.get("status"), getStatus()));
         }
-
+        query.orderBy(cb.asc(root.get("chapterOrder")));
         return cb.and(predicates.toArray(new Predicate[predicates.size()]));
       }
     };

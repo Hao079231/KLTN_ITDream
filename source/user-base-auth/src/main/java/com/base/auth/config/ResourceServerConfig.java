@@ -43,8 +43,9 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .antMatchers("/v1/educator/signup", "/v1/educator/verify").permitAll()
                 .antMatchers("/v1/account/request_forget_password", "/v1/account/forget_password", "/v1/account/resend-verify").permitAll()
                 .antMatchers("/v1/category/auto-complete").permitAll()
-                .antMatchers("/v1/course/client_list", "/v1/course/client_get/**").permitAll()
-                .antMatchers("/v1/feedback/client_list").permitAll()
+                .antMatchers("/v1/course/guest_list", "/v1/course/guest_get/**").permitAll()
+                .antMatchers("/v1/lesson/student_list").permitAll()
+                .antMatchers("/v1/chapter/student_list").permitAll()
                 .antMatchers("/**").authenticated()
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().exceptionHandling().accessDeniedHandler(new OAuth2AccessDeniedHandler());
