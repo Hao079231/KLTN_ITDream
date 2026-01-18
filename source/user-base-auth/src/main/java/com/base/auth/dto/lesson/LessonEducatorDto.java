@@ -1,21 +1,19 @@
 package com.base.auth.dto.lesson;
 
-import com.base.auth.model.Lesson;
+import com.base.auth.dto.chapter.ChapterDisplayDto;
 import lombok.Data;
 
 @Data
 public class LessonEducatorDto {
   private Long id;
-  private String name;
-  private String description;
   private String title;
   private String introduction;
+  private String description;
   private String content;
   private String imagePath;
   private String filePath;
   private String videoPath;
-  private Integer kind;
-  private Integer maxErrors;
+  private Integer totalError;
   private Integer totalQuestion;
-  private Lesson parent;
+  private ChapterDisplayDto chapter;
 }

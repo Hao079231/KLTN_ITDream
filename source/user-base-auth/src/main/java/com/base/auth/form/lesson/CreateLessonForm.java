@@ -9,17 +9,14 @@ import lombok.Data;
 @Data
 @ApiModel
 public class CreateLessonForm {
-  @NotEmpty(message = "name cannot be null")
-  @ApiModelProperty(name = "name")
-  private String name;
-  @NotEmpty(message = "description cannot be null")
-  @ApiModelProperty(name = "description")
-  private String description;
   @NotEmpty(message = "title cannot be null")
   @ApiModelProperty(name = "title")
   private String title;
   @ApiModelProperty(name = "introduction")
   private String introduction;
+  @NotEmpty(message = "description cannot be null")
+  @ApiModelProperty(name = "description")
+  private String description;
   @ApiModelProperty(name = "content")
   private String content;
   @ApiModelProperty(name = "imagePath")
@@ -28,11 +25,11 @@ public class CreateLessonForm {
   private String filePath;
   @ApiModelProperty(name = "videoPath")
   private String videoPath;
-  @ApiModelProperty(name = "kind")
-  private Integer kind;
-  @ApiModelProperty(name = "parentId")
-  private Long parentId;
-  @NotNull(message = "simulationId cannot be null")
-  @ApiModelProperty(name = "simulationId")
-  private Long simulationId;
+  @NotNull(message = "chapterId cannot be null")
+  @ApiModelProperty(name = "chapterId")
+  private Long chapterId;
+  @ApiModelProperty(name = "previousId")
+  private Long previousId;
+  @ApiModelProperty(name = "nextId")
+  private Long nextId;
 }

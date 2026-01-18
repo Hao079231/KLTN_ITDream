@@ -115,8 +115,8 @@ public class CategoryController extends ABasicController{
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Category category = categoryRepository.findById(id).orElseThrow(()
     -> new NotFoundException("Category not found", ErrorCode.CATEGORY_ERROR_NOT_FOUND));
-    Boolean existSimulation = courseRepository.existsByCategoryId(id);
-    if (existSimulation){
+    Boolean existCourse = courseRepository.existsByCategoryId(id);
+    if (existCourse){
       throw new BadRequestException("Category cannot be deleted", ErrorCode.CATEGORY_ERROR_DELETE);
     }
     categoryRepository.delete(category);

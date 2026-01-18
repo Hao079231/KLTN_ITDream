@@ -40,45 +40,57 @@ public class UserBaseApiService {
                 return;
             }
 
-            String cleanedPath = filePath.startsWith("/") ? filePath.substring(1) : filePath;
-            String[] parts = cleanedPath.split("/", 2);
+            // Chuẩn hóa separator cho mọi OS
+            String normalizedPath = filePath.replace("\\", "/");
 
-            if (parts.length < 2) {
+            // Bỏ dấu / đầu nếu có
+            if (normalizedPath.startsWith("/")) {
+                normalizedPath = normalizedPath.substring(1);
+            }
+
+            Path relativePath = Paths.get(normalizedPath);
+
+            if (relativePath.getNameCount() < 2) {
                 log.warn("======> Invalid path format: {}", filePath);
                 return;
             }
 
-            String rootFolder = parts[0]; // video, avatar, image, document...
-            String subPath = parts[1];
-            String basePath = uploadDir + ITDreamConstant.DIRECTORY_GENERAL + "/" + rootFolder;
-            Path subPathObj = Paths.get(subPath);
-            boolean isFolderKind = !subPathObj.getFileName().toString().contains(".");
+            String rootFolder = relativePath.getName(0).toString();
 
-            if (isFolderKind) {
-                String folderName = subPathObj.getName(0).toString();
-                File targetFolder = new File(basePath + "/" + folderName);
-                log.info("======> Deleting folder: {}", targetFolder.getAbsolutePath());
-                if (targetFolder.exists() && targetFolder.isDirectory()) {
-                    deleteDirectory(targetFolder.toPath());
-                    log.info("======> Folder '{}' deleted successfully", targetFolder.getAbsolutePath());
+            Path baseUploadPath = Paths.get(
+                uploadDir,
+                ITDreamConstant.DIRECTORY_GENERAL
+            );
+
+            Path fullPath = baseUploadPath.resolve(relativePath).normalize();
+
+            log.info("======> Resolved full path: {}", fullPath);
+
+            // Nếu đường dẫn đến video thì xóa folder chứa video
+            if ("video".equalsIgnoreCase(rootFolder)) {
+
+                // folder chứa file video (parent của file)
+                Path videoFolder = fullPath.getParent();
+
+                if (videoFolder != null && Files.exists(videoFolder)) {
+                    log.info("======> Deleting video folder: {}", videoFolder);
+                    deleteDirectory(videoFolder);
                 } else {
-                    log.warn("======> Folder not found or not a directory: {}", targetFolder.getAbsolutePath());
+                    log.warn("======> Video folder not found: {}", videoFolder);
                 }
-            } else {
-                File targetFile = new File(basePath + "/" + subPath);
-                log.info("======> Deleting file: {}", targetFile.getAbsolutePath());
-                if (targetFile.exists() && targetFile.isFile()) {
-                    if (targetFile.delete()) {
-                        log.info("======> File '{}' deleted successfully", targetFile.getAbsolutePath());
-                    } else {
-                        log.warn("======> Failed to delete file: {}", targetFile.getAbsolutePath());
-                    }
-                } else {
-                    log.warn("======> File not found or is not a file: {}", targetFile.getAbsolutePath());
-                }
+                return;
             }
+
+            // Nếu đường dẫn chứa ảnh, file thì sẽ xóa ảnh, file
+            if (Files.exists(fullPath) && Files.isRegularFile(fullPath)) {
+                Files.delete(fullPath);
+                log.info("======> File deleted: {}", fullPath);
+            } else {
+                log.warn("======> File not found or not a file: {}", fullPath);
+            }
+
         } catch (Exception e) {
-            log.error("======> Error occurred while deleting path: {}", filePath, e);
+            log.error("======> Error deleting path: {}", filePath, e);
         }
     }
 

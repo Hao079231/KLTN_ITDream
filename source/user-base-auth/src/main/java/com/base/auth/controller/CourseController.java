@@ -9,6 +9,7 @@ import com.base.auth.dto.course.CourseClientDto;
 import com.base.auth.dto.course.CourseDto;
 import com.base.auth.exception.BadRequestException;
 import com.base.auth.exception.NotFoundException;
+import com.base.auth.exception.UnauthorizationException;
 import com.base.auth.form.course.CreateCourseForm;
 import com.base.auth.form.course.RequestCourseIdForm;
 import com.base.auth.form.course.UpdateCourseForm;
@@ -29,7 +30,9 @@ import com.base.auth.repository.LessonProgressRepository;
 import com.base.auth.repository.CorrectAnswerRepository;
 import com.base.auth.repository.LessonQuestionRepository;
 import com.base.auth.repository.LessonRepository;
+import com.base.auth.service.CourseService;
 import com.base.auth.service.ProcessVideoService;
+import com.base.auth.service.UserBaseApiService;
 import java.io.File;
 import java.util.List;
 import java.util.Objects;
@@ -95,8 +98,14 @@ public class CourseController extends ABasicController{
   @Autowired
   ReviewSubmissionRepository reviewSubmissionRepository;
 
+  @Autowired
+  UserBaseApiService userBaseApiService;
+
+  @Autowired
+  CourseService courseService;
+
   @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
-  @PreAuthorize("hasRole('CS_C')")
+  @PreAuthorize("hasRole('CS_ED_C')")
   public ApiMessageDto<String> create(@Valid @RequestBody CreateCourseForm createCourseForm, BindingResult bindingResult){
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Educator educator = educatorRepository.findById(getCurrentUser()).orElseThrow(()
@@ -159,7 +168,7 @@ public class CourseController extends ABasicController{
     return apiMessageDto;
   }
 
-  @GetMapping(value = "/client_list", produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetMapping(value = "/guest_list", produces = MediaType.APPLICATION_JSON_VALUE)
   public ApiMessageDto<ResponseListDto<List<CourseDisplayDto>>> getListForClient(Pageable pageable){
     ApiMessageDto<ResponseListDto<List<CourseDisplayDto>>> apiMessageDto = new ApiMessageDto<>();
     ResponseListDto<List<CourseDisplayDto>> responseListDto = new ResponseListDto<>();
@@ -204,7 +213,7 @@ public class CourseController extends ABasicController{
     return apiMessageDto;
   }
 
-  @GetMapping(value = "/client_get/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetMapping(value = "/guest_get/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   public ApiMessageDto<CourseClientDto> getCourseForClient(@PathVariable("id") Long id){
     ApiMessageDto<CourseClientDto> apiMessageDto = new ApiMessageDto<>();
     Course course = courseRepository.findById(id).orElseThrow(()
@@ -249,7 +258,7 @@ public class CourseController extends ABasicController{
   }
 
   @PutMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
-  @PreAuthorize("hasRole('CS_U')")
+  @PreAuthorize("hasRole('CS_ED_U')")
   public ApiMessageDto<String> update(@Valid @RequestBody UpdateCourseForm updateCourseForm, BindingResult bindingResult){
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     if (!isEducator()){
@@ -266,35 +275,27 @@ public class CourseController extends ABasicController{
       course.setCategory(category);
     }
 
-    courseMapper.fromUpdateCourseFormToEntity(updateCourseForm, course);
-    if (StringUtils.isNotBlank(updateCourseForm.getVideoPath()) && updateCourseForm.getVideoPath().toLowerCase().startsWith(File.separator + "video")){
-      if (StringUtils.isNotBlank(course.getVideoPath())){
-        if (!Objects.equals(course.getVideoPath(), updateCourseForm.getVideoPath())){
-          if (course.getVideoPath().toLowerCase().startsWith(File.separator + "video")){
-            userBaseApiService.deleteByFilePath(course.getVideoPath());
-          }
-          RequestProcessVideoMessageForm data = new RequestProcessVideoMessageForm();
-          data.setId(course.getId());
-          data.setKind(ITDreamConstant.KIND_COURSE);
-          data.setUrl(updateCourseForm.getVideoPath());
-          data.setTsSecond(tsSecond);
-          processVideoService.sendProcessVideoMessage(data);
-        }
-      } else {
-        RequestProcessVideoMessageForm data = new RequestProcessVideoMessageForm();
-        data.setId(course.getId());
-        data.setKind(ITDreamConstant.KIND_COURSE);
-        data.setUrl(updateCourseForm.getVideoPath());
-        data.setTsSecond(tsSecond);
-        processVideoService.sendProcessVideoMessage(data);
-      }
+    if (StringUtils.isNotBlank(updateCourseForm.getThumbnail()) &&
+        course.getThumbnail().toLowerCase().startsWith(File.separator + "image") &&
+        !Objects.equals(updateCourseForm.getThumbnail(), course.getThumbnail())){
+      userBaseApiService.deleteByFilePath(course.getThumbnail());
     }
 
-    if (StringUtils.isNotBlank(updateCourseForm.getThumbnail())){
-      if (StringUtils.isNotBlank(course.getThumbnail()) && !Objects.equals(course.getThumbnail(), updateCourseForm.getThumbnail())){
-        userBaseApiService.deleteByFilePath(course.getThumbnail());
-      }
-      course.setThumbnail(updateCourseForm.getThumbnail());
+    if (StringUtils.isNotBlank(updateCourseForm.getVideoPath()) &&
+        course.getVideoPath().toLowerCase().startsWith(File.separator + "video") &&
+        !Objects.equals(updateCourseForm.getVideoPath(), course.getVideoPath())){
+      userBaseApiService.deleteByFilePath(course.getVideoPath());
+    }
+
+    courseMapper.fromUpdateCourseFormToEntity(updateCourseForm, course);
+
+    if (StringUtils.isNotBlank(updateCourseForm.getVideoPath()) && updateCourseForm.getVideoPath().toLowerCase().startsWith(File.separator + "video")){
+      RequestProcessVideoMessageForm data = new RequestProcessVideoMessageForm();
+      data.setId(course.getId());
+      data.setKind(ITDreamConstant.KIND_COURSE);
+      data.setUrl(updateCourseForm.getVideoPath());
+      data.setTsSecond(tsSecond);
+      processVideoService.sendProcessVideoMessage(data);
     }
 
     course.setStatus(ITDreamConstant.COURSE_STATUS_WAITING_APPROVE);
@@ -305,29 +306,19 @@ public class CourseController extends ABasicController{
 
   @DeleteMapping(value = "/approve_delete/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   @PreAuthorize("hasRole('CS_APD')")
-  @Transactional
   public ApiMessageDto<String> approveDelete(@PathVariable("id") Long id){
+    if (!isAdmin()){
+      throw new UnauthorizationException("User is not an admin");
+    }
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Course course = courseRepository.findById(id).orElseThrow(()
-    -> new NotFoundException("Course not found", ErrorCode.COURSE_ERROR_NOT_FOUND));
-    if (!Objects.equals(ITDreamConstant.COURSE_STATUS_WAITING_APPROVE_DELETE, course.getStatus())){
+        -> new NotFoundException("Course not found", ErrorCode.COURSE_ERROR_NOT_FOUND));
+
+    if (!Objects.equals(ITDreamConstant.COURSE_STATUS_WAITING_APPROVE_DELETE, course.getStatus())) {
       throw new BadRequestException("Course cannot be deleted", ErrorCode.COURSE_ERROR_NOT_DELETE);
     }
-//    List<Lesson> lessons = lessonRepository.findAllByCourseId(id);
-//    for (Lesson lesson : lessons){
-//      deleteLessonFiles(lesson);
-//    }
-    userBaseApiService.deleteByFilePath(course.getThumbnail());
-    userBaseApiService.deleteByFilePath(course.getVideoPath());
-//    correctAnswerRepository.deleteAllByCourseId(id);
-//    lessonProgressRepository.deleteAllByCourseId(id);
-//    lessonQuestionRepository.deleteAllByCourseId(id);
-//    lessonRepository.deleteAllSubTaskByCourseId(id);
-//    lessonRepository.deleteAllTaskByCourseId(id);
-//    feedbackRepository.deleteByCourseId(id);
-//    reviewSubmissionRepository.deleteByCourseId(id);
-//    achievementRepository.setNullCourseId(id);
-    courseRepository.delete(course);
+
+    courseService.deleteCourse(course);
     apiMessageDto.setMessage("Approve delete course success");
     return apiMessageDto;
   }
@@ -405,23 +396,9 @@ public class CourseController extends ABasicController{
     if (!Objects.equals(ITDreamConstant.COURSE_STATUS_WAITING_APPROVE, course.getStatus())){
       throw new BadRequestException("Course cannot be deleted", ErrorCode.COURSE_ERROR_NOT_DELETE);
     }
-//    List<Lesson> lessons = lessonRepository.findAllByCourseId(id);
-//    for (Lesson lesson : lessons){
-//      deleteLessonFiles(lesson);
-//    }
-    userBaseApiService.deleteByFilePath(course.getThumbnail());
-    userBaseApiService.deleteByFilePath(course.getVideoPath());
-//    lessonQuestionRepository.deleteAllByCourseId(id);
-//    lessonRepository.deleteAllSubTaskByCourseId(id);
-//    lessonRepository.deleteAllTaskByCourseId(id);
+    courseService.deleteCourse(course);
     courseRepository.delete(course);
     apiMessageDto.setMessage("Delete course success");
     return apiMessageDto;
-  }
-
-  private void deleteLessonFiles(Lesson lesson) {
-    userBaseApiService.deleteByFilePath(lesson.getImagePath());
-    userBaseApiService.deleteByFilePath(lesson.getFilePath());
-    userBaseApiService.deleteByFilePath(lesson.getVideoPath());
   }
 }

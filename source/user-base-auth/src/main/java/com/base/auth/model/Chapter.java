@@ -14,35 +14,19 @@ import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
-@Table(name = "db_it_dream_lesson")
+@Table(name = "db_it_dream_chapter")
 @EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
-public class Lesson {
+public class Chapter{
   @Id
   @GenericGenerator(name = "idGenerator", strategy = "com.base.auth.service.id.IdGenerator")
   @GeneratedValue(generator = "idGenerator")
   private Long id;
-  private String title;
-  @Column(columnDefinition = "TEXT")
-  private String introduction;
-  @Column(columnDefinition = "TEXT")
-  private String description;
-  @Column(columnDefinition = "TEXT")
-  private String content;
-  private String videoPath;
-  private String filePath;
-  private String imagePath;
-  private Integer videoState;
-  private Integer totalQuestion = 0;
-  private Integer totalError = 0;
+  private String name;
+  @Column(name = "chapter_order")
+  private Integer chapterOrder;
   @ManyToOne
-  @JoinColumn(name = "previous_id")
-  private Lesson previous;
-  @ManyToOne
-  @JoinColumn(name = "next_id")
-  private Lesson next;
-  @ManyToOne
-  @JoinColumn(name = "chapter_id")
-  private Chapter chapter;
+  @JoinColumn(name = "course_id")
+  private Course course;
 }

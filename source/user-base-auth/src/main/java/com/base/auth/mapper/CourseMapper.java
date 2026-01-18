@@ -90,6 +90,7 @@ public interface CourseMapper {
   @Mapping(source = "level", target = "level")
   @Mapping(source = "duration", target = "duration")
   @Mapping(source = "thumbnail", target = "thumbnail")
+  @Mapping(source = "videoPath", target = "videoPath")
   @BeanMapping(ignoreByDefault = true)
   void fromUpdateCourseFormToEntity(UpdateCourseForm updateCourseForm, @MappingTarget Course course);
 }
