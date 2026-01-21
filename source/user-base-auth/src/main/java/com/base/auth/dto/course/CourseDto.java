@@ -11,6 +11,7 @@ public class CourseDto {
   private String overview;
   private String description;
   private Integer level;
+  private Integer type;
   private String duration;
   private String thumbnail;
   private String videoPath;

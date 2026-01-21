@@ -13,5 +13,7 @@ public class LessonStudentDto {
   private String imagePath;
   private String filePath;
   private String videoPath;
+  private Integer totalQuestion;
+  private Integer totalError;
   private ChapterDisplayDto chapter;
 }

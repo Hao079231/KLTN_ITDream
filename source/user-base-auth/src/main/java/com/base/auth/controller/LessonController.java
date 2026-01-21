@@ -18,9 +18,9 @@ import com.base.auth.mapper.LessonMapper;
 import com.base.auth.model.Chapter;
 import com.base.auth.model.Course;
 import com.base.auth.model.Lesson;
-import com.base.auth.model.criteria.LessonCriteria;
 import com.base.auth.repository.ChapterRepository;
 import com.base.auth.repository.CourseRepository;
+import com.base.auth.repository.LessonQuestionRepository;
 import com.base.auth.repository.LessonRepository;
 import com.base.auth.service.LessonService;
 import com.base.auth.service.ProcessVideoService;
@@ -61,6 +61,9 @@ public class LessonController extends ABasicController{
 
   @Autowired
   CourseRepository courseRepository;
+
+  @Autowired
+  LessonQuestionRepository lessonQuestionRepository;
 
   @Autowired
   LessonMapper lessonMapper;
@@ -384,6 +387,7 @@ public class LessonController extends ABasicController{
         lesson.getVideoPath().toLowerCase().startsWith(File.separator + "video")){
       userBaseApiService.deleteByFilePath(lesson.getVideoPath());
     }
+    lessonQuestionRepository.deleteAllByLessonId(id);
     Course course = lesson.getChapter().getCourse();
     course.setStatus(ITDreamConstant.COURSE_STATUS_WAITING_APPROVE);
     courseRepository.save(course);

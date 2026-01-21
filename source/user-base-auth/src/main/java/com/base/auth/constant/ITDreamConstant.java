@@ -50,12 +50,16 @@ public class ITDreamConstant {
     public static final Integer COURSE_LEVEL_ADVANCED = 3;
     public static final List<Integer> COURSE_LEVELS = List.of(COURSE_LEVEL_BEGINNER, COURSE_LEVEL_INTERMEDIATE, COURSE_LEVEL_ADVANCED);
 
+    public static final Integer COURSE_TYPE_COURSE = 1;
+    public static final Integer COURSE_TYPE_SIMULATION = 2;
+    public static final List<Integer> COURSE_TYPES = List.of(COURSE_TYPE_COURSE, COURSE_TYPE_SIMULATION);
+
     public static final Integer RESTART_ERROR_COUNT = 0;
 
     public static final Integer QUESTION_TYPE_FILE = 1;
     public static final Integer QUESTION_TYPE_TEXT = 2;
-    public static final Integer QUESTION_TYPE_MULTIPLE_CHOICE = 3;
-    public static final List<Integer> QUESTION_TYPES = List.of(QUESTION_TYPE_FILE, QUESTION_TYPE_TEXT, QUESTION_TYPE_MULTIPLE_CHOICE);
+    public static final Integer QUESTION_TYPE_QUIZ = 3;
+    public static final List<Integer> QUESTION_TYPES = List.of(QUESTION_TYPE_FILE, QUESTION_TYPE_TEXT, QUESTION_TYPE_QUIZ);
 
     public static final String BACKEND_PROCESS_VIDEO_CMD = "BACKEND_PROCESS_VIDEO";
     public static final String MEDIA_COMPLETED_PROCESS_VIDEO_CMD = "MEDIA_COMPLETED_PROCESS_VIDEO";

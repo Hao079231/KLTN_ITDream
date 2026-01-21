@@ -8,6 +8,7 @@ public class CourseDisplayDto {
   private Long id;
   private String title;
   private Integer level;
+  private Integer type;
   private String duration;
   private Integer totalParticipant;
   private String thumbnail;

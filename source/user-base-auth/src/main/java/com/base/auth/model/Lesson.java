@@ -7,6 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -36,10 +37,10 @@ public class Lesson {
   private Integer videoState;
   private Integer totalQuestion = 0;
   private Integer totalError = 0;
-  @ManyToOne
+  @OneToOne
   @JoinColumn(name = "previous_id")
   private Lesson previous;
-  @ManyToOne
+  @OneToOne
   @JoinColumn(name = "next_id")
   private Lesson next;
   @ManyToOne

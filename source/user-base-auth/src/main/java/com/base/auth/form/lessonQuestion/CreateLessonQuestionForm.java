@@ -18,7 +18,7 @@ public class CreateLessonQuestionForm {
   private Integer questionType;
   @ApiModelProperty(name = "options")
   private String options;
-  @NotNull(message = "taskId cannot be null")
-  @ApiModelProperty(name = "taskId")
-  private Long taskId;
+  @NotNull(message = "lessonId cannot be null")
+  @ApiModelProperty(name = "lessonId")
+  private Long lessonId;
 }

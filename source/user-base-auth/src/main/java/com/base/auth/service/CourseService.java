@@ -1,18 +1,14 @@
 package com.base.auth.service;
 
-import com.base.auth.constant.ITDreamConstant;
-import com.base.auth.dto.ErrorCode;
-import com.base.auth.exception.BadRequestException;
-import com.base.auth.exception.NotFoundException;
 import com.base.auth.model.Chapter;
 import com.base.auth.model.Course;
 import com.base.auth.model.Lesson;
 import com.base.auth.repository.ChapterRepository;
 import com.base.auth.repository.CourseRepository;
+import com.base.auth.repository.LessonQuestionRepository;
 import com.base.auth.repository.LessonRepository;
 import java.io.File;
 import java.util.List;
-import java.util.Objects;
 import javax.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -33,6 +29,9 @@ public class CourseService {
   LessonRepository lessonRepository;
 
   @Autowired
+  LessonQuestionRepository lessonQuestionRepository;
+
+  @Autowired
   UserBaseApiService userBaseApiService;
 
   public void deleteCourse(Course course) {
@@ -43,33 +42,19 @@ public class CourseService {
     deleteCourseFiles(course);
     courseRepository.delete(course);
   }
-
-
+  
   private void deleteChapterInCourse(Chapter chapter) {
-
-    Lesson current = lessonRepository
-        .findFirstByChapterIdAndPreviousIsNull(chapter.getId())
-        .orElse(null);
-
-    while (current != null) {
-      Lesson next = current.getNext();
-
-      if (next != null) {
-        next.setPrevious(null);
-        lessonRepository.save(next);
-      }
-
-      current.setPrevious(null);
-      current.setNext(null);
-
-      deleteLessonFiles(current);
-
-      lessonRepository.delete(current);
-      current = next;
+    List<Lesson> lessons = lessonRepository.findAllByChapterId(chapter.getId());
+    for (Lesson lesson : lessons){
+      lessonQuestionRepository.deleteAllByLessonId(lesson.getId());
+      deleteLessonFiles(lesson);
+      lesson.setPrevious(null);
+      lesson.setNext(null);
+      lessonRepository.save(lesson);
     }
+    lessonRepository.deleteAll(lessons);
     chapterRepository.delete(chapter);
   }
-
 
   private void deleteLessonFiles(Lesson lesson) {
     if (StringUtils.isNotBlank(lesson.getImagePath())
@@ -90,7 +75,6 @@ public class CourseService {
 
 
   private void deleteCourseFiles(Course course) {
-
     if (StringUtils.isNotBlank(course.getThumbnail())
         && course.getThumbnail().startsWith(File.separator + "image")) {
       userBaseApiService.deleteByFilePath(course.getThumbnail());
