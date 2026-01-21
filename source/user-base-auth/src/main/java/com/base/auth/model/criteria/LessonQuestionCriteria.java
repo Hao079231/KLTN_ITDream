@@ -1,5 +1,6 @@
 package com.base.auth.model.criteria;
 
+import com.base.auth.model.Chapter;
 import com.base.auth.model.Course;
 import com.base.auth.model.Lesson;
 import com.base.auth.model.LessonQuestion;
@@ -15,12 +16,9 @@ import lombok.Data;
 import org.springframework.data.jpa.domain.Specification;
 
 @Data
-public class TaskQuestionCriteria {
-  @NotNull(message = "simulationId required")
-  private Long simulationId;
-  @NotNull(message = "taskId required")
-  private Long taskId;
-  private Long educatorId;
+public class LessonQuestionCriteria {
+  @NotNull(message = "lessonId required")
+  private Long lessonId;
   private Integer status;
 
   public Specification<LessonQuestion> getSpecification() {
@@ -30,18 +28,14 @@ public class TaskQuestionCriteria {
       @Override
       public Predicate toPredicate(Root<LessonQuestion> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
         List<Predicate> predicates = new ArrayList<>();
-        Join<LessonQuestion, Lesson> taskJoin = root.join("task");
-        Join<Lesson, Course> simulationJoin = taskJoin.join("simulation");
+        Join<LessonQuestion, Lesson> lessonJoin = root.join("lesson");
 
-        predicates.add(cb.equal(taskJoin.get("id"), taskId));
-        predicates.add(cb.equal(simulationJoin.get("id"), simulationId));
-
-        if (getEducatorId() != null){
-          predicates.add(cb.equal(simulationJoin.get("educator").get("id"), educatorId));
-        }
+        predicates.add(cb.equal(lessonJoin.get("id"), getLessonId()));
 
         if (getStatus()!=null){
-          predicates.add(cb.equal(simulationJoin.get("status"), getStatus()));
+          Join<Lesson, Chapter> chapterJoin = lessonJoin.join("chapter");
+          Join<Chapter, Course> courseJoin = chapterJoin.join("course");
+          predicates.add(cb.equal(courseJoin.get("status"), getStatus()));
         }
         return cb.and(predicates.toArray(new Predicate[predicates.size()]));
       }

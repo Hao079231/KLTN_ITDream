@@ -9,5 +9,5 @@ public class LessonQuestionDto {
   private String question;
   private Integer questionType;
   private String options;
-  private LessonDto task;
+  private LessonDto lesson;
 }

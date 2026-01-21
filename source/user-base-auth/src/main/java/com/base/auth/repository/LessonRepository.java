@@ -1,6 +1,7 @@
 package com.base.auth.repository;
 
 import com.base.auth.model.Lesson;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -10,7 +11,7 @@ public interface LessonRepository extends JpaRepository<Lesson, Long>, JpaSpecif
 
   Optional<Lesson> findFirstByChapterIdAndPreviousIsNull(Long chapterId);
 
-  void deleteAllByChapterId(Long chapterId);
+  List<Lesson> findAllByChapterId(Long chapterId);
 //  @Modifying
 //  @Transactional
 //  @Query(value = "DELETE FROM db_it_dream_lesson WHERE parent_id IS NOT NULL AND course_id = :courseId", nativeQuery = true)

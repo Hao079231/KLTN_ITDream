@@ -18,6 +18,7 @@ import com.base.auth.model.Lesson;
 import com.base.auth.model.criteria.ChapterCriteria;
 import com.base.auth.repository.ChapterRepository;
 import com.base.auth.repository.CourseRepository;
+import com.base.auth.repository.LessonQuestionRepository;
 import com.base.auth.repository.LessonRepository;
 import java.io.File;
 import java.util.List;
@@ -54,6 +55,9 @@ public class ChapterController extends ABasicController{
 
   @Autowired
   LessonRepository lessonRepository;
+
+  @Autowired
+  LessonQuestionRepository lessonQuestionRepository;
 
   @Autowired
   ChapterMapper chapterMapper;
@@ -186,7 +190,6 @@ public class ChapterController extends ABasicController{
         lessonRepository.save(next);
       }
 
-
       current.setPrevious(null);
       current.setNext(null);
       if (StringUtils.isNotBlank(current.getImagePath())
@@ -203,6 +206,7 @@ public class ChapterController extends ABasicController{
           && current.getVideoPath().toLowerCase().startsWith(File.separator + "video")) {
         userBaseApiService.deleteByFilePath(current.getVideoPath());
       }
+      lessonQuestionRepository.deleteAllByLessonId(current.getId());
       lessonRepository.delete(current);
       current = next;
     }

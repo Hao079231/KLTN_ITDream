@@ -78,6 +78,8 @@ public interface LessonMapper {
   @Mapping(source = "imagePath", target = "imagePath")
   @Mapping(source = "filePath", target = "filePath")
   @Mapping(source = "videoPath", target = "videoPath")
+  @Mapping(source = "totalError", target = "totalError")
+  @Mapping(source = "totalQuestion", target = "totalQuestion")
   @Mapping(source = "chapter", target = "chapter", qualifiedByName = "fromEntityToChapterDisplayDto")
   @BeanMapping(ignoreByDefault = true)
   @Named("fromEntityToLessonStudentDto")

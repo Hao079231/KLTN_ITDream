@@ -29,6 +29,7 @@ public class Course extends Auditable<String>{
   @Column(columnDefinition = "TEXT")
   private String description;
   private Integer level; // 1 - beginner, 2 - intermediate, 3 - advanced
+  private Integer type; // 1 - course, 2 - simulation
   private String duration;
   private String thumbnail;
   private String videoPath;

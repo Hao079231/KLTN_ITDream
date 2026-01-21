@@ -1,5 +1,6 @@
 package com.base.auth.form.course;
 
+import com.base.auth.validation.CourseType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import javax.validation.constraints.NotEmpty;
@@ -23,6 +24,9 @@ public class UpdateCourseForm {
   private String description;
   @ApiModelProperty(name = "level")
   private Integer level;
+  @CourseType
+  @ApiModelProperty(name = "type")
+  private Integer type;
   @NotEmpty(message = "duration cannot be null")
   @ApiModelProperty(name = "duration")
   private String duration;
