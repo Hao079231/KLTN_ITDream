@@ -23,6 +23,8 @@ public interface LessonQuestionRepository extends JpaRepository<LessonQuestion, 
   @Query("delete from LessonQuestion lq where lq.lesson.id = :lessonId")
   void deleteAllByLessonId(@Param("lessonId") Long lessonId);
 
+  Boolean existsByLessonId(Long lessonId);
+
 //  @Modifying
 //  @Transactional
 //  @Query(value =

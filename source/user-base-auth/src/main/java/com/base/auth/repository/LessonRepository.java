@@ -12,6 +12,8 @@ public interface LessonRepository extends JpaRepository<Lesson, Long>, JpaSpecif
   Optional<Lesson> findFirstByChapterIdAndPreviousIsNull(Long chapterId);
 
   List<Lesson> findAllByChapterId(Long chapterId);
+
+  Boolean existsByChapterId(Long chapterId);
 //  @Modifying
 //  @Transactional
 //  @Query(value = "DELETE FROM db_it_dream_lesson WHERE parent_id IS NOT NULL AND course_id = :courseId", nativeQuery = true)

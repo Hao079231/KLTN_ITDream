@@ -61,6 +61,12 @@ public class ITDreamConstant {
     public static final Integer QUESTION_TYPE_QUIZ = 3;
     public static final List<Integer> QUESTION_TYPES = List.of(QUESTION_TYPE_FILE, QUESTION_TYPE_TEXT, QUESTION_TYPE_QUIZ);
 
+    public static final Integer COURSE_ENROLLMENT_COMPLETED = 1;
+    public static final Integer COURSE_ENROLLMENT_IN_PROGRESS = 2;
+
+    public static final Integer LESSON_PROGRESS_COMPLETED = 1;
+    public static final Integer LESSON_PROGRESS_IN_PROGRESS = 2;
+
     public static final String BACKEND_PROCESS_VIDEO_CMD = "BACKEND_PROCESS_VIDEO";
     public static final String MEDIA_COMPLETED_PROCESS_VIDEO_CMD = "MEDIA_COMPLETED_PROCESS_VIDEO";
     public static final String BACKEND_POST_NOTIFICATION_CMD = "BACKEND_POST_NOTIFICATION";

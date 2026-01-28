@@ -19,7 +19,9 @@ import com.base.auth.model.Chapter;
 import com.base.auth.model.Course;
 import com.base.auth.model.Lesson;
 import com.base.auth.repository.ChapterRepository;
+import com.base.auth.repository.CourseEnrollmentRepository;
 import com.base.auth.repository.CourseRepository;
+import com.base.auth.repository.LessonProgressRepository;
 import com.base.auth.repository.LessonQuestionRepository;
 import com.base.auth.repository.LessonRepository;
 import com.base.auth.service.LessonService;
@@ -66,6 +68,9 @@ public class LessonController extends ABasicController{
   LessonQuestionRepository lessonQuestionRepository;
 
   @Autowired
+  LessonProgressRepository lessonProgressRepository;
+
+  @Autowired
   LessonMapper lessonMapper;
 
   @Autowired
@@ -93,6 +98,10 @@ public class LessonController extends ABasicController{
 
     Lesson previous = null;
     Lesson next = null;
+    Boolean existLessonByChapter = lessonRepository.existsByChapterId(form.getChapterId());
+    if (existLessonByChapter && form.getPreviousId() == null && form.getNextId() == null){
+      throw new BadRequestException("Lessons must be created within the same linked list", ErrorCode.LESSON_ERROR_CREATE);
+    }
     if (form.getPreviousId() != null){
       previous = lessonRepository.findById(form.getPreviousId()).orElseThrow(()
           -> new NotFoundException("Lesson not found", ErrorCode.LESSON_ERROR_NOT_FOUND));
@@ -254,11 +263,25 @@ public class LessonController extends ABasicController{
     -> new NotFoundException("Lesson not found", ErrorCode.LESSON_ERROR_NOT_FOUND));
     Chapter chapter = chapterRepository.findById(form.getChapterId()).orElseThrow(()
     -> new NotFoundException("Chapter not found", ErrorCode.CHAPTER_ERROR_NOT_FOUND));
-    if (!Objects.equals(lesson.getChapter().getId(), form.getChapterId())){
+    Chapter oldChapter = lesson.getChapter();
+    // Không cho phép tự trỏ vào chính lesson
+    if (Objects.equals(form.getPreviousId(), form.getId()) || Objects.equals(form.getNextId(), form.getId())) {
+      throw new BadRequestException("Lesson cannot reference itself", ErrorCode.LESSON_ERROR_POSITION);
+    }
+    // Không cho phép lesson previous và lesson next là cùng 1 lesson
+    if (form.getPreviousId() != null && Objects.equals(form.getPreviousId(), form.getNextId())) {
+      throw new BadRequestException("Previous and next cannot be the same lesson", ErrorCode.LESSON_ERROR_POSITION);
+    }
+    // Kiểm tra trùng title khi cùng 1 chapter
+    if (!Objects.equals(oldChapter.getId(), form.getChapterId()) || !Objects.equals(lesson.getTitle(), form.getTitle())){
       Boolean existTitle = lessonRepository.existsByChapterIdAndTitle(form.getChapterId(), form.getTitle());
       if (existTitle){
         throw new BadRequestException("Lesson title already exist", ErrorCode.LESSON_ERROR_EXIST);
       }
+    }
+    Boolean existLessonByChapter = lessonRepository.existsByChapterId(form.getChapterId());
+    if (existLessonByChapter && form.getPreviousId() == null && form.getNextId() == null){
+      throw new BadRequestException("Lessons must be updated within the same linked list", ErrorCode.LESSON_ERROR_UPDATE);
     }
     Lesson oldPrev = lesson.getPrevious();
     Lesson oldNext = lesson.getNext();
@@ -274,10 +297,10 @@ public class LessonController extends ABasicController{
     }
 
     // Kiểm tra xem lesson trước và sau lesson chuẩn bị cập nhật vị trí có nằm cùng chương hay không
-    if (newPrev != null && !newPrev.getChapter().getId().equals(lesson.getChapter().getId()))
+    if (newPrev != null && !newPrev.getChapter().getId().equals(chapter.getId()))
       throw new BadRequestException("Invalid chapter", ErrorCode.LESSON_ERROR_SAME_CHAPTER);
 
-    if (newNext != null && !newNext.getChapter().getId().equals(lesson.getChapter().getId()))
+    if (newNext != null && !newNext.getChapter().getId().equals(chapter.getId()))
       throw new BadRequestException("Invalid chapter", ErrorCode.LESSON_ERROR_SAME_CHAPTER);
 
     // Kiểm tra xem nếu lesson hiện tại được chuyển vào giữa 2 lesson thì vị trí có đúng không
@@ -285,6 +308,16 @@ public class LessonController extends ABasicController{
       if (newPrev.getNext() == null || !newPrev.getNext().getId().equals(newNext.getId())) {
         throw new BadRequestException("Invalid position", ErrorCode.LESSON_ERROR_POSITION);
       }
+    }
+
+    // Kiểm tra khi mà update vào đầu danh sách
+    if (newPrev == null && newNext != null && newNext.getPrevious() != null) {
+      throw new BadRequestException("Invalid head insertion", ErrorCode.LESSON_ERROR_POSITION);
+    }
+
+    // Kiểm tra khi mà update vào cuối danh sách
+    if (newNext == null && newPrev != null && newPrev.getNext() != null) {
+      throw new BadRequestException("Invalid tail insertion", ErrorCode.LESSON_ERROR_POSITION);
     }
 
     if (StringUtils.isNotBlank(form.getImagePath()) &&
@@ -305,11 +338,6 @@ public class LessonController extends ABasicController{
       userBaseApiService.deleteByFilePath(lesson.getVideoPath());
     }
 
-    lessonMapper.fromUpdateLessonFormToEntity(form, lesson);
-    if (chapter != null){
-      lesson.setChapter(chapter);
-    }
-
     if (StringUtils.isNotBlank(form.getVideoPath()) &&
         form.getVideoPath().toLowerCase().startsWith(File.separator + "video") &&
         Objects.equals(form.getVideoPath(), lesson.getVideoPath())){
@@ -324,10 +352,16 @@ public class LessonController extends ABasicController{
     // Xóa vị trí cũ hiện tại của lesson
     if (oldPrev != null) {
       oldPrev.setNext(oldNext);
+      lessonRepository.save(oldPrev);
     }
     if (oldNext != null) {
       oldNext.setPrevious(oldPrev);
+      lessonRepository.save(oldNext);
     }
+
+
+    lessonMapper.fromUpdateLessonFormToEntity(form, lesson);
+    lesson.setChapter(chapter);
 
     // Thêm vào vị trí mới
     lesson.setPrevious(newPrev);
@@ -387,6 +421,7 @@ public class LessonController extends ABasicController{
         lesson.getVideoPath().toLowerCase().startsWith(File.separator + "video")){
       userBaseApiService.deleteByFilePath(lesson.getVideoPath());
     }
+    lessonProgressRepository.deleteAllByLessonId(id);
     lessonQuestionRepository.deleteAllByLessonId(id);
     Course course = lesson.getChapter().getCourse();
     course.setStatus(ITDreamConstant.COURSE_STATUS_WAITING_APPROVE);

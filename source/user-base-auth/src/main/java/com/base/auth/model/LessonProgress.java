@@ -25,7 +25,6 @@ public class LessonProgress extends Auditable<String>{
   private Long id;
   @Column(name = "error_count")
   private Integer errorCount = 0;
-  private Integer state;
   @ManyToOne
   @JoinColumn(name = "lesson_id")
   private Lesson lesson;
