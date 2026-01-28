@@ -22,8 +22,7 @@ public class CourseEnrollment extends Auditable<String>{
   @GenericGenerator(name = "idGenerator", strategy = "com.base.auth.service.id.IdGenerator")
   @GeneratedValue(generator = "idGenerator")
   private Long id;
-  private Float progress;
-  private Integer state;
+  private Float progress = 0F;
   @ManyToOne
   @JoinColumn(name = "course_id")
   private Course course;

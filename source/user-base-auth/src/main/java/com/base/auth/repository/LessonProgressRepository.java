@@ -12,6 +12,10 @@ import org.springframework.data.repository.query.Param;
 public interface LessonProgressRepository extends JpaRepository<LessonProgress, Long>,
     JpaSpecificationExecutor<LessonProgress> {
 
+  void deleteAllByCourseEnrollmentCourseId(Long courseId);
+
+  void deleteAllByLessonId(Long lessonId);
+
 //  Optional<LessonProgress> findByTaskIdAndStudentId(Long taskId, long studentId);
 //
 //  void deleteAllByStudentId(Long studentId);

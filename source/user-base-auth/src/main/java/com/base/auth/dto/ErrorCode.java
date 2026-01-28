@@ -84,6 +84,7 @@ public class ErrorCode {
     public static final String LESSON_ERROR_POSITION = "LESSON-ERROR-0002";
     public static final String LESSON_ERROR_SAME_CHAPTER = "LESSON-ERROR-0003";
     public static final String LESSON_ERROR_CREATE = "LESSON-ERROR-0004";
+    public static final String LESSON_ERROR_UPDATE = "LESSON-ERROR-0005";
 
     /**
      * Starting error code LessonQuestion
@@ -102,11 +103,18 @@ public class ErrorCode {
     public static final String LESSON_QUESTION_ERROR_OPTION_NOT_NULL = "LESSON_QUESTION-ERROR-0005";
 
     /**
+     * Starting error code CourseEnrollment
+     * */
+    public static final String COURSE_ENROLLMENT_NOT_FOUND = "COURSE-ENROLLMENT-ERROR-0000";
+    public static final String COURSE_ENROLLMENT_NOT_CREATE = "COURSE-ENROLLMENT-ERROR-0001";
+
+    /**
      * Starting error code LessonProgress
      * */
-    public static final String STUDENT_SUBLESSON_PROGRESS_ERROR_NOT_FOUND = "STUDENT-SUBLESSON-PROGRESS-ERROR-0000";
-    public static final String STUDENT_SUBLESSON_PROGRESS_ERROR_EXIST = "STUDENT-SUBLESSON-PROGRESS-ERROR-0001";
-    public static final String STUDENT_SUBLESSON_PROGRESS_ERROR_NOT_COMPLETED = "STUDENT-SUBLESSON-PROGRESS-ERROR-0002";
+    public static final String LESSON_PROGRESS_ERROR_NOT_FOUND = "LESSON-PROGRESS-ERROR-0000";
+    public static final String LESSON_PROGRESS_ERROR_EXIST = "LESSON-PROGRESS-ERROR-0001";
+    public static final String LESSON_PROGRESS_ERROR_NOT_COMPLETED = "LESSON-PROGRESS-ERROR-0002";
+    public static final String LESSON_PROGRESS_ERROR_NOT_CREATE = "LESSON-PROGRESS-ERROR-0003";
 
     /**
      * Starting error code CorrectAnswer

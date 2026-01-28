@@ -21,6 +21,7 @@ import com.base.auth.model.Category;
 import com.base.auth.model.Lesson;
 import com.base.auth.model.criteria.CourseCriteria;
 import com.base.auth.repository.AchievementRepository;
+import com.base.auth.repository.CourseEnrollmentRepository;
 import com.base.auth.repository.EducatorRepository;
 import com.base.auth.repository.FeedbackRepository;
 import com.base.auth.repository.ReviewSubmissionRepository;
@@ -97,6 +98,9 @@ public class CourseController extends ABasicController{
 
   @Autowired
   ReviewSubmissionRepository reviewSubmissionRepository;
+
+  @Autowired
+  CourseEnrollmentRepository courseEnrollmentRepository;
 
   @Autowired
   UserBaseApiService userBaseApiService;
@@ -317,7 +321,8 @@ public class CourseController extends ABasicController{
     if (!Objects.equals(ITDreamConstant.COURSE_STATUS_WAITING_APPROVE_DELETE, course.getStatus())) {
       throw new BadRequestException("Course cannot be deleted", ErrorCode.COURSE_ERROR_NOT_DELETE);
     }
-
+    lessonProgressRepository.deleteAllByCourseEnrollmentCourseId(id);
+    courseEnrollmentRepository.deleteAllByCourseId(id);
     courseService.deleteCourse(course);
     apiMessageDto.setMessage("Approve delete course success");
     return apiMessageDto;
@@ -381,6 +386,7 @@ public class CourseController extends ABasicController{
     if (!Objects.equals(ITDreamConstant.COURSE_STATUS_WAITING_APPROVE, course.getStatus())){
       throw new BadRequestException("Course cannot approve", ErrorCode.COURSE_ERROR_APPROVE);
     }
+    course.setStatus(ITDreamConstant.COURSE_STATUS_REJECT);
     course.setNotice(requestCourseIdForm.getNotice());
     courseRepository.save(course);
     apiMessageDto.setMessage("Reject course success");
@@ -396,6 +402,8 @@ public class CourseController extends ABasicController{
     if (!Objects.equals(ITDreamConstant.COURSE_STATUS_WAITING_APPROVE, course.getStatus())){
       throw new BadRequestException("Course cannot be deleted", ErrorCode.COURSE_ERROR_NOT_DELETE);
     }
+    lessonProgressRepository.deleteAllByCourseEnrollmentCourseId(id);
+    courseEnrollmentRepository.deleteAllByCourseId(id);
     courseService.deleteCourse(course);
     courseRepository.delete(course);
     apiMessageDto.setMessage("Delete course success");

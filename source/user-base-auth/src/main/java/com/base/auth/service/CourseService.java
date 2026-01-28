@@ -42,7 +42,7 @@ public class CourseService {
     deleteCourseFiles(course);
     courseRepository.delete(course);
   }
-  
+
   private void deleteChapterInCourse(Chapter chapter) {
     List<Lesson> lessons = lessonRepository.findAllByChapterId(chapter.getId());
     for (Lesson lesson : lessons){
