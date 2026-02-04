@@ -17,9 +17,13 @@ import com.base.auth.model.Course;
 import com.base.auth.model.Lesson;
 import com.base.auth.model.criteria.ChapterCriteria;
 import com.base.auth.repository.ChapterRepository;
+import com.base.auth.repository.CorrectAnswerRepository;
 import com.base.auth.repository.CourseRepository;
+import com.base.auth.repository.LessonProgressRepository;
 import com.base.auth.repository.LessonQuestionRepository;
 import com.base.auth.repository.LessonRepository;
+import com.base.auth.repository.QuestionQuizHistoryRepository;
+import com.base.auth.service.LessonService;
 import java.io.File;
 import java.util.List;
 import java.util.Objects;
@@ -60,7 +64,19 @@ public class ChapterController extends ABasicController{
   LessonQuestionRepository lessonQuestionRepository;
 
   @Autowired
+  LessonProgressRepository lessonProgressRepository;
+
+  @Autowired
+  QuestionQuizHistoryRepository questionQuizHistoryRepository;
+
+  @Autowired
+  CorrectAnswerRepository correctAnswerRepository;
+
+  @Autowired
   ChapterMapper chapterMapper;
+
+  @Autowired
+  LessonService lessonService;
 
   @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
   @PreAuthorize("hasRole('CHP_ED_C')")
@@ -192,20 +208,11 @@ public class ChapterController extends ABasicController{
 
       current.setPrevious(null);
       current.setNext(null);
-      if (StringUtils.isNotBlank(current.getImagePath())
-          && current.getImagePath().toLowerCase().startsWith(File.separator + "image")) {
-        userBaseApiService.deleteByFilePath(current.getImagePath());
-      }
-
-      if (StringUtils.isNotBlank(current.getFilePath())
-          && current.getFilePath().toLowerCase().startsWith(File.separator + "document")) {
-        userBaseApiService.deleteByFilePath(current.getFilePath());
-      }
-
-      if (StringUtils.isNotBlank(current.getVideoPath())
-          && current.getVideoPath().toLowerCase().startsWith(File.separator + "video")) {
-        userBaseApiService.deleteByFilePath(current.getVideoPath());
-      }
+      lessonService.rollbackStudentScoreWhenDeleteLesson(current);
+      lessonService.deleteLessonFiles(current);
+      correctAnswerRepository.deleteAllByLessonQuestionLessonId(current.getId());
+      questionQuizHistoryRepository.deleteAllByLessonQuestionLessonId(current.getId());
+      lessonProgressRepository.deleteAllByLessonId(current.getId());
       lessonQuestionRepository.deleteAllByLessonId(current.getId());
       lessonRepository.delete(current);
       current = next;

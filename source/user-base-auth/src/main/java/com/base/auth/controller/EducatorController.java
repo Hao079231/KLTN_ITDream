@@ -34,6 +34,7 @@ import com.base.auth.repository.LessonProgressRepository;
 import com.base.auth.repository.CorrectAnswerRepository;
 import com.base.auth.repository.LessonQuestionRepository;
 import com.base.auth.repository.LessonRepository;
+import com.base.auth.service.CourseService;
 import com.base.auth.utils.AESUtils;
 import com.base.auth.utils.ConvertUtils;
 import java.util.Date;
@@ -105,6 +106,9 @@ public class EducatorController extends ABasicController{
 
   @Autowired
   ReviewSubmissionRepository reviewSubmissionRepository;
+
+  @Autowired
+  CourseService courseService;
 
   @PostMapping(value = "/signup", produces= MediaType.APPLICATION_JSON_VALUE)
   public ApiMessageDto<OtpDto> create(@Valid @RequestBody SignUpEducatorForm signUpEducatorForm, BindingResult bindingResult)
@@ -262,25 +266,14 @@ public class EducatorController extends ABasicController{
       throw new BadRequestException("Not allow delete admin", ErrorCode.ACCOUNT_ERROR_NOT_ALLOW_DELETE_ADMIN);
     }
 
-//    List<Lesson> lessons = lessonRepository.findAllByEducatorId(id);
-//    for (Lesson lesson : lessons){
-//      deleteTaskFiles(lesson);
-//    }
-
     List<Course> courses = courseRepository.findAllByEducatorId(id);
     for (Course course : courses){
-      deleteCourseFiles(course);
-//      achievementRepository.setNullCourseId(course.getId());
+      courseService.deleteCourse(course);
     }
 
-    userBaseApiService.deleteByFilePath(educator.getAccount().getAvatarPath());
-//    correctAnswerRepository.deleteAllByEducatorId(id);
-//    lessonProgressRepository.deleteAllByEducatorId(id);
-//    reviewSubmissionRepository.deleteAllByEducatorId(id);
-//    feedbackRepository.deleteAllByEducatorId(id);
-//    lessonQuestionRepository.deleteAllByEducatorId(id);
-//    lessonRepository.deleteAllSubTaskByEducatorId(id);
-//    lessonRepository.deleteAllTaskByEducatorId(id);
+    if (StringUtils.isNotBlank(educator.getAccount().getAvatarPath())){
+      userBaseApiService.deleteByFilePath(educator.getAccount().getAvatarPath());
+    }
     courseRepository.deleteAllByEducatorId(id);
     educatorRepository.delete(educator);
     accountRepository.delete(account);
@@ -426,16 +419,5 @@ public class EducatorController extends ABasicController{
     accountRepository.save(account);
     apiMessageDto.setMessage("Reject educator success");
     return apiMessageDto;
-  }
-
-  private void deleteCourseFiles(Course course) {
-    userBaseApiService.deleteByFilePath(course.getThumbnail());
-    userBaseApiService.deleteByFilePath(course.getVideoPath());
-  }
-
-  private void deleteTaskFiles(Lesson lesson) {
-    userBaseApiService.deleteByFilePath(lesson.getImagePath());
-    userBaseApiService.deleteByFilePath(lesson.getFilePath());
-    userBaseApiService.deleteByFilePath(lesson.getVideoPath());
   }
 }

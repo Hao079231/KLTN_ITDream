@@ -25,6 +25,8 @@ public interface LessonQuestionRepository extends JpaRepository<LessonQuestion, 
 
   Boolean existsByLessonId(Long lessonId);
 
+  Integer countByLessonId(Long lessonId);
+
 //  @Modifying
 //  @Transactional
 //  @Query(value =

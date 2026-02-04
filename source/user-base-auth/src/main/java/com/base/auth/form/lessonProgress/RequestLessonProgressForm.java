@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 @ApiModel
 public class RequestLessonProgressForm {
-  @NotNull(message = "task id cannot be null")
-  @ApiModelProperty(name = "task id")
-  private Long taskId;
+  @NotNull(message = "lessonId cannot be null")
+  @ApiModelProperty(name = "lessonId")
+  private Long lessonId;
 }

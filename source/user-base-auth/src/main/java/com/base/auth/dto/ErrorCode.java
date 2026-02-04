@@ -105,8 +105,8 @@ public class ErrorCode {
     /**
      * Starting error code CourseEnrollment
      * */
-    public static final String COURSE_ENROLLMENT_NOT_FOUND = "COURSE-ENROLLMENT-ERROR-0000";
-    public static final String COURSE_ENROLLMENT_NOT_CREATE = "COURSE-ENROLLMENT-ERROR-0001";
+    public static final String COURSE_ENROLLMENT_ERROR_NOT_FOUND = "COURSE-ENROLLMENT-ERROR-0000";
+    public static final String COURSE_ENROLLMENT_ERROR_NOT_CREATE = "COURSE-ENROLLMENT-ERROR-0001";
 
     /**
      * Starting error code LessonProgress
@@ -115,6 +115,7 @@ public class ErrorCode {
     public static final String LESSON_PROGRESS_ERROR_EXIST = "LESSON-PROGRESS-ERROR-0001";
     public static final String LESSON_PROGRESS_ERROR_NOT_COMPLETED = "LESSON-PROGRESS-ERROR-0002";
     public static final String LESSON_PROGRESS_ERROR_NOT_CREATE = "LESSON-PROGRESS-ERROR-0003";
+    public static final String LESSON_PROGRESS_ERROR_FAIL = "LESSON-PROGRESS-ERROR-0004";
 
     /**
      * Starting error code CorrectAnswer
@@ -155,4 +156,9 @@ public class ErrorCode {
      * */
     public static final String NOTIFICATION_ERROR_NOT_FOUND = "NOTIFICATION-ERROR-0000";
     public static final String NOTIFICATION_ERROR_EXIST = "NOTIFICATION-ERROR-0001";
+
+    /**
+     * Starting error code Correct answer
+     * */
+    public static final String CORRECT_ANSWER_ERROR_NOT_CREATE = "CORRECT-ANSWER-ERROR-0000";
 }

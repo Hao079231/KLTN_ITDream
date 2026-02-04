@@ -60,7 +60,7 @@ public class CourseEnrollmentController extends ABasicController{
     Course course = courseRepository.findById(form.getCourseId()).orElseThrow(()
     -> new NotFoundException("Course not found", ErrorCode.COURSE_ERROR_NOT_FOUND));
     if (!Objects.equals(course.getStatus(), ITDreamConstant.COURSE_STATUS_ACTIVE)){
-      throw new BadRequestException("Cannot create course enrollment", ErrorCode.COURSE_ENROLLMENT_NOT_CREATE);
+      throw new BadRequestException("Cannot create course enrollment", ErrorCode.COURSE_ENROLLMENT_ERROR_NOT_CREATE);
     }
     CourseEnrollment courseEnrollment = new CourseEnrollment();
     courseEnrollment.setStatus(ITDreamConstant.COURSE_ENROLLMENT_IN_PROGRESS);

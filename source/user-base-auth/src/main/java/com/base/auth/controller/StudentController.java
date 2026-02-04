@@ -28,8 +28,10 @@ import com.base.auth.model.Student;
 import com.base.auth.model.criteria.StudentCriteria;
 import com.base.auth.repository.AccountRepository;
 import com.base.auth.repository.AchievementRepository;
+import com.base.auth.repository.CourseEnrollmentRepository;
 import com.base.auth.repository.GroupRepository;
 import com.base.auth.repository.FeedbackRepository;
+import com.base.auth.repository.QuestionQuizHistoryRepository;
 import com.base.auth.repository.ReviewSubmissionRepository;
 import com.base.auth.repository.CourseRepository;
 import com.base.auth.repository.StudentRepository;
@@ -92,7 +94,13 @@ public class StudentController extends ABasicController{
   LessonProgressRepository lessonProgressRepository;
 
   @Autowired
+  QuestionQuizHistoryRepository questionQuizHistoryRepository;
+
+  @Autowired
   CorrectAnswerRepository correctAnswerRepository;
+
+  @Autowired
+  CourseEnrollmentRepository courseEnrollmentRepository;
 
   @Autowired
   FeedbackRepository feedbackRepository;
@@ -137,22 +145,22 @@ public class StudentController extends ABasicController{
       throw new NotFoundException("Group not found", ErrorCode.GROUP_ERROR_NOT_FOUND);
     }
     account.setGroup(group);
-    account.setStatus(ITDreamConstant.STATUS_PENDING);
-    String otp = userBaseApiService.getRequestOTP();
-    account.setAttemptCode(0);
-    account.setResetPwdCode(otp);
-    account.setResetPwdTime(new Date());
+    account.setStatus(ITDreamConstant.STATUS_ACTIVE);
+//    String otp = userBaseApiService.getRequestOTP();
+//    account.setAttemptCode(0);
+//    account.setResetPwdCode(otp);
+//    account.setResetPwdTime(new Date());
     accountRepository.save(account);
 
     Student student = new Student();
     student.setAccount(account);
     studentRepository.save(student);
 
-    sendVerifyAccount(account);
-    OtpDto otpDto = new OtpDto();
-    String hash = AESUtils.encrypt (account.getId()+";"+otp, true);
-    otpDto.setIdHash(hash);
-    apiMessageDto.setData(otpDto);
+//    sendVerifyAccount(account);
+//    OtpDto otpDto = new OtpDto();
+//    String hash = AESUtils.encrypt (account.getId()+";"+otp, true);
+//    otpDto.setIdHash(hash);
+//    apiMessageDto.setData(otpDto);
     apiMessageDto.setMessage("Sign up success, please check email.");
     return apiMessageDto;
   }
@@ -258,39 +266,13 @@ public class StudentController extends ABasicController{
     if (Objects.equals(account.getKind(), ITDreamConstant.USER_KIND_ADMIN)){
       throw new BadRequestException("Not allow delete admin", ErrorCode.ACCOUNT_ERROR_NOT_ALLOW_DELETE_ADMIN);
     }
-    userBaseApiService.deleteByFilePath(student.getAccount().getAvatarPath());
-//    List<Achievement> achievements = achievementRepository.findAllByStudentId(id);
-//    for (Achievement ac : achievements) {
-//      if (StringUtils.isNotBlank(ac.getFilePath())) {
-//        userBaseApiService.deleteByFilePath(ac.getFilePath());
-//      }
-//    }
-
-//    List<CorrectAnswer> taskQuestionProgresses = correctAnswerRepository.findAllByStudentId(id);
-//    for (CorrectAnswer correctAnswer : taskQuestionProgresses){
-//      if (correctAnswer.getAnswer().matches(ITDreamConstant.FILE_PATH_PATTERN)){
-//        userBaseApiService.deleteByFilePath(correctAnswer.getAnswer());
-//      }
-//    }
-//    correctAnswerRepository.deleteAllByStudentId(id);
-//    lessonProgressRepository.deleteAllByStudentId(id);
-
-//    List<Feedback> feedbacks = feedbackRepository.findAllByStudentId(id);
-//    for (Feedback feedback : feedbacks) {
-//      Course course = feedback.getCourse();
-//      int totalReviewer = feedbackRepository.countBySimulationId(course.getId());
-//      feedbackRepository.delete(feedback);
-//
-//      if (totalReviewer > 1) {
-//        float avgRating = ((course.getAvgStar() * totalReviewer) - feedback.getStar()) / (totalReviewer - 1);
-//        course.setAvgStar(avgRating);
-//      } else {
-//        course.setAvgStar(0F);
-//      }
-//      courseRepository.save(course);
-//    }
-//    reviewSubmissionRepository.deleteByStudentId(id);
-//    achievementRepository.deleteByStudentId(id);
+    correctAnswerRepository.deleteAllByLessonProgressCourseEnrollmentStudentId(id);
+    questionQuizHistoryRepository.deleteAllByLessonProgressCourseEnrollmentStudentId(id);
+    lessonProgressRepository.deleteAllByCourseEnrollmentStudentId(id);
+    courseEnrollmentRepository.deleteAllByStudentId(id);
+    if (StringUtils.isNotBlank(student.getAccount().getAvatarPath())){
+      userBaseApiService.deleteByFilePath(student.getAccount().getAvatarPath());
+    }
     studentRepository.delete(student);
     accountRepository.delete(account);
     apiMessageDto.setMessage("Delete student success");

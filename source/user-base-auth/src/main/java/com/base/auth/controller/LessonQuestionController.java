@@ -13,12 +13,19 @@ import com.base.auth.exception.UnauthorizationException;
 import com.base.auth.form.lessonQuestion.CreateLessonQuestionForm;
 import com.base.auth.form.lessonQuestion.UpdateLessonQuestionForm;
 import com.base.auth.mapper.LessonQuestionMapper;
+import com.base.auth.model.CorrectAnswer;
+import com.base.auth.model.Course;
 import com.base.auth.model.Lesson;
 import com.base.auth.model.LessonQuestion;
+import com.base.auth.model.Student;
 import com.base.auth.model.criteria.LessonQuestionCriteria;
+import com.base.auth.repository.CorrectAnswerRepository;
+import com.base.auth.repository.CourseRepository;
 import com.base.auth.repository.LessonQuestionRepository;
 import com.base.auth.repository.LessonRepository;
+import com.base.auth.repository.QuestionQuizHistoryRepository;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +54,15 @@ public class LessonQuestionController extends ABasicController{
 
   @Autowired
   LessonRepository lessonRepository;
+
+  @Autowired
+  QuestionQuizHistoryRepository questionQuizHistoryRepository;
+
+  @Autowired
+  CorrectAnswerRepository correctAnswerRepository;
+
+  @Autowired
+  CourseRepository courseRepository;
 
   @Autowired
   LessonQuestionMapper lessonQuestionMapper;
@@ -82,9 +98,12 @@ public class LessonQuestionController extends ABasicController{
       lesson.setTotalError(1);
     } else {
       lesson.setTotalQuestion(lesson.getTotalQuestion() + 1);
-      lesson.setTotalError((int) Math.ceil((lesson.getTotalError() + 1) / 2));
+      lesson.setTotalError((int) Math.ceil((double) (lesson.getTotalQuestion() + 1) / 2));
     }
     lessonRepository.save(lesson);
+    Course course = lesson.getChapter().getCourse();
+    course.setStatus(ITDreamConstant.COURSE_STATUS_WAITING_APPROVE);
+    courseRepository.save(course);
     apiMessageDto.setMessage("Create lesson question success");
     return apiMessageDto;
   }
@@ -163,6 +182,9 @@ public class LessonQuestionController extends ABasicController{
     }
     lessonQuestionMapper.fromUpdateLessonQuestionFormToEntity(form, lessonQuestion);
     lessonQuestionRepository.save(lessonQuestion);
+    Course course = lessonQuestion.getLesson().getChapter().getCourse();
+    course.setStatus(ITDreamConstant.COURSE_STATUS_WAITING_APPROVE);
+    courseRepository.save(course);
     apiMessageDto.setMessage("Update lesson question success");
     return apiMessageDto;
   }
@@ -176,10 +198,35 @@ public class LessonQuestionController extends ABasicController{
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     LessonQuestion lessonQuestion = lessonQuestionRepository.findById(id).orElseThrow(()
     -> new NotFoundException("Lesson question not found", ErrorCode.LESSON_QUESTION_ERROR_NOT_FOUND));
+    //Cập nhật lại điểm của những student đã làm lesson question này
+    List<CorrectAnswer> correctAnswers = correctAnswerRepository.findAllByLessonQuestionId(id);
+
+    for (CorrectAnswer ca : correctAnswers) {
+      Student student = ca.getLessonProgress()
+          .getCourseEnrollment()
+          .getStudent();
+
+      student.setScore(Math.max(0, student.getScore() - ITDreamConstant.SCORE_COMPLETE_QUESTION));
+    }
+
+    List<Student> students = correctAnswers.stream()
+        .map(ca -> ca.getLessonProgress()
+            .getCourseEnrollment()
+            .getStudent())
+        .distinct()
+        .collect(Collectors.toList());
+
+    studentRepository.saveAll(students);
+    questionQuizHistoryRepository.deleteAllByLessonQuestionId(id);
+    correctAnswerRepository.deleteAllByLessonQuestionId(id);
     Lesson lesson = lessonQuestion.getLesson();
-    lesson.setTotalError((int) Math.ceil((lesson.getTotalError() - 1) / 2));
+    lesson.setTotalError((int) ((double)(lesson.getTotalError() - 1) / 2));
     lesson.setTotalQuestion(lesson.getTotalQuestion() - 1);
     lessonRepository.save(lesson);
+
+    Course course = lesson.getChapter().getCourse();
+    course.setStatus(ITDreamConstant.COURSE_STATUS_WAITING_APPROVE);
+    courseRepository.save(course);
     lessonQuestionRepository.delete(lessonQuestion);
     apiMessageDto.setMessage("Delete lesson question success");
     return apiMessageDto;
