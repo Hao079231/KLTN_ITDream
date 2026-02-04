@@ -321,8 +321,6 @@ public class CourseController extends ABasicController{
     if (!Objects.equals(ITDreamConstant.COURSE_STATUS_WAITING_APPROVE_DELETE, course.getStatus())) {
       throw new BadRequestException("Course cannot be deleted", ErrorCode.COURSE_ERROR_NOT_DELETE);
     }
-    lessonProgressRepository.deleteAllByCourseEnrollmentCourseId(id);
-    courseEnrollmentRepository.deleteAllByCourseId(id);
     courseService.deleteCourse(course);
     apiMessageDto.setMessage("Approve delete course success");
     return apiMessageDto;
@@ -402,8 +400,6 @@ public class CourseController extends ABasicController{
     if (!Objects.equals(ITDreamConstant.COURSE_STATUS_WAITING_APPROVE, course.getStatus())){
       throw new BadRequestException("Course cannot be deleted", ErrorCode.COURSE_ERROR_NOT_DELETE);
     }
-    lessonProgressRepository.deleteAllByCourseEnrollmentCourseId(id);
-    courseEnrollmentRepository.deleteAllByCourseId(id);
     courseService.deleteCourse(course);
     courseRepository.delete(course);
     apiMessageDto.setMessage("Delete course success");

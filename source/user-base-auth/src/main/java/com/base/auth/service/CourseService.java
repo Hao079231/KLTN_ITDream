@@ -4,9 +4,13 @@ import com.base.auth.model.Chapter;
 import com.base.auth.model.Course;
 import com.base.auth.model.Lesson;
 import com.base.auth.repository.ChapterRepository;
+import com.base.auth.repository.CorrectAnswerRepository;
+import com.base.auth.repository.CourseEnrollmentRepository;
 import com.base.auth.repository.CourseRepository;
+import com.base.auth.repository.LessonProgressRepository;
 import com.base.auth.repository.LessonQuestionRepository;
 import com.base.auth.repository.LessonRepository;
+import com.base.auth.repository.QuestionQuizHistoryRepository;
 import java.io.File;
 import java.util.List;
 import javax.transaction.Transactional;
@@ -32,14 +36,30 @@ public class CourseService {
   LessonQuestionRepository lessonQuestionRepository;
 
   @Autowired
+  LessonProgressRepository lessonProgressRepository;
+
+  @Autowired
+  CorrectAnswerRepository correctAnswerRepository;
+
+  @Autowired
+  QuestionQuizHistoryRepository questionQuizHistoryRepository;
+
+  @Autowired
+  CourseEnrollmentRepository courseEnrollmentRepository;
+
+  @Autowired
   UserBaseApiService userBaseApiService;
+
+  @Autowired
+  LessonService lessonService;
 
   public void deleteCourse(Course course) {
     List<Chapter> chapters = chapterRepository.findAllByCourseId(course.getId());
     for (Chapter chapter : chapters) {
-      deleteChapterInCourse(chapter);
+      deleteChapterWithLinkedList(chapter);
     }
     deleteCourseFiles(course);
+    courseEnrollmentRepository.deleteAllByCourseId(course.getId());
     courseRepository.delete(course);
   }
 
@@ -53,6 +73,48 @@ public class CourseService {
       lessonRepository.save(lesson);
     }
     lessonRepository.deleteAll(lessons);
+    chapterRepository.delete(chapter);
+  }
+
+  private void deleteChapterWithLinkedList(Chapter chapter) {
+    Lesson current = lessonRepository.findFirstByChapterIdAndPreviousIsNull(chapter.getId()).orElse(null);
+
+    while (current != null) {
+      Lesson next = current.getNext();
+
+      // 1. rollback điểm
+      lessonService.rollbackStudentScoreWhenDeleteLesson(current);
+
+      // 2. delete correct answer
+      correctAnswerRepository.deleteAllByLessonProgressLessonId(current.getId());
+
+      // 3. delete quiz history
+      questionQuizHistoryRepository.deleteAllByLessonProgressLessonId(current.getId());
+
+      // 4. delete lesson progress
+      lessonProgressRepository.deleteAllByLessonId(current.getId());
+
+      // 5. delete question
+      lessonQuestionRepository.deleteAllByLessonId(current.getId());
+
+      // 6. unlink
+      if (next != null) {
+        next.setPrevious(null);
+        lessonRepository.save(next);
+      }
+
+      current.setPrevious(null);
+      current.setNext(null);
+
+      // 6. delete files
+      deleteLessonFiles(current);
+
+      // 7. delete lesson
+      lessonRepository.delete(current);
+
+      current = next;
+    }
+
     chapterRepository.delete(chapter);
   }
 

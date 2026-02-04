@@ -31,9 +31,6 @@ public class ITDreamConstant {
     public static final Integer COURSE_STATUS_WAITING_APPROVE_DELETE = 3;
     public static final Integer COURSE_STATUS_REJECT = -1;
 
-    public static final Integer STATE_STUDENT_SUBTASK_PROGRESS_COMPLETED = 1;
-    public static final Integer STATE_STUDENT_SUBTASK_PROGRESS_IN_PROGRESS = 2;
-
     public static final Integer STATE_COURSE_PROCESSING = 1;
     public static final Integer STATE_COURSE_DONE = 2;
     public static final Integer STATE_COURSE_FAIL = 3;
@@ -66,6 +63,9 @@ public class ITDreamConstant {
 
     public static final Integer LESSON_PROGRESS_COMPLETED = 1;
     public static final Integer LESSON_PROGRESS_IN_PROGRESS = 2;
+
+    public static final Integer SCORE_COMPLETE_QUESTION = 10;
+    public static final Integer SCORE_COMPLETE_LESSON = 20;
 
     public static final String BACKEND_PROCESS_VIDEO_CMD = "BACKEND_PROCESS_VIDEO";
     public static final String MEDIA_COMPLETED_PROCESS_VIDEO_CMD = "MEDIA_COMPLETED_PROCESS_VIDEO";

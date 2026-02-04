@@ -19,11 +19,13 @@ import com.base.auth.model.Chapter;
 import com.base.auth.model.Course;
 import com.base.auth.model.Lesson;
 import com.base.auth.repository.ChapterRepository;
+import com.base.auth.repository.CorrectAnswerRepository;
 import com.base.auth.repository.CourseEnrollmentRepository;
 import com.base.auth.repository.CourseRepository;
 import com.base.auth.repository.LessonProgressRepository;
 import com.base.auth.repository.LessonQuestionRepository;
 import com.base.auth.repository.LessonRepository;
+import com.base.auth.repository.QuestionQuizHistoryRepository;
 import com.base.auth.service.LessonService;
 import com.base.auth.service.ProcessVideoService;
 import com.base.auth.service.UserBaseApiService;
@@ -69,6 +71,12 @@ public class LessonController extends ABasicController{
 
   @Autowired
   LessonProgressRepository lessonProgressRepository;
+
+  @Autowired
+  QuestionQuizHistoryRepository questionQuizHistoryRepository;
+
+  @Autowired
+  CorrectAnswerRepository correctAnswerRepository;
 
   @Autowired
   LessonMapper lessonMapper;
@@ -407,20 +415,10 @@ public class LessonController extends ABasicController{
       lessonRepository.save(next);
     }
 
-    if (StringUtils.isNotBlank(lesson.getImagePath()) &&
-        lesson.getImagePath().toLowerCase().startsWith(File.separator + "image")){
-      userBaseApiService.deleteByFilePath(lesson.getImagePath());
-    }
-
-    if (StringUtils.isNotBlank(lesson.getFilePath()) &&
-        lesson.getFilePath().toLowerCase().startsWith(File.separator + "document")){
-      userBaseApiService.deleteByFilePath(lesson.getFilePath());
-    }
-
-    if (StringUtils.isNotBlank(lesson.getVideoPath()) &&
-        lesson.getVideoPath().toLowerCase().startsWith(File.separator + "video")){
-      userBaseApiService.deleteByFilePath(lesson.getVideoPath());
-    }
+    lessonService.deleteLessonFiles(lesson);
+    lessonService.rollbackStudentScoreWhenDeleteLesson(lesson);
+    correctAnswerRepository.deleteAllByLessonQuestionLessonId(id);
+    questionQuizHistoryRepository.deleteAllByLessonQuestionLessonId(id);
     lessonProgressRepository.deleteAllByLessonId(id);
     lessonQuestionRepository.deleteAllByLessonId(id);
     Course course = lesson.getChapter().getCourse();
