@@ -39,6 +39,7 @@ public interface CorrectAnswerRepository extends JpaRepository<CorrectAnswer, Lo
   @Transactional
   void deleteAllByLessonQuestionLessonId(Long lessonId);
 
+  @Transactional
   void deleteAllByLessonProgressCourseEnrollmentStudentId(Long studentId);
 
   Boolean existsByLessonProgressIdAndAnswer(Long lessonProgressId, String answer);

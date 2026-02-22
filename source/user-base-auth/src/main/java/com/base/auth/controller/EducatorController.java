@@ -21,19 +21,11 @@ import com.base.auth.model.Account;
 import com.base.auth.model.Course;
 import com.base.auth.model.Educator;
 import com.base.auth.model.Group;
-import com.base.auth.model.Lesson;
 import com.base.auth.model.criteria.EducatorCriteria;
 import com.base.auth.repository.AccountRepository;
-import com.base.auth.repository.AchievementRepository;
 import com.base.auth.repository.EducatorRepository;
 import com.base.auth.repository.GroupRepository;
-import com.base.auth.repository.FeedbackRepository;
-import com.base.auth.repository.ReviewSubmissionRepository;
 import com.base.auth.repository.CourseRepository;
-import com.base.auth.repository.LessonProgressRepository;
-import com.base.auth.repository.CorrectAnswerRepository;
-import com.base.auth.repository.LessonQuestionRepository;
-import com.base.auth.repository.LessonRepository;
 import com.base.auth.service.CourseService;
 import com.base.auth.utils.AESUtils;
 import com.base.auth.utils.ConvertUtils;
@@ -85,27 +77,6 @@ public class EducatorController extends ABasicController{
 
   @Autowired
   CourseRepository courseRepository;
-
-  @Autowired
-  LessonRepository lessonRepository;
-
-  @Autowired
-  LessonQuestionRepository lessonQuestionRepository;
-
-  @Autowired
-  LessonProgressRepository lessonProgressRepository;
-
-  @Autowired
-  CorrectAnswerRepository correctAnswerRepository;
-
-  @Autowired
-  AchievementRepository achievementRepository;
-
-  @Autowired
-  FeedbackRepository feedbackRepository;
-
-  @Autowired
-  ReviewSubmissionRepository reviewSubmissionRepository;
 
   @Autowired
   CourseService courseService;

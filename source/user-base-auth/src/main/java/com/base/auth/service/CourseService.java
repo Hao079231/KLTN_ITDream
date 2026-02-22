@@ -4,9 +4,11 @@ import com.base.auth.model.Chapter;
 import com.base.auth.model.Course;
 import com.base.auth.model.Lesson;
 import com.base.auth.repository.ChapterRepository;
+import com.base.auth.repository.CommentRepository;
 import com.base.auth.repository.CorrectAnswerRepository;
 import com.base.auth.repository.CourseEnrollmentRepository;
 import com.base.auth.repository.CourseRepository;
+import com.base.auth.repository.FeedbackRepository;
 import com.base.auth.repository.LessonProgressRepository;
 import com.base.auth.repository.LessonQuestionRepository;
 import com.base.auth.repository.LessonRepository;
@@ -48,6 +50,12 @@ public class CourseService {
   CourseEnrollmentRepository courseEnrollmentRepository;
 
   @Autowired
+  FeedbackRepository feedbackRepository;
+
+  @Autowired
+  CommentRepository commentRepository;
+
+  @Autowired
   UserBaseApiService userBaseApiService;
 
   @Autowired
@@ -59,21 +67,9 @@ public class CourseService {
       deleteChapterWithLinkedList(chapter);
     }
     deleteCourseFiles(course);
+    feedbackRepository.deleteAllByCourseId(course.getId());
     courseEnrollmentRepository.deleteAllByCourseId(course.getId());
     courseRepository.delete(course);
-  }
-
-  private void deleteChapterInCourse(Chapter chapter) {
-    List<Lesson> lessons = lessonRepository.findAllByChapterId(chapter.getId());
-    for (Lesson lesson : lessons){
-      lessonQuestionRepository.deleteAllByLessonId(lesson.getId());
-      deleteLessonFiles(lesson);
-      lesson.setPrevious(null);
-      lesson.setNext(null);
-      lessonRepository.save(lesson);
-    }
-    lessonRepository.deleteAll(lessons);
-    chapterRepository.delete(chapter);
   }
 
   private void deleteChapterWithLinkedList(Chapter chapter) {
@@ -82,22 +78,25 @@ public class CourseService {
     while (current != null) {
       Lesson next = current.getNext();
 
-      // 1. rollback điểm
+      // rollback điểm
       lessonService.rollbackStudentScoreWhenDeleteLesson(current);
 
-      // 2. delete correct answer
+      // delete correct answer
       correctAnswerRepository.deleteAllByLessonProgressLessonId(current.getId());
 
-      // 3. delete quiz history
+      // delete quiz history
       questionQuizHistoryRepository.deleteAllByLessonProgressLessonId(current.getId());
 
-      // 4. delete lesson progress
+      // delete lesson progress
       lessonProgressRepository.deleteAllByLessonId(current.getId());
 
-      // 5. delete question
+      // delete question
       lessonQuestionRepository.deleteAllByLessonId(current.getId());
 
-      // 6. unlink
+      // delete comment
+      commentRepository.deleteAllByLessonId(current.getId());
+
+      // unlink
       if (next != null) {
         next.setPrevious(null);
         lessonRepository.save(next);
@@ -106,10 +105,10 @@ public class CourseService {
       current.setPrevious(null);
       current.setNext(null);
 
-      // 6. delete files
+      // delete files
       deleteLessonFiles(current);
 
-      // 7. delete lesson
+      // delete lesson
       lessonRepository.delete(current);
 
       current = next;

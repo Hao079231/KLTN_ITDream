@@ -1,14 +1,14 @@
 package com.base.auth.dto.feedback;
 
+import com.base.auth.dto.ABasicAdminDto;
 import com.base.auth.dto.course.CourseDto;
 import com.base.auth.dto.student.StudentDto;
 import lombok.Data;
 
 @Data
-public class FeedbackDto {
-  private Long id;
+public class FeedbackDto extends ABasicAdminDto {
   private Integer star;
-  private String comment;
+  private String content;
   private StudentDto student;
-  private CourseDto simulation;
+  private CourseDto course;
 }

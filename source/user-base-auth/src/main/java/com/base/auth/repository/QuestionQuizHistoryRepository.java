@@ -21,6 +21,7 @@ public interface QuestionQuizHistoryRepository extends JpaRepository<QuestionQui
   @Transactional
   void deleteAllByLessonQuestionLessonId(Long lessonId);
 
+  @Transactional
   void deleteAllByLessonProgressCourseEnrollmentStudentId(Long studentId);
 
   @Modifying
