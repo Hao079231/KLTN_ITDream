@@ -31,6 +31,7 @@ public interface LessonProgressRepository extends JpaRepository<LessonProgress, 
 
   List<LessonProgress> findAllByLessonId(Long lessonId);
 
+  @Transactional
   void deleteAllByCourseEnrollmentStudentId(Long studentId);
 
   Boolean existsByCourseEnrollmentIdAndStatus(Long courseEnrollmentId, Integer lessonProgressInProgress);

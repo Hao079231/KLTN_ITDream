@@ -19,6 +19,7 @@ import com.base.auth.model.Chapter;
 import com.base.auth.model.Course;
 import com.base.auth.model.Lesson;
 import com.base.auth.repository.ChapterRepository;
+import com.base.auth.repository.CommentRepository;
 import com.base.auth.repository.CorrectAnswerRepository;
 import com.base.auth.repository.CourseEnrollmentRepository;
 import com.base.auth.repository.CourseRepository;
@@ -77,6 +78,9 @@ public class LessonController extends ABasicController{
 
   @Autowired
   CorrectAnswerRepository correctAnswerRepository;
+
+  @Autowired
+  CommentRepository commentRepository;
 
   @Autowired
   LessonMapper lessonMapper;
@@ -421,6 +425,7 @@ public class LessonController extends ABasicController{
     questionQuizHistoryRepository.deleteAllByLessonQuestionLessonId(id);
     lessonProgressRepository.deleteAllByLessonId(id);
     lessonQuestionRepository.deleteAllByLessonId(id);
+    commentRepository.deleteAllByLessonId(id);
     Course course = lesson.getChapter().getCourse();
     course.setStatus(ITDreamConstant.COURSE_STATUS_WAITING_APPROVE);
     courseRepository.save(course);

@@ -10,6 +10,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface FeedbackRepository extends JpaRepository<Feedback, Long>, JpaSpecificationExecutor<Feedback> {
+
+  Boolean existsByStudentIdAndCourseId(Long studentId, Long courseId);
+
+  @Transactional
+  void deleteAllByCourseId(Long courseId);
 //  void deleteByCourseId(Long simulationId);
 //
 //  int countBySimulationId(Long simulationId);

@@ -161,4 +161,20 @@ public class ErrorCode {
      * Starting error code Correct answer
      * */
     public static final String CORRECT_ANSWER_ERROR_NOT_CREATE = "CORRECT-ANSWER-ERROR-0000";
+
+    /**
+     * Starting error code Comment
+     * */
+    public static final String COMMENT_ERROR_NOT_FOUND = "COMMENT-ERROR-0000";
+    public static final String COMMENT_ERROR_NOT_UPDATE = "COMMENT-ERROR-0001";
+    public static final String COMMENT_ERROR_NOT_DELETE = "COMMENT-ERROR-0002";
+    public static final String COMMENT_ERROR_USER_SELF_LIKE = "COMMENT-ERROR-0003";
+    public static final String COMMENT_ERROR_INVALID_PARENT = "COMMENT-ERROR-0004";
+    public static final String COMMENT_ERROR_MAX_DEPTH = "COMMENT-ERROR-0005";
+
+    /**
+     * Starting error code Feedback
+     * */
+    public static final String FEEDBACK_ERROR_NOT_FOUND = "FEEDBACK-ERROR-0000";
+    public static final String FEEDBACK_ERROR_EXIST = "FEEDBACK-ERROR-0001";
 }

@@ -25,7 +25,6 @@ public class Comment extends Auditable<String>{
   private Long id;
   @Column(columnDefinition = "TEXT")
   private String content;
-  private Integer likeCount;
   @ManyToOne
   @JoinColumn(name = "lesson_id")
   private Lesson lesson;
@@ -35,4 +34,7 @@ public class Comment extends Auditable<String>{
   @ManyToOne
   @JoinColumn(name = "parent_id")
   private Comment parent;
+  @ManyToOne
+  @JoinColumn(name = "root_id")
+  private Comment root;
 }

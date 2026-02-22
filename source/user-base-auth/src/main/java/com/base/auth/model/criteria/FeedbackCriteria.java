@@ -16,8 +16,8 @@ import org.springframework.data.jpa.domain.Specification;
 
 @Data
 public class FeedbackCriteria {
-  @NotNull(message = "simulationId required")
-  private Long simulationId;
+  @NotNull(message = "courseId required")
+  private Long courseId;
 
   public Specification<Feedback> getSpecification() {
     return new Specification<Feedback>() {
@@ -26,8 +26,9 @@ public class FeedbackCriteria {
       @Override
       public Predicate toPredicate(Root<Feedback> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
         List<Predicate> predicates = new ArrayList<>();
-        Join<Feedback, Course> simulationJoin = root.join("simulation", JoinType.INNER);
-        predicates.add(cb.equal(simulationJoin.get("id"), getSimulationId()));
+        Join<Feedback, Course> courseJoin = root.join("course", JoinType.INNER);
+        predicates.add(cb.equal(courseJoin.get("id"), getCourseId()));
+        query.orderBy(cb.desc(root.get("createdDate")));
         return cb.and(predicates.toArray(new Predicate[predicates.size()]));
       }
     };
