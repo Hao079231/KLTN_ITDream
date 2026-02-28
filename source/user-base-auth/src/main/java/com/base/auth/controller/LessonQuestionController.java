@@ -24,6 +24,7 @@ import com.base.auth.repository.CourseRepository;
 import com.base.auth.repository.LessonQuestionRepository;
 import com.base.auth.repository.LessonRepository;
 import com.base.auth.repository.QuestionQuizHistoryRepository;
+import com.base.auth.repository.ReviewSubmissionRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
@@ -63,6 +64,9 @@ public class LessonQuestionController extends ABasicController{
 
   @Autowired
   CourseRepository courseRepository;
+
+  @Autowired
+  ReviewSubmissionRepository reviewSubmissionRepository;
 
   @Autowired
   LessonQuestionMapper lessonQuestionMapper;
@@ -217,6 +221,7 @@ public class LessonQuestionController extends ABasicController{
         .collect(Collectors.toList());
 
     studentRepository.saveAll(students);
+    reviewSubmissionRepository.deleteAllByLessonQuestionId(id);
     questionQuizHistoryRepository.deleteAllByLessonQuestionId(id);
     correctAnswerRepository.deleteAllByLessonQuestionId(id);
     Lesson lesson = lessonQuestion.getLesson();

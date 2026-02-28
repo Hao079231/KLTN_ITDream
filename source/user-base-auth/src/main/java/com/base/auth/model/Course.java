@@ -35,6 +35,7 @@ public class Course extends Auditable<String>{
   private String videoPath;
   private Integer videoState; // 1 - process, 2 - done, 3 - failed
   private Float avgStar = 0F;
+  private Long totalFeedback = 0L;
   private Long totalParticipant = 0L;
   private Integer totalLesson = 0;
   @Column(columnDefinition = "TEXT")

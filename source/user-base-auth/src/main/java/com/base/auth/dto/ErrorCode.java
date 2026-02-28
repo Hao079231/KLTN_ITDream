@@ -118,21 +118,6 @@ public class ErrorCode {
     public static final String LESSON_PROGRESS_ERROR_FAIL = "LESSON-PROGRESS-ERROR-0004";
 
     /**
-     * Starting error code CorrectAnswer
-     * */
-    public static final String STUDENT_LESSON_QUESTION_PROGRESS_ERROR_NOT_FOUND = "STUDENT-LESSON-QUESTION-PROGRESS-ERROR-0000";
-    public static final String STUDENT_LESSON_QUESTION_PROGRESS_ERROR_EXIST = "STUDENT-LESSON-QUESTION-PROGRESS-ERROR-0001";
-    public static final String STUDENT_LESSON_QUESTION_PROGRESS_ERROR_NOT_CREATE = "STUDENT-LESSON-QUESTION-PROGRESS-ERROR-0002";
-
-    /**
-     * Starting error code Feedback
-     * */
-    public static final String REVIEW_ERROR_NOT_FOUND = "REVIEW-ERROR-0000";
-    public static final String REVIEW_ERROR_EXIST = "REVIEW-ERROR-0001";
-    public static final String REVIEW_ERROR_NOT_AUTHORIZE = "REVIEW-ERROR-0002";
-    public static final String REVIEW_ERROR_NOT_CREATE = "REVIEW-ERROR-0003";
-
-    /**
      * Starting error code Google
      * */
     public static final String GOOGLE_ERROR_ACCESS_TOKEN_INVALID = "GOOGLE-ERROR-0000";
@@ -149,7 +134,7 @@ public class ErrorCode {
      * */
     public static final String REVIEW_SUBMISSION_ERROR_NOT_FOUND = "REVIEW-SUBMISSION-ERROR-0000";
     public static final String REVIEW_SUBMISSION_ERROR_EXIST = "REVIEW-SUBMISSION-ERROR-0001";
-    public static final String REVIEW_SUBMISSION_ERROR_CREATE = "REVIEW-SUBMISSION-ERROR-0002";
+    public static final String REVIEW_SUBMISSION_ERROR_NOT_COMPLETE = "REVIEW-SUBMISSION-ERROR-0002";
 
     /**
      * Starting error code Notification
@@ -160,7 +145,8 @@ public class ErrorCode {
     /**
      * Starting error code Correct answer
      * */
-    public static final String CORRECT_ANSWER_ERROR_NOT_CREATE = "CORRECT-ANSWER-ERROR-0000";
+    public static final String CORRECT_ANSWER_ERROR_NOT_FOUND = "CORRECT-ANSWER-ERROR-0000";
+    public static final String CORRECT_ANSWER_ERROR_NOT_CREATE = "CORRECT-ANSWER-ERROR-0001";
 
     /**
      * Starting error code Comment
@@ -168,9 +154,7 @@ public class ErrorCode {
     public static final String COMMENT_ERROR_NOT_FOUND = "COMMENT-ERROR-0000";
     public static final String COMMENT_ERROR_NOT_UPDATE = "COMMENT-ERROR-0001";
     public static final String COMMENT_ERROR_NOT_DELETE = "COMMENT-ERROR-0002";
-    public static final String COMMENT_ERROR_USER_SELF_LIKE = "COMMENT-ERROR-0003";
-    public static final String COMMENT_ERROR_INVALID_PARENT = "COMMENT-ERROR-0004";
-    public static final String COMMENT_ERROR_MAX_DEPTH = "COMMENT-ERROR-0005";
+    public static final String COMMENT_ERROR_INVALID_PARENT = "COMMENT-ERROR-0003";
 
     /**
      * Starting error code Feedback

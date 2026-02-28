@@ -12,6 +12,7 @@ import com.base.auth.repository.CorrectAnswerRepository;
 import com.base.auth.repository.LessonProgressRepository;
 import com.base.auth.repository.LessonRepository;
 import com.base.auth.repository.QuestionQuizHistoryRepository;
+import com.base.auth.repository.ReviewSubmissionRepository;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;

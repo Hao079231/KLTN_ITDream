@@ -23,6 +23,7 @@ import com.base.auth.repository.LessonProgressRepository;
 import com.base.auth.repository.LessonQuestionRepository;
 import com.base.auth.repository.LessonRepository;
 import com.base.auth.repository.QuestionQuizHistoryRepository;
+import com.base.auth.repository.ReviewSubmissionRepository;
 import com.base.auth.service.LessonService;
 import java.io.File;
 import java.util.List;
@@ -71,6 +72,9 @@ public class ChapterController extends ABasicController{
 
   @Autowired
   CorrectAnswerRepository correctAnswerRepository;
+
+  @Autowired
+  ReviewSubmissionRepository reviewSubmissionRepository;
 
   @Autowired
   ChapterMapper chapterMapper;
@@ -210,6 +214,7 @@ public class ChapterController extends ABasicController{
       current.setNext(null);
       lessonService.rollbackStudentScoreWhenDeleteLesson(current);
       lessonService.deleteLessonFiles(current);
+      reviewSubmissionRepository.deleteAllByChapterId(id);
       correctAnswerRepository.deleteAllByLessonQuestionLessonId(current.getId());
       questionQuizHistoryRepository.deleteAllByLessonQuestionLessonId(current.getId());
       lessonProgressRepository.deleteAllByLessonId(current.getId());

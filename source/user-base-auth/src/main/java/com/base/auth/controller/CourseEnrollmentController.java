@@ -6,6 +6,7 @@ import com.base.auth.dto.ErrorCode;
 import com.base.auth.dto.ResponseListDto;
 import com.base.auth.dto.courseEnrollment.CourseEnrollmentDisplayDto;
 import com.base.auth.dto.courseEnrollment.CourseEnrollmentDto;
+import com.base.auth.dto.courseEnrollment.StudentLessonViewsDto;
 import com.base.auth.exception.BadRequestException;
 import com.base.auth.exception.NotFoundException;
 import com.base.auth.exception.UnauthorizationException;
@@ -15,8 +16,10 @@ import com.base.auth.model.Course;
 import com.base.auth.model.CourseEnrollment;
 import com.base.auth.model.Student;
 import com.base.auth.model.criteria.CourseEnrollmentCriteria;
+import com.base.auth.repository.CorrectAnswerRepository;
 import com.base.auth.repository.CourseEnrollmentRepository;
 import com.base.auth.repository.CourseRepository;
+import com.base.auth.repository.ReviewSubmissionRepository;
 import java.util.List;
 import java.util.Objects;
 import javax.validation.Valid;
@@ -46,6 +49,12 @@ public class CourseEnrollmentController extends ABasicController{
   CourseRepository courseRepository;
 
   @Autowired
+  CorrectAnswerRepository correctAnswerRepository;
+
+  @Autowired
+  ReviewSubmissionRepository reviewSubmissionRepository;
+
+  @Autowired
   CourseEnrollmentMapper courseEnrollmentMapper;
 
   @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -67,6 +76,9 @@ public class CourseEnrollmentController extends ABasicController{
     courseEnrollment.setStudent(student);
     courseEnrollment.setCourse(course);
     courseEnrollmentRepository.save(courseEnrollment);
+
+    course.setTotalParticipant(course.getTotalParticipant() + 1);
+    courseRepository.save(course);
     apiMessageDto.setMessage("Create course enrollment success");
     return apiMessageDto;
   }
@@ -99,6 +111,33 @@ public class CourseEnrollmentController extends ABasicController{
     responseListDto.setTotalPages(courseEnrollments.getTotalPages());
     apiMessageDto.setData(responseListDto);
     apiMessageDto.setMessage("Get list course enrollment success");
+    return apiMessageDto;
+  }
+
+  @GetMapping(value = "/student_complete_list", produces = MediaType.APPLICATION_JSON_VALUE)
+  @PreAuthorize("hasRole('CEM_ED_STCL')")
+  public ApiMessageDto<ResponseListDto<List<StudentLessonViewsDto>>> listStudentCompleteCourse(CourseEnrollmentCriteria criteria, Pageable pageable){
+    ApiMessageDto<ResponseListDto<List<StudentLessonViewsDto>>> apiMessageDto = new ApiMessageDto<>();
+    ResponseListDto<List<StudentLessonViewsDto>> responseListDto = new ResponseListDto<>();
+    criteria.setStatus(ITDreamConstant.COURSE_ENROLLMENT_COMPLETED);
+    Page<CourseEnrollment> courseEnrollments = courseEnrollmentRepository.findAll(criteria.getSpecification(), pageable);
+    List<CourseEnrollment> enrollmentList = courseEnrollments.getContent();
+    List<StudentLessonViewsDto> courseEnrollmentDtos = courseEnrollmentMapper.fromEntityToStudentLessonViewsDtoList(enrollmentList);
+    for (int i = 0; i < enrollmentList.size(); i++) {
+      CourseEnrollment enrollment = enrollmentList.get(i);
+      long totalCorrect = correctAnswerRepository.countByCourseEnrollmentId(enrollment.getId());
+      long totalReviewed = reviewSubmissionRepository.countByCourseEnrollmentId(enrollment.getId());
+      boolean isReviewed = false;
+      if (totalCorrect > 0 && totalCorrect == totalReviewed) {
+        isReviewed = true;
+      }
+      courseEnrollmentDtos.get(i).setIsReviewed(isReviewed);
+    }
+    responseListDto.setContent(courseEnrollmentDtos);
+    responseListDto.setTotalElements(courseEnrollments.getTotalElements());
+    responseListDto.setTotalPages(courseEnrollments.getTotalPages());
+    apiMessageDto.setData(responseListDto);
+    apiMessageDto.setMessage("Get list student complete course success");
     return apiMessageDto;
   }
 }

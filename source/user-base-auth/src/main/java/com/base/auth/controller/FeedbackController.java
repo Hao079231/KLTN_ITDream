@@ -80,6 +80,10 @@ public class FeedbackController extends ABasicController{
     feedback.setStudent(student);
     feedback.setCourse(course);
     feedbackRepository.save(feedback);
+
+    course.setTotalFeedback(course.getTotalFeedback() + 1);
+    course.setAvgStar((course.getAvgStar() * course.getTotalFeedback() + feedback.getStar()) / (course.getTotalFeedback() + 1));
+    courseRepository.save(course);
     apiMessageDto.setMessage("Create feedback success");
     return apiMessageDto;
   }
@@ -125,6 +129,11 @@ public class FeedbackController extends ABasicController{
     if (!feedback.getStudent().getId().equals(getCurrentUser())){
       throw new UnauthorizationException("Feedback was not created by this student");
     }
+
+    Course course = feedback.getCourse();
+    course.setAvgStar((course.getAvgStar() * course.getTotalFeedback() - feedback.getStar() + form.getStar()) / (course.getTotalFeedback()));
+    courseRepository.save(course);
+
     feedbackMapper.fromUpdateFeedbackFormToEntity(form, feedback);
     feedbackRepository.save(feedback);
     apiMessageDto.setMessage("Update feedback success");
@@ -143,6 +152,9 @@ public class FeedbackController extends ABasicController{
     if (!feedback.getStudent().getId().equals(getCurrentUser())){
       throw new UnauthorizationException("Feedback was not created by this student");
     }
+    Course course = feedback.getCourse();
+    course.setTotalFeedback(course.getTotalFeedback() - 1);
+    course.setAvgStar((course.getAvgStar() * course.getTotalFeedback() - feedback.getStar()) / (course.getTotalFeedback() - 1));
     feedbackRepository.delete(feedback);
     apiMessageDto.setMessage("Delete feedback success");
     return apiMessageDto;

@@ -11,4 +11,23 @@
     <changeSet author="Authentication" id="1771747808313-3">
         <dropColumn columnName="like_count" tableName="db_it_dream_comment"/>
     </changeSet>
+    <changeSet author="Authentication" id="1771747808313-4">
+        <addColumn tableName="db_it_dream_review_submission">
+            <column name="correct_answer_id" type="bigint"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="Authentication" id="1771747808313-5">
+        <addForeignKeyConstraint baseColumnNames="correct_answer_id" baseTableName="db_it_dream_review_submission" constraintName="FK6fjho9d2xjr3kvcgu3pulea4e" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="db_it_dream_correct_answer" validate="true"/>
+    </changeSet>
+    <changeSet author="Authentication" id="1771747808313-6">
+        <dropForeignKeyConstraint baseTableName="db_it_dream_review_submission" constraintName="FKenurjpgybf9t34ohyny4qhks2"/>
+    </changeSet>
+    <changeSet author="Authentication" id="1771747808313-7">
+        <dropColumn columnName="course_id" tableName="db_it_dream_review_submission"/>
+    </changeSet>
+    <changeSet author="Authentication" id="1771747808313-8">
+        <addColumn tableName="db_it_dream_course">
+            <column name="total_feedback" type="bigint" afterColumn="avg_star"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

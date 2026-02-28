@@ -18,31 +18,20 @@ import com.base.auth.mapper.CourseMapper;
 import com.base.auth.model.Course;
 import com.base.auth.model.Educator;
 import com.base.auth.model.Category;
-import com.base.auth.model.Lesson;
 import com.base.auth.model.criteria.CourseCriteria;
-import com.base.auth.repository.AchievementRepository;
-import com.base.auth.repository.CourseEnrollmentRepository;
 import com.base.auth.repository.EducatorRepository;
-import com.base.auth.repository.FeedbackRepository;
-import com.base.auth.repository.ReviewSubmissionRepository;
 import com.base.auth.repository.CourseRepository;
 import com.base.auth.repository.CategoryRepository;
-import com.base.auth.repository.LessonProgressRepository;
-import com.base.auth.repository.CorrectAnswerRepository;
-import com.base.auth.repository.LessonQuestionRepository;
-import com.base.auth.repository.LessonRepository;
 import com.base.auth.service.CourseService;
 import com.base.auth.service.ProcessVideoService;
 import com.base.auth.service.UserBaseApiService;
 import java.io.File;
 import java.util.List;
 import java.util.Objects;
-import javax.transaction.Transactional;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
@@ -76,31 +65,7 @@ public class CourseController extends ABasicController{
   EducatorRepository educatorRepository;
 
   @Autowired
-  LessonRepository lessonRepository;
-
-  @Autowired
-  LessonQuestionRepository lessonQuestionRepository;
-
-  @Autowired
-  LessonProgressRepository lessonProgressRepository;
-
-  @Autowired
-  CorrectAnswerRepository correctAnswerRepository;
-
-  @Autowired
   ProcessVideoService processVideoService;
-
-  @Autowired
-  FeedbackRepository feedbackRepository;
-
-  @Autowired
-  AchievementRepository achievementRepository;
-
-  @Autowired
-  ReviewSubmissionRepository reviewSubmissionRepository;
-
-  @Autowired
-  CourseEnrollmentRepository courseEnrollmentRepository;
 
   @Autowired
   UserBaseApiService userBaseApiService;
