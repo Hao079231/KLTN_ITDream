@@ -3,6 +3,7 @@ package com.base.auth.service;
 import com.base.auth.model.Chapter;
 import com.base.auth.model.Course;
 import com.base.auth.model.Lesson;
+import com.base.auth.repository.AchievementRepository;
 import com.base.auth.repository.ChapterRepository;
 import com.base.auth.repository.CommentRepository;
 import com.base.auth.repository.CorrectAnswerRepository;
@@ -13,6 +14,7 @@ import com.base.auth.repository.LessonProgressRepository;
 import com.base.auth.repository.LessonQuestionRepository;
 import com.base.auth.repository.LessonRepository;
 import com.base.auth.repository.QuestionQuizHistoryRepository;
+import com.base.auth.repository.ReviewSubmissionRepository;
 import java.io.File;
 import java.util.List;
 import javax.transaction.Transactional;
@@ -56,6 +58,12 @@ public class CourseService {
   CommentRepository commentRepository;
 
   @Autowired
+  ReviewSubmissionRepository reviewSubmissionRepository;
+
+  @Autowired
+  AchievementRepository achievementRepository;
+
+  @Autowired
   UserBaseApiService userBaseApiService;
 
   @Autowired
@@ -67,6 +75,7 @@ public class CourseService {
       deleteChapterWithLinkedList(chapter);
     }
     deleteCourseFiles(course);
+    achievementRepository.setNullByCourseId(course.getId());
     feedbackRepository.deleteAllByCourseId(course.getId());
     courseEnrollmentRepository.deleteAllByCourseId(course.getId());
     courseRepository.delete(course);
@@ -80,6 +89,9 @@ public class CourseService {
 
       // rollback điểm
       lessonService.rollbackStudentScoreWhenDeleteLesson(current);
+
+      //delete review submission
+      reviewSubmissionRepository.deleteAllByLessonId(current.getId());
 
       // delete correct answer
       correctAnswerRepository.deleteAllByLessonProgressLessonId(current.getId());

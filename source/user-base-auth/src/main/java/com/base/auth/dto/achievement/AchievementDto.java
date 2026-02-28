@@ -8,6 +8,6 @@ import lombok.Data;
 @Data
 public class AchievementDto extends ABasicAdminDto {
   private String filePath;
-  private CourseDto simulation;
+  private CourseDto course;
   private StudentDto student;
 }

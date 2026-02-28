@@ -5,8 +5,6 @@ import com.base.auth.dto.ApiMessageDto;
 import com.base.auth.dto.ErrorCode;
 import com.base.auth.dto.ResponseListDto;
 import com.base.auth.dto.account.OtpDto;
-import com.base.auth.dto.account.ProfileAccountDto;
-import com.base.auth.dto.reviewSubmission.ReviewedStudentProjection;
 import com.base.auth.dto.student.ProfileStudentDto;
 import com.base.auth.dto.student.StudentDto;
 import com.base.auth.exception.BadRequestException;
@@ -20,32 +18,23 @@ import com.base.auth.mapper.AccountMapper;
 import com.base.auth.mapper.StudentMapper;
 import com.base.auth.model.Account;
 import com.base.auth.model.Achievement;
-import com.base.auth.model.CorrectAnswer;
-import com.base.auth.model.Feedback;
 import com.base.auth.model.Group;
-import com.base.auth.model.Course;
 import com.base.auth.model.Student;
 import com.base.auth.model.criteria.StudentCriteria;
 import com.base.auth.repository.AccountRepository;
 import com.base.auth.repository.AchievementRepository;
 import com.base.auth.repository.CourseEnrollmentRepository;
 import com.base.auth.repository.GroupRepository;
-import com.base.auth.repository.FeedbackRepository;
 import com.base.auth.repository.QuestionQuizHistoryRepository;
 import com.base.auth.repository.ReviewSubmissionRepository;
-import com.base.auth.repository.CourseRepository;
 import com.base.auth.repository.StudentRepository;
 import com.base.auth.repository.LessonProgressRepository;
 import com.base.auth.repository.CorrectAnswerRepository;
-import com.base.auth.repository.LessonRepository;
 import com.base.auth.utils.AESUtils;
 import com.base.auth.utils.ConvertUtils;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -64,7 +53,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -103,19 +91,10 @@ public class StudentController extends ABasicController{
   CourseEnrollmentRepository courseEnrollmentRepository;
 
   @Autowired
-  FeedbackRepository feedbackRepository;
-
-  @Autowired
-  CourseRepository courseRepository;
-
-  @Autowired
-  LessonRepository lessonRepository;
+  AchievementRepository achievementRepository;
 
   @Autowired
   ReviewSubmissionRepository reviewSubmissionRepository;
-
-  @Autowired
-  AchievementRepository achievementRepository;
 
   @PostMapping(value = "/signup", produces= MediaType.APPLICATION_JSON_VALUE)
   public ApiMessageDto<OtpDto> create(@Valid @RequestBody SignUpStudentForm signUpStudentForm, BindingResult bindingResult)
@@ -146,21 +125,21 @@ public class StudentController extends ABasicController{
     }
     account.setGroup(group);
     account.setStatus(ITDreamConstant.STATUS_ACTIVE);
-//    String otp = userBaseApiService.getRequestOTP();
-//    account.setAttemptCode(0);
-//    account.setResetPwdCode(otp);
-//    account.setResetPwdTime(new Date());
+    String otp = userBaseApiService.getRequestOTP();
+    account.setAttemptCode(0);
+    account.setResetPwdCode(otp);
+    account.setResetPwdTime(new Date());
     accountRepository.save(account);
 
     Student student = new Student();
     student.setAccount(account);
     studentRepository.save(student);
 
-//    sendVerifyAccount(account);
-//    OtpDto otpDto = new OtpDto();
-//    String hash = AESUtils.encrypt (account.getId()+";"+otp, true);
-//    otpDto.setIdHash(hash);
-//    apiMessageDto.setData(otpDto);
+    sendVerifyAccount(account);
+    OtpDto otpDto = new OtpDto();
+    String hash = AESUtils.encrypt (account.getId()+";"+otp, true);
+    otpDto.setIdHash(hash);
+    apiMessageDto.setData(otpDto);
     apiMessageDto.setMessage("Sign up success, please check email.");
     return apiMessageDto;
   }
@@ -266,6 +245,14 @@ public class StudentController extends ABasicController{
     if (Objects.equals(account.getKind(), ITDreamConstant.USER_KIND_ADMIN)){
       throw new BadRequestException("Not allow delete admin", ErrorCode.ACCOUNT_ERROR_NOT_ALLOW_DELETE_ADMIN);
     }
+    List<Achievement> achievements = achievementRepository.findAllByStudentId(id);
+    for (Achievement achievement : achievements){
+      if (StringUtils.isNotBlank(achievement.getFilePath())){
+        userBaseApiService.deleteByFilePath(achievement.getFilePath());
+      }
+    }
+    achievementRepository.deleteAllByStudentId(id);
+    reviewSubmissionRepository.deleteAllByStudentId(id);
     correctAnswerRepository.deleteAllByLessonProgressCourseEnrollmentStudentId(id);
     questionQuizHistoryRepository.deleteAllByLessonProgressCourseEnrollmentStudentId(id);
     lessonProgressRepository.deleteAllByCourseEnrollmentStudentId(id);
@@ -372,56 +359,4 @@ public class StudentController extends ABasicController{
     apiMessageDto.setMessage("Verify account student success");
     return apiMessageDto;
   }
-
-//  @GetMapping(value = "/complete-list", produces = MediaType.APPLICATION_JSON_VALUE)
-//  @PreAuthorize("hasRole('ST_ED_CL')")
-//  public ApiMessageDto<ResponseListDto<List<ProfileStudentDto>>> getListStudentComplete(@RequestParam("simulationId") Long simulationId, Pageable pageable){
-//    ApiMessageDto<ResponseListDto<List<ProfileStudentDto>>> apiMessageDto = new ApiMessageDto<>();
-//    ResponseListDto<List<ProfileStudentDto>> responseListDto = new ResponseListDto<>();
-//    Page<Student> students = achievementRepository.findCompletedStudents(simulationId, pageable);
-//    List<ProfileStudentDto> studentDtos = studentMapper.fromStudentToProfileDtoList(students.getContent());
-////    Map<String, Boolean> reviewedMap = createReviewedMapBySimulation(simulationId);
-////    setIsReviewedByMap(studentDtos, reviewedMap);
-//    responseListDto.setContent(studentDtos);
-//    responseListDto.setTotalElements(students.getTotalElements());
-//    responseListDto.setTotalPages(students.getTotalPages());
-//    apiMessageDto.setData(responseListDto);
-//    apiMessageDto.setMessage("Get list student complete simulation success");
-//    return apiMessageDto;
-//  }
-
-  // Chuyển nội dung từ DTO sang Map để dễ gán field isReviewed
-//  private Map<String, Boolean> createReviewedMapBySimulation(Long simulationId){
-//    List<ReviewedStudentProjection> reviewedList =
-//        reviewSubmissionRepository.findReviewedStudentUsernamesBySimulationId(simulationId);
-//
-//    if (reviewedList == null || reviewedList.isEmpty()) {
-//      return Collections.emptyMap();
-//    }
-//
-//    return reviewedList.stream()
-//        .filter(p -> p.getUsername() != null)
-//        .collect(Collectors.toMap(
-//            ReviewedStudentProjection::getUsername,
-//            ReviewedStudentProjection::getIsReviewed,
-//            (a, b) -> a // nếu trùng username, giữ giá trị đầu tiên
-//        ));
-//  }
-//
-//  // Gán isReviewed dựa trên username (nếu có trong map => lấy giá trị DB, nếu không => null)
-//  private void  setIsReviewedByMap(List<ProfileStudentDto> dtos, Map<String, Boolean> reviewedMap){
-//    for (ProfileStudentDto dto : dtos) {
-//      ProfileAccountDto acc = dto.getProfileAccountDto();
-//      if (acc != null) {
-//        String username = acc.getUsername();
-//        if (username != null && reviewedMap.containsKey(username)) {
-//          dto.setIsReviewed(reviewedMap.get(username));
-//        } else {
-//          dto.setIsReviewed(null);
-//        }
-//      } else {
-//        dto.setIsReviewed(null);
-//      }
-//    }
-//  }
 }

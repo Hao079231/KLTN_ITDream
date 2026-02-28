@@ -4,6 +4,7 @@ import com.base.auth.constant.ITDreamConstant;
 import com.base.auth.dto.ApiMessageDto;
 import com.base.auth.dto.ErrorCode;
 import com.base.auth.dto.ResponseListDto;
+import com.base.auth.dto.achievement.AchievementDisplayDto;
 import com.base.auth.dto.lessonProgress.LessonProgressDisplayDto;
 import com.base.auth.dto.lessonProgress.LessonProgressDto;
 import com.base.auth.exception.BadRequestException;
@@ -12,11 +13,13 @@ import com.base.auth.exception.UnauthorizationException;
 import com.base.auth.form.lessonProgress.CreateLessonProgressForm;
 import com.base.auth.form.lessonProgress.RequestLessonProgressForm;
 import com.base.auth.mapper.LessonProgressMapper;
+import com.base.auth.model.Achievement;
 import com.base.auth.model.CourseEnrollment;
 import com.base.auth.model.Lesson;
 import com.base.auth.model.LessonProgress;
 import com.base.auth.model.Student;
 import com.base.auth.model.criteria.LessonProgressCriteria;
+import com.base.auth.repository.AchievementRepository;
 import com.base.auth.repository.CorrectAnswerRepository;
 import com.base.auth.repository.CourseEnrollmentRepository;
 import com.base.auth.repository.LessonProgressRepository;
@@ -63,6 +66,9 @@ public class LessonProgressController extends ABasicController{
 
   @Autowired
   QuestionQuizHistoryRepository questionQuizHistoryRepository;
+
+  @Autowired
+  AchievementRepository achievementRepository;
 
   @Autowired
   LessonProgressMapper lessonProgressMapper;
@@ -127,11 +133,11 @@ public class LessonProgressController extends ABasicController{
 
   @PutMapping(value = "/complete", produces = MediaType.APPLICATION_JSON_VALUE)
   @PreAuthorize("hasRole('LSP_ST_CPL')")
-  public ApiMessageDto<String> complete(@Valid @RequestBody RequestLessonProgressForm form, BindingResult bindingResult){
+  public ApiMessageDto<AchievementDisplayDto> complete(@Valid @RequestBody RequestLessonProgressForm form, BindingResult bindingResult){
     if (!isStudent()){
       throw new UnauthorizationException("User is not a student");
     }
-    ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
+    ApiMessageDto<AchievementDisplayDto> apiMessageDto = new ApiMessageDto<>();
     Lesson lesson = lessonRepository.findById(form.getLessonId())
         .orElseThrow(() -> new NotFoundException("Lesson not found", ErrorCode.LESSON_ERROR_NOT_FOUND));
     LessonProgress lessonProgress = lessonProgressRepository.findByLessonIdAndCourseEnrollmentStudentId(form.getLessonId(), getCurrentUser())
@@ -158,9 +164,23 @@ public class LessonProgressController extends ABasicController{
     courseEnrollment.setProgress(progress);
     if (completedLesson.equals(totalLesson)){
       courseEnrollment.setStatus(ITDreamConstant.COURSE_ENROLLMENT_COMPLETED);
+      courseEnrollmentRepository.save(courseEnrollment);
+
+      Achievement achievement = new Achievement();
+      achievement.setCourse(courseEnrollment.getCourse());
+      achievement.setStudent(courseEnrollment.getStudent());
+      achievementRepository.save(achievement);
+
+      AchievementDisplayDto achievementDisplayDto = new AchievementDisplayDto();
+      achievementDisplayDto.setId(achievement.getId());
+      achievementDisplayDto.setUsername(courseEnrollment.getStudent().getAccount().getUsername());
+      achievementDisplayDto.setCourseTitle(courseEnrollment.getCourse().getTitle());
+      apiMessageDto.setData(achievementDisplayDto);
+      apiMessageDto.setMessage("Complete course");
+      return apiMessageDto;
     }
     courseEnrollmentRepository.save(courseEnrollment);
-    apiMessageDto.setMessage("Complete lesson progress success");
+    apiMessageDto.setMessage("Complete lesson");
     return apiMessageDto;
   }
 

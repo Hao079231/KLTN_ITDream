@@ -1,46 +1,52 @@
 package com.base.auth.repository;
 
-import com.base.auth.dto.reviewSubmission.ReviewedStudentProjection;
 import com.base.auth.model.ReviewSubmission;
-import java.util.List;
-import java.util.Optional;
 import javax.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface ReviewSubmissionRepository extends JpaRepository<ReviewSubmission, Long> {
+public interface ReviewSubmissionRepository extends JpaRepository<ReviewSubmission, Long>,
+    JpaSpecificationExecutor<ReviewSubmission> {
 
-//  Optional<ReviewSubmission> findBySimulationIdAndStudentId(Long simulationId, Long studentId);
-//
-//  @Query("SELECT r FROM ReviewSubmission r " +
-//      "WHERE r.simulation.id = :simulationId " +
-//      "AND r.student.account.username = :username")
-//  Optional<ReviewSubmission> findBySimulationIdAndStudentUsername(
-//      @Param("simulationId") Long simulationId,
-//      @Param("username") String username);
-//
-//  boolean existsBySimulationIdAndStudentId(Long simulationId, Long studentId);
-//
-//  @Query("select new com.base.auth.dto.reviewSubmission.ReviewedStudentProjection(" +
-//      "rs.student.account.username, rs.isReviewed) " +
-//      "from ReviewSubmission rs " +
-//      "where rs.simulation.id = :simulationId")
-//  List<ReviewedStudentProjection> findReviewedStudentUsernamesBySimulationId(@Param("simulationId") Long simulationId);
-//
-//  @Modifying
-//  @Transactional
-//  @Query(
-//      value = "DELETE rs " +
-//          "FROM db_it_dream_review_submission rs " +
-//          "JOIN db_it_dream_simulation s ON rs.simulation_id = s.id " +
-//          "WHERE s.educator_id = :educatorId",
-//      nativeQuery = true
-//  )
-//  void deleteAllByEducatorId(@Param("educatorId") Long educatorId);
-//
-//  void deleteByStudentId(Long studentId);
-//
-//  void deleteByCourseId(Long simulationId);
+  @Query("select count(rs.id) " +
+      "from ReviewSubmission rs " +
+      "where rs.correctAnswer.lessonProgress.courseEnrollment.id = :enrollmentId")
+  long countByCourseEnrollmentId(@Param("enrollmentId") Long enrollmentId);
+
+  @Transactional
+  void deleteAllByStudentId(Long studentId);
+
+  @Query("SELECT COUNT(rs) " +
+      "FROM ReviewSubmission rs " +
+      "JOIN rs.correctAnswer ca " +
+      "JOIN ca.lessonProgress lp " +
+      "JOIN lp.lesson l " +
+      "JOIN l.chapter ch " +
+      "JOIN ch.course c " +
+      "WHERE c.id = :courseId " +
+      "AND rs.student.id = :studentId")
+  Long countReviewByCourseAndStudent(@Param("courseId") Long courseId, @Param("studentId") Long studentId);
+
+  @Transactional
+  @Modifying
+  @Query("DELETE FROM ReviewSubmission rs " +
+      "WHERE rs.correctAnswer.lessonQuestion.id = :lessonQuestionId")
+  void deleteAllByLessonQuestionId(@Param("lessonQuestionId") Long lessonQuestionId);
+
+  @Transactional
+  @Modifying
+  @Query("DELETE FROM ReviewSubmission rs " +
+      "WHERE rs.correctAnswer.lessonQuestion.lesson.id = :lessonId")
+  void deleteAllByLessonId(@Param("lessonId") Long lessonId);
+
+  @Transactional
+  @Modifying
+  @Query("DELETE FROM ReviewSubmission rs " +
+      "WHERE rs.correctAnswer.lessonQuestion.lesson.chapter.id = :chapterId")
+  void deleteAllByChapterId(@Param("chapterId") Long chapterId);
+
+  ReviewSubmission findByCorrectAnswerIdAndStudentId(Long correctAnswerId, Long studentId);
 }

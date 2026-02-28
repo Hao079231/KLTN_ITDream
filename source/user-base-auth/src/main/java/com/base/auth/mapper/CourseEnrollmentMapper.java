@@ -2,6 +2,7 @@ package com.base.auth.mapper;
 
 import com.base.auth.dto.courseEnrollment.CourseEnrollmentDisplayDto;
 import com.base.auth.dto.courseEnrollment.CourseEnrollmentDto;
+import com.base.auth.dto.courseEnrollment.StudentLessonViewsDto;
 import com.base.auth.model.CourseEnrollment;
 import java.util.List;
 import org.mapstruct.BeanMapping;
@@ -41,4 +42,13 @@ public interface CourseEnrollmentMapper {
 
   @IterableMapping(elementTargetType = CourseEnrollmentDisplayDto.class, qualifiedByName = "fromEntityToCourseEnrollmentDisplayDto")
   List<CourseEnrollmentDisplayDto> fromEntityToCourseEnrollmentDisplayDtoList(List<CourseEnrollment> courseEnrollment);
+
+  @Mapping(source = "student", target = "student", qualifiedByName = "fromStudentToProfileDto")
+  @BeanMapping(ignoreByDefault = true)
+  @Named("fromEntityToStudentLessonViewsDto")
+  StudentLessonViewsDto fromEntityToStudentLessonViewsDto(CourseEnrollment courseEnrollment);
+
+  @IterableMapping(elementTargetType = StudentLessonViewsDto.class, qualifiedByName = "fromEntityToStudentLessonViewsDto")
+  List<StudentLessonViewsDto> fromEntityToStudentLessonViewsDtoList(List<CourseEnrollment> courseEnrollment);
+
 }

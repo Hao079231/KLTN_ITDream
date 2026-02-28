@@ -15,13 +15,4 @@ public interface StudentRepository extends JpaRepository<Student, Long>, JpaSpec
   @Transactional
   @Modifying
   void deleteAllByAccountId(Long accountId);
-
-//  @Query("SELECT s FROM Student s " +
-//      "WHERE (SELECT COUNT(DISTINCT sp) FROM LessonProgress sp JOIN sp.task t " +
-//      "       WHERE sp.student = s AND t.simulation.id = :simulationId AND sp.state = :state) = :totalTasks")
-//  Page<Student> findStudentsCompletedSimulation(
-//      @Param("simulationId") Long simulationId,
-//      @Param("state") Integer state,
-//      @Param("totalTasks") Long totalTasks,
-//      Pageable pageable);
 }

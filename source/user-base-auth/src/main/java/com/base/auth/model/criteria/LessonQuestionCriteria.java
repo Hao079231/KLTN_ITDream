@@ -32,7 +32,7 @@ public class LessonQuestionCriteria {
 
         predicates.add(cb.equal(lessonJoin.get("id"), getLessonId()));
 
-        if (getStatus()!=null){
+        if (getStatus() != null){
           Join<Lesson, Chapter> chapterJoin = lessonJoin.join("chapter");
           Join<Chapter, Course> courseJoin = chapterJoin.join("course");
           predicates.add(cb.equal(courseJoin.get("status"), getStatus()));

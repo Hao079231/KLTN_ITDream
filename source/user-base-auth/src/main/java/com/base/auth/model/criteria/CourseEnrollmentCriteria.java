@@ -17,8 +17,9 @@ import org.springframework.data.jpa.domain.Specification;
 
 @Data
 public class CourseEnrollmentCriteria {
-  @NotNull(message = "studentId is required")
   private Long studentId;
+  private Long courseId;
+  private Integer status;
 
   public Specification<CourseEnrollment> getSpecification() {
     return new Specification<CourseEnrollment>() {
@@ -27,10 +28,19 @@ public class CourseEnrollmentCriteria {
       @Override
       public Predicate toPredicate(Root<CourseEnrollment> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
         List<Predicate> predicates = new ArrayList<>();
-        root.fetch("course", JoinType.LEFT);
-        query.distinct(true);
         Join<CourseEnrollment, Student> studentJoin = root.join("student", JoinType.INNER);
-        predicates.add(cb.equal(studentJoin.get("id"), getStudentId()));
+        Join<CourseEnrollment, Course> courseJoin = root.join("course", JoinType.INNER);
+        if (getStudentId() != null){
+          predicates.add(cb.equal(studentJoin.get("id"), getStudentId()));
+        }
+
+        if (getCourseId() != null){
+          predicates.add(cb.equal(courseJoin.get("id"), getCourseId()));
+        }
+
+        if (getStatus() != null){
+          predicates.add(cb.equal(root.get("status"), getStatus()));
+        }
         return cb.and(predicates.toArray(new Predicate[predicates.size()]));
       }
     };

@@ -27,6 +27,7 @@ import com.base.auth.repository.LessonProgressRepository;
 import com.base.auth.repository.LessonQuestionRepository;
 import com.base.auth.repository.LessonRepository;
 import com.base.auth.repository.QuestionQuizHistoryRepository;
+import com.base.auth.repository.ReviewSubmissionRepository;
 import com.base.auth.service.LessonService;
 import com.base.auth.service.ProcessVideoService;
 import com.base.auth.service.UserBaseApiService;
@@ -81,6 +82,9 @@ public class LessonController extends ABasicController{
 
   @Autowired
   CommentRepository commentRepository;
+
+  @Autowired
+  ReviewSubmissionRepository reviewSubmissionRepository;
 
   @Autowired
   LessonMapper lessonMapper;
@@ -421,6 +425,7 @@ public class LessonController extends ABasicController{
 
     lessonService.deleteLessonFiles(lesson);
     lessonService.rollbackStudentScoreWhenDeleteLesson(lesson);
+    reviewSubmissionRepository.deleteAllByLessonId(id);
     correctAnswerRepository.deleteAllByLessonQuestionLessonId(id);
     questionQuizHistoryRepository.deleteAllByLessonQuestionLessonId(id);
     lessonProgressRepository.deleteAllByLessonId(id);

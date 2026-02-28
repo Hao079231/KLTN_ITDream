@@ -7,6 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,13 +24,12 @@ public class ReviewSubmission extends Auditable<String>{
   @GenericGenerator(name = "idGenerator", strategy = "com.base.auth.service.id.IdGenerator")
   @GeneratedValue(generator = "idGenerator")
   private Long id;
-  @ManyToOne
-  @JoinColumn(name = "course_id")
-  private Course course;
+  @OneToOne
+  @JoinColumn(name = "correct_answer_id")
+  private CorrectAnswer correctAnswer;
   @ManyToOne
   @JoinColumn(name = "student_id")
   private Student student;
   @Column(columnDefinition = "TEXT")
   private String content;
-  private Boolean isReviewed = true;
 }
