@@ -39,9 +39,9 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources/**", "/configuration/**", "/swagger-ui.html", "/index", "/pub/**", "/api/token","/api/auth/pwd/verify-token",
                         "/api/auth/activate/resend", "/api/auth/pwd", "/api/auth/logout", "/actuator/**").permitAll()
-                .antMatchers("/v1/student/signup", "/v1/student/verify").permitAll()
-                .antMatchers("/v1/educator/signup", "/v1/educator/verify").permitAll()
-                .antMatchers("/v1/account/request_forget_password", "/v1/account/forget_password", "/v1/account/resend-verify").permitAll()
+                .antMatchers("/v1/student/signup").permitAll()
+                .antMatchers("/v1/educator/signup").permitAll()
+                .antMatchers("/v1/account/request_forget_password", "/v1/account/forget_password", "/v1/account/resend_verify", "/v1/account/verify").permitAll()
                 .antMatchers("/v1/category/auto-complete").permitAll()
                 .antMatchers("/v1/course/guest_list", "/v1/course/guest_get/**").permitAll()
                 .antMatchers("/v1/lesson/student_list").permitAll()

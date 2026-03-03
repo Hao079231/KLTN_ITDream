@@ -11,7 +11,7 @@ public class ErrorCode {
     public static final String ACCOUNT_ERROR_WRONG_HASH_RESET_PASS = "ERROR-ACCOUNT-0004";
     public static final String ACCOUNT_ERROR_LOCKED = "ERROR-ACCOUNT-0005";
     public static final String ACCOUNT_ERROR_OPT_INVALID = "ERROR-ACCOUNT-0006";
-    public static final String ACCOUNT_ERROR_LOGIN = "ERROR-ACCOUNT-0007";
+    public static final String ACCOUNT_ERROR_NOT_DELETE = "ERROR-ACCOUNT-0007";
     public static final String ACCOUNT_ERROR_NOT_ALLOW_DELETE_ADMIN = "ERROR-ACCOUNT-0011";
     public static final String ACCOUNT_ERROR_NOT_ALLOW_DELETE_SUPPER_ADMIN = "ERROR-ACCOUNT-0012";
     public static final String ACCOUNT_ERROR_EMAIL_EXIST = "ERROR-ACCOUNT-0013";

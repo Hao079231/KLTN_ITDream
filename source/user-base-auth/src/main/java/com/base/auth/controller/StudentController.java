@@ -124,7 +124,7 @@ public class StudentController extends ABasicController{
       throw new NotFoundException("Group not found", ErrorCode.GROUP_ERROR_NOT_FOUND);
     }
     account.setGroup(group);
-    account.setStatus(ITDreamConstant.STATUS_ACTIVE);
+    account.setStatus(ITDreamConstant.STATUS_VERIFY);
     String otp = userBaseApiService.getRequestOTP();
     account.setAttemptCode(0);
     account.setResetPwdCode(otp);
@@ -317,46 +317,6 @@ public class StudentController extends ABasicController{
     accountRepository.save(currentAccount);
     studentRepository.save(currentUser);
     apiMessageDto.setMessage("Update profile student success");
-    return apiMessageDto;
-  }
-
-  @PostMapping(value = "/verify", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ApiMessageDto<String> verifyAccountStudent(@RequestBody @Valid VerifyUserForm verifyUserForm){
-    ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
-    String[] hash = AESUtils.decrypt(verifyUserForm.getIdHash(),true).split(";",2);
-    Long id = ConvertUtils.convertStringToLong(hash[0]);
-    if(id <= 0){
-      throw new BadRequestException("Incorrect hash verification", ErrorCode.ACCOUNT_ERROR_INCORRECT_HASH_VERIFICATION);
-    }
-
-    Account account = accountRepository.findById(id).orElseThrow(()
-    -> new NotFoundException("Account not found", ErrorCode.ACCOUNT_ERROR_NOT_FOUND));
-
-    if (!Objects.equals(ITDreamConstant.STATUS_PENDING, account.getStatus())){
-      throw new BadRequestException("Student cannot be verified", ErrorCode.USER_ERROR_VERIFY_FAILED);
-    }
-
-    if(account.getAttemptCode() >= ITDreamConstant.MAX_ATTEMPT_FORGET_PWD){
-      account.setStatus(ITDreamConstant.STATUS_LOCK);
-      accountRepository.save(account);
-      throw new BadRequestException("Account has been locked", ErrorCode.ACCOUNT_ERROR_LOCKED);
-    }
-
-    if(!account.getResetPwdCode().equals(verifyUserForm.getOtp()) ||
-        (new Date().getTime() - account.getResetPwdTime().getTime() >= ITDreamConstant.MAX_TIME_FORGET_PWD)){
-
-      //Tăng số lần thêm 1
-      account.setAttemptCode(account.getAttemptCode() + 1);
-      accountRepository.save(account);
-      throw new BadRequestException("OTP invalid", ErrorCode.ACCOUNT_ERROR_OPT_INVALID);
-    }
-
-    account.setResetPwdTime(null);
-    account.setResetPwdCode(null);
-    account.setAttemptCode(null);
-    account.setStatus(ITDreamConstant.STATUS_ACTIVE);
-    accountRepository.save(account);
-    apiMessageDto.setMessage("Verify account student success");
     return apiMessageDto;
   }
 }

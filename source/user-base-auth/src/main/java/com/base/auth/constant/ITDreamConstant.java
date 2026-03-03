@@ -21,7 +21,8 @@ public class ITDreamConstant {
     public static final List<Integer> STARS = List.of(1, 2, 3, 4, 5);
 
     public static final Integer STATUS_ACTIVE = 1;
-    public static final Integer STATUS_PENDING = 0;
+    public static final Integer STATUS_FORGET_PASSWORD = 0;
+    public static final Integer STATUS_VERIFY = 3;
     public static final Integer STATUS_WAITING_APPROVE = 2;
     public static final Integer STATUS_LOCK = -1;
     public static final Integer STATUS_REJECT = -2;
