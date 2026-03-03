@@ -28,7 +28,7 @@ public class CreateAccountAdminForm {
     @ApiModelProperty(name = "kind", required = true)
     private Integer kind;
     @NotEmpty(message = "fullName cant not be null")
-    @ApiModelProperty(name = "fullName",example = "Tam Nguyen",required = true)
+    @ApiModelProperty(name = "fullName",example = "Trung Hao",required = true)
     private String fullName;
     @ApiModelProperty(name = "birthday")
     @Past(message = "birthday must be in the past")

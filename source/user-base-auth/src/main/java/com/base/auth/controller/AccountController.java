@@ -14,6 +14,7 @@ import com.base.auth.form.account.CreateAccountAdminForm;
 import com.base.auth.form.account.ForgetPasswordForm;
 import com.base.auth.form.account.UpdateAccountAdminForm;
 import com.base.auth.form.account.UpdateProfileAdminForm;
+import com.base.auth.form.account.VerifyUserForm;
 import com.base.auth.mapper.AccountMapper;
 import com.base.auth.model.Account;
 import com.base.auth.model.Group;
@@ -127,9 +128,10 @@ public class AccountController extends ABasicController{
 
     @GetMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ACC_L')")
-    public ApiMessageDto<ResponseListDto<List<AccountDto>>> listDtoApiMessageDto(AccountCriteria criteria, Pageable pageable){
+    public ApiMessageDto<ResponseListDto<List<AccountDto>>> listAdmin(AccountCriteria criteria, Pageable pageable){
         ApiMessageDto<ResponseListDto<List<AccountDto>>> apiMessageDto = new ApiMessageDto<>();
         ResponseListDto<List<AccountDto>> responseListDto = new ResponseListDto<>();
+        criteria.setKind(ITDreamConstant.USER_KIND_ADMIN);
         Page<Account> accounts = accountRepository.findAll(criteria.getSpecification(), pageable);
         List<AccountDto> accountDtos = accountMapper.fromAccountToDtoList(accounts.getContent());
         responseListDto.setContent(accountDtos);
@@ -167,6 +169,10 @@ public class AccountController extends ABasicController{
 
         if (account.getIsSuperAdmin()){
             throw new BadRequestException("Not allow delete super admin", ErrorCode.ACCOUNT_ERROR_NOT_ALLOW_DELETE_SUPPER_ADMIN);
+        }
+
+        if (!ITDreamConstant.USER_KIND_ADMIN.equals(account.getKind())){
+            throw new BadRequestException("Cannot delete other users except admin", ErrorCode.ACCOUNT_ERROR_NOT_DELETE);
         }
         //delete avatar file
         userBaseApiService.deleteByFilePath(account.getAvatarPath());
@@ -252,7 +258,7 @@ public class AccountController extends ABasicController{
         account.setAttemptCode(0);
         account.setResetPwdCode(otp);
         account.setResetPwdTime(new Date());
-        account.setStatus(ITDreamConstant.STATUS_PENDING);
+        account.setStatus(ITDreamConstant.STATUS_FORGET_PASSWORD);
         accountRepository.save(account);
 
         //send email
@@ -279,6 +285,10 @@ public class AccountController extends ABasicController{
         Account account = accountRepository.findById(id).orElseThrow(()
         -> new NotFoundException("Account not found", ErrorCode.ACCOUNT_ERROR_NOT_FOUND));
 
+        if (!ITDreamConstant.STATUS_FORGET_PASSWORD.equals(account.getStatus())){
+            throw new BadRequestException("Account not pending", ErrorCode.ACCOUNT_ERROR_NOT_PENDING);
+        }
+
         if(account.getAttemptCode() >= ITDreamConstant.MAX_ATTEMPT_FORGET_PWD){
             account.setStatus(ITDreamConstant.STATUS_LOCK);
             accountRepository.save(account);
@@ -304,7 +314,7 @@ public class AccountController extends ABasicController{
         return apiMessageDto;
     }
 
-    @PostMapping(value = "/resend-verify", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/resend_verify", produces = MediaType.APPLICATION_JSON_VALUE)
     public ApiMessageDto<OtpDto> resendVerification(@Valid @RequestBody RequestEmailForm emailForm, BindingResult bindingResult){
         ApiMessageDto<OtpDto> apiMessageDto = new ApiMessageDto<>();
         Account account = accountRepository.findAccountByEmail(emailForm.getEmail());
@@ -312,7 +322,7 @@ public class AccountController extends ABasicController{
             throw new NotFoundException("Account not found", ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
         }
 
-        if (!Objects.equals(account.getStatus(), ITDreamConstant.STATUS_PENDING)){
+        if (!Objects.equals(account.getStatus(), ITDreamConstant.STATUS_FORGET_PASSWORD) && !Objects.equals(account.getStatus(), ITDreamConstant.STATUS_VERIFY)){
             throw new BadRequestException("Account is not pending", ErrorCode.ACCOUNT_ERROR_NOT_PENDING);
         }
         String otp = userBaseApiService.getRequestOTP();
@@ -328,6 +338,58 @@ public class AccountController extends ABasicController{
         otpDto.setIdHash(hash);
         apiMessageDto.setData(otpDto);
         apiMessageDto.setMessage("Resend verify email success");
+        return apiMessageDto;
+    }
+
+    @PostMapping(value = "/verify", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ApiMessageDto<String> verifyAccountStudent(@RequestBody @Valid VerifyUserForm verifyUserForm){
+        ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
+        String[] hash = AESUtils.decrypt(verifyUserForm.getIdHash(),true).split(";",2);
+        Long id = ConvertUtils.convertStringToLong(hash[0]);
+        if(id <= 0){
+            throw new BadRequestException("Incorrect hash verification", ErrorCode.ACCOUNT_ERROR_INCORRECT_HASH_VERIFICATION);
+        }
+
+        Account account = accountRepository.findById(id).orElseThrow(()
+            -> new NotFoundException("Account not found", ErrorCode.ACCOUNT_ERROR_NOT_FOUND));
+
+        if (!Objects.equals(ITDreamConstant.STATUS_VERIFY, account.getStatus())){
+            throw new BadRequestException("Account cannot be verified", ErrorCode.USER_ERROR_VERIFY_FAILED);
+        }
+
+        if(account.getAttemptCode() >= ITDreamConstant.MAX_ATTEMPT_FORGET_PWD){
+            account.setStatus(ITDreamConstant.STATUS_LOCK);
+            accountRepository.save(account);
+            throw new BadRequestException("Account has been locked", ErrorCode.ACCOUNT_ERROR_LOCKED);
+        }
+
+        if(!account.getResetPwdCode().equals(verifyUserForm.getOtp()) ||
+            (new Date().getTime() - account.getResetPwdTime().getTime() >= ITDreamConstant.MAX_TIME_FORGET_PWD)){
+
+            //Tăng số lần thêm 1
+            account.setAttemptCode(account.getAttemptCode() + 1);
+            accountRepository.save(account);
+            throw new BadRequestException("OTP invalid", ErrorCode.ACCOUNT_ERROR_OPT_INVALID);
+        }
+
+        account.setResetPwdTime(null);
+        account.setResetPwdCode(null);
+        account.setAttemptCode(null);
+        if (ITDreamConstant.USER_KIND_STUDENT.equals(account.getKind())){
+            account.setStatus(ITDreamConstant.STATUS_ACTIVE);
+            accountRepository.save(account);
+            apiMessageDto.setMessage("Verify account success");
+            return apiMessageDto;
+        } else if (ITDreamConstant.USER_KIND_EDUCATOR.equals(account.getKind())){
+            account.setStatus(ITDreamConstant.STATUS_WAITING_APPROVE);
+            accountRepository.save(account);
+            apiMessageDto.setMessage("Verify account success. Please wait for approval");
+            return apiMessageDto;
+        } else {
+            account.setStatus(ITDreamConstant.STATUS_VERIFY);
+        }
+        accountRepository.save(account);
+        apiMessageDto.setMessage("Verify account success");
         return apiMessageDto;
     }
 
