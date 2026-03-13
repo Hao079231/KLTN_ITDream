@@ -28,9 +28,9 @@ public class QuestionQuizHistory{
   private String answer;
   private Boolean isCorrect;
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "lesson_progress_id")
-  private LessonProgress lessonProgress;
+  @JoinColumn(name = "student_task_progress_id")
+  private StudentTaskProgress studentTaskProgress;
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "lesson_question_id")
-  private LessonQuestion lessonQuestion;
+  @JoinColumn(name = "task_question_id")
+  private TaskQuestion taskQuestion;
 }

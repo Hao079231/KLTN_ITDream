@@ -17,7 +17,7 @@ import org.mapstruct.ReportingPolicy;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE,
     nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
-    uses = {LessonMapper.class, AccountMapper.class})
+    uses = {TaskMapper.class, AccountMapper.class})
 public interface CommentMapper {
   @Mapping(source = "content", target = "content")
   @BeanMapping(ignoreByDefault = true)
@@ -28,7 +28,7 @@ public interface CommentMapper {
   @Mapping(source = "createdDate", target = "createdDate")
   @Mapping(source = "modifiedDate", target = "modifiedDate")
   @Mapping(source = "status", target = "status")
-  @Mapping(source = "lesson", target = "lesson", qualifiedByName = "fromEntityToLessonDto")
+  @Mapping(source = "task", target = "task", qualifiedByName = "fromEntityToTaskDto")
   @Mapping(source = "user", target = "user", qualifiedByName = "fromAccountToDto")
   @BeanMapping(ignoreByDefault = true)
   @Named("fromEntityToCommentDto")
@@ -40,7 +40,7 @@ public interface CommentMapper {
   @Mapping(source = "id", target = "id")
   @Mapping(source = "content", target = "content")
   @Mapping(source = "createdDate", target = "createdDate")
-  @Mapping(source = "lesson", target = "lesson", qualifiedByName = "fromEntityToLessonDisplayDto")
+  @Mapping(source = "task", target = "task", qualifiedByName = "fromEntityToTaskDisplayDto")
   @Mapping(source = "user", target = "user", qualifiedByName = "fromAccountToProfileDto")
   @BeanMapping(ignoreByDefault = true)
   @Named("fromEntityToCommentUserDto")

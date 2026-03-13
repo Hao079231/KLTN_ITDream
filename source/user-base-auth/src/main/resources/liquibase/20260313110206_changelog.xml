@@ -1,0 +1,399 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet author="Authentication" id="1773399733404-1">
+        <createTable tableName="db_it_dream_achievement">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="db_it_dream_achievementPK"/>
+            </column>
+            <column name="file_path" type="VARCHAR(255)"/>
+            <column name="simulation_id" type="BIGINT"/>
+            <column name="student_id" type="BIGINT"/>
+            <column name="status" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="Authentication" id="1773399733404-2">
+        <createTable tableName="db_it_dream_category">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="db_it_dream_categoryPK"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="status" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="Authentication" id="1773399733404-3">
+        <createTable tableName="db_it_dream_comment">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="db_it_dream_commentPK"/>
+            </column>
+            <column name="content" type="TEXT"/>
+            <column name="root_id" type="BIGINT"/>
+            <column name="task_id" type="BIGINT"/>
+            <column name="user_id" type="BIGINT"/>
+            <column name="parent_id" type="BIGINT"/>
+            <column name="status" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="Authentication" id="1773399733404-4">
+        <createTable tableName="db_it_dream_educator">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="db_it_dream_educatorPK"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="Authentication" id="1773399733404-5">
+        <createTable tableName="db_it_dream_feedback">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="db_it_dream_feedbackPK"/>
+            </column>
+            <column name="content" type="TEXT"/>
+            <column name="star" type="INT"/>
+            <column name="simulation_id" type="BIGINT"/>
+            <column name="student_id" type="BIGINT"/>
+            <column name="status" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="Authentication" id="1773399733404-6">
+        <createTable tableName="db_it_dream_notification">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="db_it_dream_notificationPK"/>
+            </column>
+            <column name="title" type="VARCHAR(255)"/>
+            <column name="message" type="TEXT"/>
+            <column name="read_flag" type="BIT"/>
+            <column name="receiver_id" type="BIGINT"/>
+            <column name="ref_id" type="BIGINT"/>
+            <column name="ref_type" type="VARCHAR(255)"/>
+            <column name="status" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="Authentication" id="1773399733404-7">
+        <createTable tableName="db_it_dream_question_quiz_history">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="db_it_dream_question_quiz_historyPK"/>
+            </column>
+            <column name="answer" type="TEXT"/>
+            <column name="is_correct" type="BIT"/>
+            <column name="student_task_progress_id" type="BIGINT"/>
+            <column name="task_question_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="Authentication" id="1773399733404-8">
+        <createTable tableName="db_it_dream_review_submission">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="db_it_dream_review_submissionPK"/>
+            </column>
+            <column name="content" type="TEXT"/>
+            <column name="student_id" type="BIGINT"/>
+            <column name="student_submission_id" type="BIGINT"/>
+            <column name="status" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="Authentication" id="1773399733404-9">
+        <createTable tableName="db_it_dream_simulation">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="db_it_dream_simulationPK"/>
+            </column>
+            <column name="title" type="VARCHAR(255)"/>
+            <column name="overview" type="TEXT"/>
+            <column name="avg_star" type="FLOAT"/>
+            <column name="description" type="TEXT"/>
+            <column name="duration" type="VARCHAR(255)"/>
+            <column name="level" type="INT"/>
+            <column name="notice" type="TEXT"/>
+            <column name="thumbnail" type="VARCHAR(255)"/>
+            <column name="total_feedback" type="BIGINT"/>
+            <column name="total_participant" type="BIGINT"/>
+            <column name="total_task" type="INT"/>
+            <column name="video_path" type="VARCHAR(255)"/>
+            <column name="video_state" type="INT"/>
+            <column name="category_id" type="BIGINT"/>
+            <column name="educator_id" type="BIGINT"/>
+            <column name="status" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="Authentication" id="1773399733404-10">
+        <createTable tableName="db_it_dream_simulation_enrollment">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="db_it_dream_simulation_enrollmentPK"/>
+            </column>
+            <column name="progress" type="FLOAT"/>
+            <column name="simulation_id" type="BIGINT"/>
+            <column name="student_id" type="BIGINT"/>
+            <column name="status" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="Authentication" id="1773399733404-11">
+        <createTable tableName="db_it_dream_student">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="db_it_dream_studentPK"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="Authentication" id="1773399733404-12">
+        <createTable tableName="db_it_dream_student_submission">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="db_it_dream_student_submissionPK"/>
+            </column>
+            <column name="answer" type="TEXT"/>
+            <column name="student_task_progress_id" type="BIGINT"/>
+            <column name="task_question_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="Authentication" id="1773399733404-13">
+        <createTable tableName="db_it_dream_student_task_progress">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="db_it_dream_student_task_progressPK"/>
+            </column>
+            <column name="error_count" type="INT"/>
+            <column name="simulation_enrollment_id" type="BIGINT"/>
+            <column name="task_id" type="BIGINT"/>
+            <column name="status" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="Authentication" id="1773399733404-14">
+        <createTable tableName="db_it_dream_task">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="db_it_dream_taskPK"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="title" type="VARCHAR(255)"/>
+            <column name="introduction" type="TEXT"/>
+            <column name="description" type="TEXT"/>
+            <column name="content" type="TEXT"/>
+            <column name="file_path" type="VARCHAR(255)"/>
+            <column name="image_path" type="VARCHAR(255)"/>
+            <column name="kind" type="INT"/>
+            <column name="total_error" type="INT"/>
+            <column name="total_question" type="INT"/>
+            <column name="video_path" type="VARCHAR(255)"/>
+            <column name="video_state" type="INT"/>
+            <column name="parent_id" type="BIGINT"/>
+            <column name="simulation_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="Authentication" id="1773399733404-15">
+        <createTable tableName="db_it_dream_task_question">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="db_it_dream_task_questionPK"/>
+            </column>
+            <column name="question" type="TEXT"/>
+            <column name="options" type="TEXT"/>
+            <column name="question_type" type="INT"/>
+            <column name="task_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="Authentication" id="1773399733404-16">
+        <addColumn tableName="db_it_dream_account">
+            <column name="mfa_enable" type="bit"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="Authentication" id="1773399733404-17">
+        <addColumn tableName="db_it_dream_account">
+            <column name="mfa_secret_key" type="varchar(255)"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="Authentication" id="1773399733404-18">
+        <addForeignKeyConstraint baseColumnNames="task_question_id" baseTableName="db_it_dream_student_submission" constraintName="FK128ey2m5k7djpq1075y94794n" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="db_it_dream_task_question" validate="true"/>
+    </changeSet>
+    <changeSet author="Authentication" id="1773399733404-19">
+        <addForeignKeyConstraint baseColumnNames="task_question_id" baseTableName="db_it_dream_question_quiz_history" constraintName="FK3jfvc8sipi81p6chtthhye4b2" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="db_it_dream_task_question" validate="true"/>
+    </changeSet>
+    <changeSet author="Authentication" id="1773399733404-20">
+        <addForeignKeyConstraint baseColumnNames="root_id" baseTableName="db_it_dream_comment" constraintName="FK49or8rtcv3rc4l2pnf71jejqw" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="db_it_dream_comment" validate="true"/>
+    </changeSet>
+    <changeSet author="Authentication" id="1773399733404-21">
+        <addForeignKeyConstraint baseColumnNames="simulation_id" baseTableName="db_it_dream_simulation_enrollment" constraintName="FK4er4nh0yrg865iwfybivu3rhg" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="db_it_dream_simulation" validate="true"/>
+    </changeSet>
+    <changeSet author="Authentication" id="1773399733404-22">
+        <addForeignKeyConstraint baseColumnNames="educator_id" baseTableName="db_it_dream_simulation" constraintName="FK53y2ahc65wnci9hiqfljcj36p" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="db_it_dream_educator" validate="true"/>
+    </changeSet>
+    <changeSet author="Authentication" id="1773399733404-23">
+        <addForeignKeyConstraint baseColumnNames="student_submission_id" baseTableName="db_it_dream_review_submission" constraintName="FK5kfdii7tai056clkqh8629rht" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="db_it_dream_student_submission" validate="true"/>
+    </changeSet>
+    <changeSet author="Authentication" id="1773399733404-24">
+        <addForeignKeyConstraint baseColumnNames="parent_id" baseTableName="db_it_dream_comment" constraintName="FK60sd38bn0oyfrxctx9grkkf5f" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="db_it_dream_comment" validate="true"/>
+    </changeSet>
+    <changeSet author="Authentication" id="1773399733404-25">
+        <addForeignKeyConstraint baseColumnNames="student_task_progress_id" baseTableName="db_it_dream_student_submission" constraintName="FK630pv3bucperskslxjidnsfj9" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="db_it_dream_student_task_progress" validate="true"/>
+    </changeSet>
+    <changeSet author="Authentication" id="1773399733404-26">
+        <addForeignKeyConstraint baseColumnNames="student_id" baseTableName="db_it_dream_simulation_enrollment" constraintName="FK7dxee9j9ami8ctumf96llliyo" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="db_it_dream_student" validate="true"/>
+    </changeSet>
+    <changeSet author="Authentication" id="1773399733404-27">
+        <addForeignKeyConstraint baseColumnNames="student_id" baseTableName="db_it_dream_achievement" constraintName="FKacla21gy8xk9bttmuphrgtbuv" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="db_it_dream_student" validate="true"/>
+    </changeSet>
+    <changeSet author="Authentication" id="1773399733404-28">
+        <addForeignKeyConstraint baseColumnNames="id" baseTableName="db_it_dream_educator" constraintName="FKc1mhjbryrkwt199j3fs27ext9" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="db_it_dream_account" validate="true"/>
+    </changeSet>
+    <changeSet author="Authentication" id="1773399733404-29">
+        <addForeignKeyConstraint baseColumnNames="student_task_progress_id" baseTableName="db_it_dream_question_quiz_history" constraintName="FKcbk67si27tmaape2y3jrym1ij" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="db_it_dream_student_task_progress" validate="true"/>
+    </changeSet>
+    <changeSet author="Authentication" id="1773399733404-30">
+        <addForeignKeyConstraint baseColumnNames="task_id" baseTableName="db_it_dream_comment" constraintName="FKdgu3r3fg89ij3mgt5vg17icfk" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="db_it_dream_task" validate="true"/>
+    </changeSet>
+    <changeSet author="Authentication" id="1773399733404-31">
+        <addForeignKeyConstraint baseColumnNames="simulation_id" baseTableName="db_it_dream_feedback" constraintName="FKg6bjja88ajsltp8pducw6dn01" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="db_it_dream_simulation" validate="true"/>
+    </changeSet>
+    <changeSet author="Authentication" id="1773399733404-32">
+        <addForeignKeyConstraint baseColumnNames="task_id" baseTableName="db_it_dream_task_question" constraintName="FKgaxbk6xkem2c5k2jhmxhin0yk" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="db_it_dream_task" validate="true"/>
+    </changeSet>
+    <changeSet author="Authentication" id="1773399733404-33">
+        <addForeignKeyConstraint baseColumnNames="student_id" baseTableName="db_it_dream_review_submission" constraintName="FKh8tbi6yo9n9jq44nuho6245fd" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="db_it_dream_student" validate="true"/>
+    </changeSet>
+    <changeSet author="Authentication" id="1773399733404-34">
+        <addForeignKeyConstraint baseColumnNames="category_id" baseTableName="db_it_dream_simulation" constraintName="FKhblyg8xg3f5vd3yheu597q9xp" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="db_it_dream_category" validate="true"/>
+    </changeSet>
+    <changeSet author="Authentication" id="1773399733404-35">
+        <addForeignKeyConstraint baseColumnNames="simulation_enrollment_id" baseTableName="db_it_dream_student_task_progress" constraintName="FKjicxv25vj8us37g5v26lr0hg" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="db_it_dream_simulation_enrollment" validate="true"/>
+    </changeSet>
+    <changeSet author="Authentication" id="1773399733404-36">
+        <addForeignKeyConstraint baseColumnNames="simulation_id" baseTableName="db_it_dream_task" constraintName="FKjtvo44siqno6ieyb6ih8f82kj" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="db_it_dream_simulation" validate="true"/>
+    </changeSet>
+    <changeSet author="Authentication" id="1773399733404-37">
+        <addForeignKeyConstraint baseColumnNames="simulation_id" baseTableName="db_it_dream_achievement" constraintName="FKmcld1r57s3308g57evyerufcv" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="db_it_dream_simulation" validate="true"/>
+    </changeSet>
+    <changeSet author="Authentication" id="1773399733404-38">
+        <addForeignKeyConstraint baseColumnNames="id" baseTableName="db_it_dream_student" constraintName="FKmev06gdg8lma08sj5diq3unki" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="db_it_dream_account" validate="true"/>
+    </changeSet>
+    <changeSet author="Authentication" id="1773399733404-39">
+        <addForeignKeyConstraint baseColumnNames="parent_id" baseTableName="db_it_dream_task" constraintName="FKmo12vn19ff8sp93s3ex89sy3x" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="db_it_dream_task" validate="true"/>
+    </changeSet>
+    <changeSet author="Authentication" id="1773399733404-40">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="db_it_dream_comment" constraintName="FKoqkkohqlkio1n6lmpirg5xdtx" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="db_it_dream_account" validate="true"/>
+    </changeSet>
+    <changeSet author="Authentication" id="1773399733404-41">
+        <addForeignKeyConstraint baseColumnNames="task_id" baseTableName="db_it_dream_student_task_progress" constraintName="FKt2355cow269n49acdjkfxby9c" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="db_it_dream_task" validate="true"/>
+    </changeSet>
+    <changeSet author="Authentication" id="1773399733404-42">
+        <addForeignKeyConstraint baseColumnNames="receiver_id" baseTableName="db_it_dream_notification" constraintName="FKthm1k5mauc53wwmsfwanaou4d" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="db_it_dream_account" validate="true"/>
+    </changeSet>
+    <changeSet author="Authentication" id="1773399733404-43">
+        <addForeignKeyConstraint baseColumnNames="student_id" baseTableName="db_it_dream_feedback" constraintName="FKthw95tk958uhbnxcbf85r3un0" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="db_it_dream_student" validate="true"/>
+    </changeSet>
+</databaseChangeLog>

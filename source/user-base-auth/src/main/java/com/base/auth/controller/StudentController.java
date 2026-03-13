@@ -13,7 +13,6 @@ import com.base.auth.exception.UnauthorizationException;
 import com.base.auth.form.student.SignUpStudentForm;
 import com.base.auth.form.student.UpdateProfileStudentForm;
 import com.base.auth.form.student.UpdateStudentForm;
-import com.base.auth.form.account.VerifyUserForm;
 import com.base.auth.mapper.AccountMapper;
 import com.base.auth.mapper.StudentMapper;
 import com.base.auth.model.Account;
@@ -23,15 +22,14 @@ import com.base.auth.model.Student;
 import com.base.auth.model.criteria.StudentCriteria;
 import com.base.auth.repository.AccountRepository;
 import com.base.auth.repository.AchievementRepository;
-import com.base.auth.repository.CourseEnrollmentRepository;
+import com.base.auth.repository.SimulationEnrollmentRepository;
 import com.base.auth.repository.GroupRepository;
 import com.base.auth.repository.QuestionQuizHistoryRepository;
 import com.base.auth.repository.ReviewSubmissionRepository;
 import com.base.auth.repository.StudentRepository;
-import com.base.auth.repository.LessonProgressRepository;
-import com.base.auth.repository.CorrectAnswerRepository;
+import com.base.auth.repository.StudentTaskProgressRepository;
+import com.base.auth.repository.StudentSubmissionRepository;
 import com.base.auth.utils.AESUtils;
-import com.base.auth.utils.ConvertUtils;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -79,16 +77,16 @@ public class StudentController extends ABasicController{
   GroupRepository groupRepository;
 
   @Autowired
-  LessonProgressRepository lessonProgressRepository;
+  StudentTaskProgressRepository studentTaskProgressRepository;
 
   @Autowired
   QuestionQuizHistoryRepository questionQuizHistoryRepository;
 
   @Autowired
-  CorrectAnswerRepository correctAnswerRepository;
+  StudentSubmissionRepository studentSubmissionRepository;
 
   @Autowired
-  CourseEnrollmentRepository courseEnrollmentRepository;
+  SimulationEnrollmentRepository simulationEnrollmentRepository;
 
   @Autowired
   AchievementRepository achievementRepository;
@@ -253,10 +251,10 @@ public class StudentController extends ABasicController{
     }
     achievementRepository.deleteAllByStudentId(id);
     reviewSubmissionRepository.deleteAllByStudentId(id);
-    correctAnswerRepository.deleteAllByLessonProgressCourseEnrollmentStudentId(id);
-    questionQuizHistoryRepository.deleteAllByLessonProgressCourseEnrollmentStudentId(id);
-    lessonProgressRepository.deleteAllByCourseEnrollmentStudentId(id);
-    courseEnrollmentRepository.deleteAllByStudentId(id);
+    studentSubmissionRepository.deleteAllByStudentTaskProgressSimulationEnrollmentStudentId(id);
+    questionQuizHistoryRepository.deleteAllByStudentTaskProgressSimulationEnrollmentStudentId(id);
+    studentTaskProgressRepository.deleteAllBySimulationEnrollmentStudentId(id);
+    simulationEnrollmentRepository.deleteAllByStudentId(id);
     if (StringUtils.isNotBlank(student.getAccount().getAvatarPath())){
       userBaseApiService.deleteByFilePath(student.getAccount().getAvatarPath());
     }

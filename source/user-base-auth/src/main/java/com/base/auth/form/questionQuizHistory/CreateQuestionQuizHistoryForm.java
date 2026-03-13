@@ -15,10 +15,10 @@ public class CreateQuestionQuizHistoryForm {
   @NotNull(message = "isCorrect cannot be null")
   @ApiModelProperty(name = "isCorrect")
   private Boolean isCorrect;
-  @NotNull(message = "lessonProgressId cannot be null")
-  @ApiModelProperty(name = "lessonProgressId")
-  private Long lessonProgressId;
-  @NotNull(message = "lessonQuestionId cannot be null")
-  @ApiModelProperty(name = "lessonQuestionId")
-  private Long lessonQuestionId;
+  @NotNull(message = "studentTaskProgressId cannot be null")
+  @ApiModelProperty(name = "studentTaskProgressId")
+  private Long studentTaskProgressId;
+  @NotNull(message = "taskQuestionId cannot be null")
+  @ApiModelProperty(name = "taskQuestionId")
+  private Long taskQuestionId;
 }

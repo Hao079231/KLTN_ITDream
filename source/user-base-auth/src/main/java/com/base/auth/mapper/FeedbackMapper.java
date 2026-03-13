@@ -17,7 +17,7 @@ import org.mapstruct.ReportingPolicy;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE,
     nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
-    uses = {StudentMapper.class, CourseMapper.class})
+    uses = {StudentMapper.class, SimulationMapper.class})
 public interface FeedbackMapper {
   @Mapping(source = "star", target = "star")
   @Mapping(source = "content", target = "content")
@@ -28,7 +28,7 @@ public interface FeedbackMapper {
   @Mapping(source = "star", target = "star")
   @Mapping(source = "content", target = "content")
   @Mapping(source = "student", target = "student", qualifiedByName = "fromEntityToStudentDto")
-  @Mapping(source = "course", target = "course", qualifiedByName = "fromEntityToCourseDto")
+  @Mapping(source = "simulation", target = "simulation", qualifiedByName = "fromEntityToSimulationDto")
   @Mapping(source = "createdDate", target = "createdDate")
   @Mapping(source = "modifiedDate", target = "modifiedDate")
   @BeanMapping(ignoreByDefault = true)
@@ -42,7 +42,7 @@ public interface FeedbackMapper {
   @Mapping(source = "star", target = "star")
   @Mapping(source = "content", target = "content")
   @Mapping(source = "student", target = "student", qualifiedByName = "fromStudentToProfileDto")
-  @Mapping(source = "course", target = "course", qualifiedByName = "fromEntityToCourseDisplayDto")
+  @Mapping(source = "simulation", target = "simulation", qualifiedByName = "fromEntityToSimulationDisplayDto")
   @Mapping(source = "createdDate", target = "createdDate")
   @Mapping(source = "modifiedDate", target = "modifiedDate")
   @BeanMapping(ignoreByDefault = true)

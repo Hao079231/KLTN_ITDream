@@ -1,6 +1,5 @@
 package com.base.auth.mapper;
 
-import com.base.auth.dto.achievement.AchievementDisplayDto;
 import com.base.auth.dto.achievement.AchievementDto;
 import com.base.auth.dto.achievement.AchievementStudentDto;
 import com.base.auth.model.Achievement;
@@ -15,11 +14,11 @@ import org.mapstruct.ReportingPolicy;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE,
     nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
-    uses = {CourseMapper.class, StudentMapper.class})
+    uses = {SimulationMapper.class, StudentMapper.class})
 public interface AchievementMapper {
   @Mapping(source = "id", target = "id")
   @Mapping(source = "filePath", target = "filePath")
-  @Mapping(source = "course", target = "course", qualifiedByName = "fromEntityToCourseDto")
+  @Mapping(source = "simulation", target = "simulation", qualifiedByName = "fromEntityToSimulationDto")
   @Mapping(source = "student", target = "student", qualifiedByName = "fromEntityToStudentDto")
   @Mapping(source = "modifiedDate", target = "modifiedDate")
   @Mapping(source = "createdDate", target = "createdDate")
@@ -32,7 +31,7 @@ public interface AchievementMapper {
 
   @Mapping(source = "id", target = "id")
   @Mapping(source = "filePath", target = "filePath")
-  @Mapping(source = "course", target = "course", qualifiedByName = "fromEntityToCourseDisplayDto")
+  @Mapping(source = "simulation", target = "simulation", qualifiedByName = "fromEntityToSimulationDisplayDto")
   @Mapping(source = "student", target = "student", qualifiedByName = "fromStudentToProfileDto")
   @BeanMapping(ignoreByDefault = true)
   @Named("fromEntityToAchievementDto")

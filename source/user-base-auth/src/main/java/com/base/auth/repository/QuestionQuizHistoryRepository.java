@@ -9,24 +9,24 @@ import org.springframework.data.repository.query.Param;
 
 public interface QuestionQuizHistoryRepository extends JpaRepository<QuestionQuizHistory, Long> {
   @Modifying
-  @Query("DELETE FROM QuestionQuizHistory qqh WHERE qqh.lessonQuestion.id = :lessonQuestionId")
+  @Query("DELETE FROM QuestionQuizHistory qqh WHERE qqh.taskQuestion.id = :taskQuestionId")
   @Transactional
-  void deleteAllByLessonQuestionId(@Param("lessonQuestionId") Long lessonQuestionId);
+  void deleteAllByTaskQuestionId(@Param("taskQuestionId") Long taskQuestionId);
 
   @Modifying
-  @Query("DELETE FROM QuestionQuizHistory qqh WHERE qqh.lessonProgress.id = :lessonProgressId")
+  @Query("DELETE FROM QuestionQuizHistory qqh WHERE qqh.studentTaskProgress.id = :studentTaskProgressId")
   @Transactional
-  void deleteAllByLessonProgressId(@Param("lessonProgressId") Long lessonProgressId);
+  void deleteAllByStudentTaskProgressId(@Param("studentTaskProgressId") Long studentTaskProgressId);
 
   @Transactional
-  void deleteAllByLessonQuestionLessonId(Long lessonId);
+  void deleteAllByTaskQuestionTaskId(Long taskId);
 
   @Transactional
-  void deleteAllByLessonProgressCourseEnrollmentStudentId(Long studentId);
+  void deleteAllByStudentTaskProgressSimulationEnrollmentStudentId(Long studentId);
 
   @Modifying
-  @Query("delete from QuestionQuizHistory qh where qh.lessonQuestion.id in "
-      + "(select lq.id from LessonQuestion lq where lq.lesson.id = :lessonId)")
+  @Query("delete from QuestionQuizHistory qh where qh.taskQuestion.id in "
+      + "(select tq.id from TaskQuestion tq where tq.task.id = :taskId)")
   @Transactional
-  void deleteAllByLessonProgressLessonId(Long lessonId);
+  void deleteAllByStudentTaskProgressTaskId(Long taskId);
 }

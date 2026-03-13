@@ -23,5 +23,4 @@ public class Student{
   @MapsId
   @JoinColumn(name = "id")
   private Account account;
-  private Long score = 0L;
 }

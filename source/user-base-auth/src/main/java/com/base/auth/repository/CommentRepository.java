@@ -9,5 +9,5 @@ public interface CommentRepository extends JpaRepository<Comment, Long>, JpaSpec
   @Transactional
   void deleteAllByParent(Comment parent);
 
-  void deleteAllByLessonId(Long lessonId);
+  void deleteAllByTaskId(Long taskId);
 }

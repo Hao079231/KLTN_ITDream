@@ -30,6 +30,6 @@ public class Feedback extends Auditable<String>{
   @JoinColumn(name = "student_id")
   private Student student;
   @ManyToOne
-  @JoinColumn(name = "course_id")
-  private Course course;
+  @JoinColumn(name = "simulation_id")
+  private Simulation simulation;
 }

@@ -2,7 +2,7 @@ package com.base.auth.model.criteria;
 
 import com.base.auth.model.Account;
 import com.base.auth.model.Comment;
-import com.base.auth.model.Lesson;
+import com.base.auth.model.Task;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.criteria.Expression;
@@ -16,8 +16,8 @@ import org.springframework.data.jpa.domain.Specification;
 
 @Data
 public class CommentCriteria {
-  @NotNull(message = "lessonId is required")
-  private Long lessonId;
+  @NotNull(message = "taskId is required")
+  private Long taskId;
   private Long userId;
   private String keyWord;
   private Boolean onlyRoot;
@@ -27,12 +27,12 @@ public class CommentCriteria {
       List<Predicate> predicates = new ArrayList<>();
 
       // 1. Joins - Cần join với root để lấy ngày tạo của comment gốc
-      Join<Comment, Lesson> lessonJoin = root.join("lesson", JoinType.INNER);
+      Join<Comment, Task> taskJoin = root.join("task", JoinType.INNER);
       Join<Comment, Comment> rootJoin = root.join("root", JoinType.LEFT);
 
       // 2. Filters
-      if (getLessonId() != null) {
-        predicates.add(cb.equal(lessonJoin.get("id"), getLessonId()));
+      if (getTaskId() != null) {
+        predicates.add(cb.equal(taskJoin.get("id"), getTaskId()));
       }
       if (getUserId() != null) {
         Join<Comment, Account> userJoin = root.join("user", JoinType.LEFT);

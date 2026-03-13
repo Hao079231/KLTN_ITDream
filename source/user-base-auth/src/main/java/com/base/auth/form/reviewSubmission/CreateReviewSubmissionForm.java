@@ -9,9 +9,9 @@ import lombok.Data;
 @Data
 @ApiModel
 public class CreateReviewSubmissionForm {
-  @NotNull(message = "correctAnswerId cannot be null")
-  @ApiModelProperty(name = "correctAnswerId")
-  private Long correctAnswerId;
+  @NotNull(message = "studentSubmissionId cannot be null")
+  @ApiModelProperty(name = "studentSubmissionId")
+  private Long studentSubmissionId;
   @NotEmpty(message = "student username cannot be null")
   @ApiModelProperty(name = "username")
   private String username;

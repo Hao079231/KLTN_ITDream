@@ -16,9 +16,9 @@ public interface AchievementRepository extends JpaRepository<Achievement, Long>,
   void deleteAllByStudentId(Long studentId);
 
   @Modifying
-  @Query("UPDATE Achievement a set a.course = null where a.course.id = :courseId")
+  @Query("UPDATE Achievement a set a.simulation = null where a.simulation.id = :simulationId")
   @Transactional
-  void setNullByCourseId(@Param("courseId") Long courseId);
+  void setNullBySimulationId(@Param("simulationId") Long simulationId);
 
   List<Achievement> findAllByStudentId(Long studentId);
 }

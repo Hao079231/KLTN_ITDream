@@ -24,8 +24,8 @@ public class Achievement extends Auditable<String>{
   private Long id;
   private String filePath;
   @ManyToOne
-  @JoinColumn(name = "course_id")
-  private Course course;
+  @JoinColumn(name = "simulation_id")
+  private Simulation simulation;
   @ManyToOne
   @JoinColumn(name = "student_id")
   private Student student;
