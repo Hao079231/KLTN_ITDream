@@ -14,7 +14,7 @@ public class CreateFeedbackForm {
   private Integer star;
   @ApiModelProperty(name = "content")
   private String content;
-  @NotNull(message = "courseId cannot be null")
-  @ApiModelProperty(name = "courseId")
-  private Long courseId;
+  @NotNull(message = "simulationId cannot be null")
+  @ApiModelProperty(name = "simulationId")
+  private Long simulationId;
 }

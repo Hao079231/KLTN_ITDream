@@ -12,13 +12,13 @@ import com.base.auth.exception.UnauthorizationException;
 import com.base.auth.form.feedback.CreateFeedbackForm;
 import com.base.auth.form.feedback.UpdateFeedbackForm;
 import com.base.auth.mapper.FeedbackMapper;
-import com.base.auth.model.Course;
-import com.base.auth.model.CourseEnrollment;
+import com.base.auth.model.Simulation;
+import com.base.auth.model.SimulationEnrollment;
 import com.base.auth.model.Feedback;
 import com.base.auth.model.Student;
 import com.base.auth.model.criteria.FeedbackCriteria;
-import com.base.auth.repository.CourseEnrollmentRepository;
-import com.base.auth.repository.CourseRepository;
+import com.base.auth.repository.SimulationEnrollmentRepository;
+import com.base.auth.repository.SimulationRepository;
 import com.base.auth.repository.FeedbackRepository;
 import java.util.List;
 import javax.validation.Valid;
@@ -48,10 +48,10 @@ public class FeedbackController extends ABasicController{
   FeedbackRepository feedbackRepository;
 
   @Autowired
-  CourseRepository courseRepository;
+  SimulationRepository simulationRepository;
 
   @Autowired
-  CourseEnrollmentRepository courseEnrollmentRepository;
+  SimulationEnrollmentRepository simulationEnrollmentRepository;
 
   @Autowired
   FeedbackMapper feedbackMapper;
@@ -65,25 +65,26 @@ public class FeedbackController extends ABasicController{
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Student student = studentRepository.findById(getCurrentUser())
         .orElseThrow(() -> new NotFoundException("Student not found", ErrorCode.USER_ERROR_NOT_FOUND));
-    Course course = courseRepository.findById(form.getCourseId())
-        .orElseThrow(() -> new NotFoundException("Course not found", ErrorCode.COURSE_ERROR_NOT_FOUND));
-    Boolean existFeedback = feedbackRepository.existsByStudentIdAndCourseId(student.getId(), course.getId());
+    Simulation simulation = simulationRepository.findById(form.getSimulationId())
+        .orElseThrow(() -> new NotFoundException("Simulation not found", ErrorCode.SIMULATION_ERROR_NOT_FOUND));
+    Boolean existFeedback = feedbackRepository.existsByStudentIdAndSimulationId(student.getId(), simulation.getId());
     if (existFeedback){
       throw new BadRequestException("Feedback already exist", ErrorCode.FEEDBACK_ERROR_EXIST);
     }
-    CourseEnrollment courseEnrollment = courseEnrollmentRepository.findByStudentIdAndCourseId(student.getId(), course.getId())
-        .orElseThrow(() -> new NotFoundException("Course enrollment not found", ErrorCode.COURSE_ENROLLMENT_ERROR_NOT_FOUND));
-    if (!ITDreamConstant.COURSE_ENROLLMENT_COMPLETED.equals(courseEnrollment.getStatus())){
-      throw new BadRequestException("Student has not completed this course", ErrorCode.COURSE_ENROLLMENT_ERROR_NOT_CREATE);
+    SimulationEnrollment simulationEnrollment = simulationEnrollmentRepository.findByStudentIdAndSimulationId(student.getId(), simulation.getId())
+        .orElseThrow(() -> new NotFoundException("Simulation enrollment not found", ErrorCode.SIMULATION_ENROLLMENT_ERROR_NOT_FOUND));
+    if (!ITDreamConstant.SIMULATION_ENROLLMENT_COMPLETED.equals(simulationEnrollment.getStatus())){
+      throw new BadRequestException("Student has not completed this simulation", ErrorCode.SIMULATION_ENROLLMENT_ERROR_NOT_CREATE);
     }
     Feedback feedback = feedbackMapper.fromCreateFeedbackFormToEntity(form);
     feedback.setStudent(student);
-    feedback.setCourse(course);
+    feedback.setSimulation(simulation);
     feedbackRepository.save(feedback);
 
-    course.setTotalFeedback(course.getTotalFeedback() + 1);
-    course.setAvgStar((course.getAvgStar() * course.getTotalFeedback() + feedback.getStar()) / (course.getTotalFeedback() + 1));
-    courseRepository.save(course);
+    simulation.setTotalFeedback(simulation.getTotalFeedback() + 1);
+    simulation.setAvgStar((simulation.getAvgStar() * simulation.getTotalFeedback() + feedback.getStar()) / (
+        simulation.getTotalFeedback() + 1));
+    simulationRepository.save(simulation);
     apiMessageDto.setMessage("Create feedback success");
     return apiMessageDto;
   }
@@ -130,9 +131,9 @@ public class FeedbackController extends ABasicController{
       throw new UnauthorizationException("Feedback was not created by this student");
     }
 
-    Course course = feedback.getCourse();
-    course.setAvgStar((course.getAvgStar() * course.getTotalFeedback() - feedback.getStar() + form.getStar()) / (course.getTotalFeedback()));
-    courseRepository.save(course);
+    Simulation simulation = feedback.getSimulation();
+    simulation.setAvgStar((simulation.getAvgStar() * simulation.getTotalFeedback() - feedback.getStar() + form.getStar()) / (simulation.getTotalFeedback()));
+    simulationRepository.save(simulation);
 
     feedbackMapper.fromUpdateFeedbackFormToEntity(form, feedback);
     feedbackRepository.save(feedback);
@@ -152,9 +153,10 @@ public class FeedbackController extends ABasicController{
     if (!feedback.getStudent().getId().equals(getCurrentUser())){
       throw new UnauthorizationException("Feedback was not created by this student");
     }
-    Course course = feedback.getCourse();
-    course.setTotalFeedback(course.getTotalFeedback() - 1);
-    course.setAvgStar((course.getAvgStar() * course.getTotalFeedback() - feedback.getStar()) / (course.getTotalFeedback() - 1));
+    Simulation simulation = feedback.getSimulation();
+    simulation.setTotalFeedback(simulation.getTotalFeedback() - 1);
+    simulation.setAvgStar((simulation.getAvgStar() * simulation.getTotalFeedback() - feedback.getStar()) / (
+        simulation.getTotalFeedback() - 1));
     feedbackRepository.delete(feedback);
     apiMessageDto.setMessage("Delete feedback success");
     return apiMessageDto;

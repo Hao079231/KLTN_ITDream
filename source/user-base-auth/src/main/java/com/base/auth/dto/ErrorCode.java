@@ -67,55 +67,55 @@ public class ErrorCode {
     public static final String CATEGORY_ERROR_DELETE = "CATEGORY-ERROR-0002";
 
     /**
-     * Starting error code Course
+     * Starting error code Simulation
      * */
-    public static final String COURSE_ERROR_NOT_FOUND = "COURSE-ERROR-0000";
-    public static final String COURSE_ERROR_EXIST = "COURSE-ERROR-0001";
-    public static final String COURSE_ERROR_NOT_DELETE = "COURSE-ERROR-0002";
-    public static final String COURSE_ERROR_APPROVE = "COURSE-ERROR-0003";
-    public static final String COURSE_ERROR_NOT_AUTHORIZED = "COURSE-ERROR-0004";
-    public static final String COURSE_ERROR_NOT_ACTIVE = "COURSE-ERROR-0005";
+    public static final String SIMULATION_ERROR_NOT_FOUND = "SIMULATION-ERROR-0000";
+    public static final String SIMULATION_ERROR_EXIST = "SIMULATION-ERROR-0001";
+    public static final String SIMULATION_ERROR_NOT_DELETE = "SIMULATION-ERROR-0002";
+    public static final String SIMULATION_ERROR_APPROVE = "SIMULATION-ERROR-0003";
+    public static final String SIMULATION_ERROR_NOT_AUTHORIZED = "SIMULATION-ERROR-0004";
+    public static final String SIMULATION_ERROR_NOT_ACTIVE = "SIMULATION-ERROR-0005";
 
     /**
-     * Starting error code Lesson
+     * Starting error code Task
      * */
-    public static final String LESSON_ERROR_NOT_FOUND = "LESSON-ERROR-0000";
-    public static final String LESSON_ERROR_EXIST = "LESSON-ERROR-0001";
-    public static final String LESSON_ERROR_POSITION = "LESSON-ERROR-0002";
-    public static final String LESSON_ERROR_SAME_CHAPTER = "LESSON-ERROR-0003";
-    public static final String LESSON_ERROR_CREATE = "LESSON-ERROR-0004";
-    public static final String LESSON_ERROR_UPDATE = "LESSON-ERROR-0005";
+    public static final String TASK_ERROR_NOT_FOUND = "TASK-ERROR-0000";
+    public static final String TASK_ERROR_EXIST = "TASK-ERROR-0001";
+    public static final String TASK_ERROR_POSITION = "TASK-ERROR-0002";
+    public static final String TASK_ERROR_SAME_CHAPTER = "TASK-ERROR-0003";
+    public static final String TASK_ERROR_CREATE = "TASK-ERROR-0004";
+    public static final String TASK_ERROR_UPDATE = "TASK-ERROR-0005";
 
     /**
-     * Starting error code LessonQuestion
+     * Starting error code TaskQuestion
      * */
     public static final String CHAPTER_ERROR_NOT_FOUND = "CHAPTER-ERROR-0000";
     public static final String CHAPTER_ERROR_EXIST = "CHAPTER-ERROR-0001";
 
     /**
-     * Starting error code LessonQuestion
+     * Starting error code TaskQuestion
      * */
-    public static final String LESSON_QUESTION_ERROR_NOT_FOUND = "LESSON_QUESTION-ERROR-0000";
-    public static final String LESSON_QUESTION_ERROR_EXIST = "LESSON_QUESTION-ERROR-0001";
-    public static final String LESSON_QUESTION_ERROR_NOT_CREATE = "LESSON_QUESTION-ERROR-0002";
-    public static final String LESSON_QUESTION_ERROR_NOT_UPDATE = "LESSON_QUESTION-ERROR-0003";
-    public static final String LESSON_QUESTION_ERROR_NOT_CREATE_OPTION = "LESSON_QUESTION-ERROR-0004";
-    public static final String LESSON_QUESTION_ERROR_OPTION_NOT_NULL = "LESSON_QUESTION-ERROR-0005";
+    public static final String TASK_QUESTION_ERROR_NOT_FOUND = "TASK_QUESTION-ERROR-0000";
+    public static final String TASK_QUESTION_ERROR_EXIST = "TASK_QUESTION-ERROR-0001";
+    public static final String TASK_QUESTION_ERROR_NOT_CREATE = "TASK_QUESTION-ERROR-0002";
+    public static final String TASK_QUESTION_ERROR_NOT_UPDATE = "TASK_QUESTION-ERROR-0003";
+    public static final String TASK_QUESTION_ERROR_NOT_CREATE_OPTION = "TASK_QUESTION-ERROR-0004";
+    public static final String TASK_QUESTION_ERROR_OPTION_NOT_NULL = "TASK_QUESTION-ERROR-0005";
 
     /**
-     * Starting error code CourseEnrollment
+     * Starting error code Simulation enrollment
      * */
-    public static final String COURSE_ENROLLMENT_ERROR_NOT_FOUND = "COURSE-ENROLLMENT-ERROR-0000";
-    public static final String COURSE_ENROLLMENT_ERROR_NOT_CREATE = "COURSE-ENROLLMENT-ERROR-0001";
+    public static final String SIMULATION_ENROLLMENT_ERROR_NOT_FOUND = "SIMULATION-ENROLLMENT-ERROR-0000";
+    public static final String SIMULATION_ENROLLMENT_ERROR_NOT_CREATE = "SIMULATION-ENROLLMENT-ERROR-0001";
 
     /**
-     * Starting error code LessonProgress
+     * Starting error code Student task progress
      * */
-    public static final String LESSON_PROGRESS_ERROR_NOT_FOUND = "LESSON-PROGRESS-ERROR-0000";
-    public static final String LESSON_PROGRESS_ERROR_EXIST = "LESSON-PROGRESS-ERROR-0001";
-    public static final String LESSON_PROGRESS_ERROR_NOT_COMPLETED = "LESSON-PROGRESS-ERROR-0002";
-    public static final String LESSON_PROGRESS_ERROR_NOT_CREATE = "LESSON-PROGRESS-ERROR-0003";
-    public static final String LESSON_PROGRESS_ERROR_FAIL = "LESSON-PROGRESS-ERROR-0004";
+    public static final String STUDENT_TASK_PROGRESS_ERROR_NOT_FOUND = "STUDENT_TASK-PROGRESS-ERROR-0000";
+    public static final String STUDENT_TASK_PROGRESS_ERROR_EXIST = "STUDENT_TASK-PROGRESS-ERROR-0001";
+    public static final String STUDENT_TASK_PROGRESS_ERROR_NOT_COMPLETED = "STUDENT_TASK-PROGRESS-ERROR-0002";
+    public static final String STUDENT_TASK_PROGRESS_ERROR_NOT_CREATE = "STUDENT_TASK-PROGRESS-ERROR-0003";
+    public static final String STUDENT_TASK_PROGRESS_ERROR_FAIL = "STUDENT_TASK-PROGRESS-ERROR-0004";
 
     /**
      * Starting error code Google
@@ -143,10 +143,10 @@ public class ErrorCode {
     public static final String NOTIFICATION_ERROR_EXIST = "NOTIFICATION-ERROR-0001";
 
     /**
-     * Starting error code Correct answer
+     * Starting error code Student submission
      * */
-    public static final String CORRECT_ANSWER_ERROR_NOT_FOUND = "CORRECT-ANSWER-ERROR-0000";
-    public static final String CORRECT_ANSWER_ERROR_NOT_CREATE = "CORRECT-ANSWER-ERROR-0001";
+    public static final String STUDENT_SUBMISSION_ERROR_NOT_FOUND = "STUDENT-SUBMISSION-ERROR-0000";
+    public static final String STUDENT_SUBMISSION_ERROR_NOT_CREATE = "STUDENT-SUBMISSION-ERROR-0001";
 
     /**
      * Starting error code Comment

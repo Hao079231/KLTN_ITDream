@@ -1,11 +1,10 @@
 package com.base.auth.model.criteria;
 
 import com.base.auth.model.Account;
-import com.base.auth.model.Chapter;
-import com.base.auth.model.CorrectAnswer;
-import com.base.auth.model.Course;
-import com.base.auth.model.Lesson;
-import com.base.auth.model.LessonProgress;
+import com.base.auth.model.StudentSubmission;
+import com.base.auth.model.Simulation;
+import com.base.auth.model.Task;
+import com.base.auth.model.StudentTaskProgress;
 import com.base.auth.model.ReviewSubmission;
 import com.base.auth.model.Student;
 import java.util.ArrayList;
@@ -22,7 +21,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 @Data
 public class ReviewSubmissionCriteria {
-  private Long courseId;
+  private Long simulationId;
   private String studentUsername;
   private Long studentId;
 
@@ -33,14 +32,13 @@ public class ReviewSubmissionCriteria {
       @Override
       public Predicate toPredicate(Root<ReviewSubmission> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
         List<Predicate> predicates = new ArrayList<>();
-        Join<ReviewSubmission, CorrectAnswer> correctAnswerJoin = root.join("correctAnswer", JoinType.INNER);
-        Join<CorrectAnswer, LessonProgress> lessonProgressJoin = correctAnswerJoin.join("lessonProgress", JoinType.INNER);
-        Join<LessonProgress, Lesson> lessonJoin = lessonProgressJoin.join("lesson", JoinType.INNER);
-        Join<Lesson, Chapter> chapterJoin = lessonJoin.join("chapter", JoinType.INNER);
-        Join<Chapter, Course> courseJoin = chapterJoin.join("course", JoinType.INNER);
+        Join<ReviewSubmission, StudentSubmission> studentSubmissionJoin = root.join("studentSubmission", JoinType.INNER);
+        Join<StudentSubmission, StudentTaskProgress> studentTaskProgressJoin = studentSubmissionJoin.join("studentTaskProgress", JoinType.INNER);
+        Join<StudentTaskProgress, Task> taskJoin = studentTaskProgressJoin.join("task", JoinType.INNER);
+        Join<Task, Simulation> simulationJoin = taskJoin.join("simulation", JoinType.INNER);
 
-        if (getCourseId() != null) {
-          predicates.add(cb.equal(courseJoin.get("id"), getCourseId()));
+        if (getSimulationId() != null) {
+          predicates.add(cb.equal(simulationJoin.get("id"), getSimulationId()));
         }
 
         if (StringUtils.isNotEmpty(getStudentUsername())) {

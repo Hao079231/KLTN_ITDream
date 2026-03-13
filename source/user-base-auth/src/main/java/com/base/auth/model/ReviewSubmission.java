@@ -25,8 +25,8 @@ public class ReviewSubmission extends Auditable<String>{
   @GeneratedValue(generator = "idGenerator")
   private Long id;
   @OneToOne
-  @JoinColumn(name = "correct_answer_id")
-  private CorrectAnswer correctAnswer;
+  @JoinColumn(name = "student_submission_id")
+  private StudentSubmission studentSubmission;
   @ManyToOne
   @JoinColumn(name = "student_id")
   private Student student;

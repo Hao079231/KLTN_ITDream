@@ -1,0 +1,20 @@
+package com.base.auth.repository;
+
+import com.base.auth.model.SimulationEnrollment;
+import java.util.Optional;
+import javax.transaction.Transactional;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+
+public interface SimulationEnrollmentRepository extends JpaRepository<SimulationEnrollment, Long>,
+    JpaSpecificationExecutor<SimulationEnrollment> {
+
+  void deleteAllBySimulationId(Long simulationId);
+
+  Optional<SimulationEnrollment> findBySimulationId(Long simulationId);
+
+  @Transactional
+  void deleteAllByStudentId(Long studentId);
+
+  Optional<SimulationEnrollment> findByStudentIdAndSimulationId(Long studentId, Long simulationId);
+}

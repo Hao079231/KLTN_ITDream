@@ -12,15 +12,15 @@ import com.base.auth.form.reviewSubmission.CreateReviewSubmissionForm;
 import com.base.auth.form.reviewSubmission.UpdateReviewSubmissionForm;
 import com.base.auth.mapper.ReviewSubmissionMapper;
 import com.base.auth.model.Account;
-import com.base.auth.model.CorrectAnswer;
-import com.base.auth.model.Course;
+import com.base.auth.model.StudentSubmission;
+import com.base.auth.model.Simulation;
 import com.base.auth.model.Notification;
 import com.base.auth.model.ReviewSubmission;
 import com.base.auth.model.Student;
 import com.base.auth.model.criteria.ReviewSubmissionCriteria;
 import com.base.auth.repository.AccountRepository;
-import com.base.auth.repository.CorrectAnswerRepository;
-import com.base.auth.repository.CourseRepository;
+import com.base.auth.repository.StudentSubmissionRepository;
+import com.base.auth.repository.SimulationRepository;
 import com.base.auth.repository.NotificationRepository;
 import com.base.auth.repository.ReviewSubmissionRepository;
 import java.util.List;
@@ -51,7 +51,7 @@ public class ReviewSubmissionController extends ABasicController{
   ReviewSubmissionRepository reviewSubmissionRepository;
 
   @Autowired
-  CorrectAnswerRepository correctAnswerRepository;
+  StudentSubmissionRepository studentSubmissionRepository;
 
   @Autowired
   AccountRepository accountRepository;
@@ -60,7 +60,7 @@ public class ReviewSubmissionController extends ABasicController{
   NotificationRepository notificationRepository;
 
   @Autowired
-  CourseRepository courseRepository;
+  SimulationRepository simulationRepository;
 
   @Autowired
   ReviewSubmissionMapper reviewSubmissionMapper;
@@ -72,8 +72,8 @@ public class ReviewSubmissionController extends ABasicController{
       throw new UnauthorizationException("User is not an educator");
     }
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
-    CorrectAnswer correctAnswer = correctAnswerRepository.findById(form.getCorrectAnswerId())
-        .orElseThrow(() -> new NotFoundException("Correct answer not found", ErrorCode.CORRECT_ANSWER_ERROR_NOT_FOUND));
+    StudentSubmission studentSubmission = studentSubmissionRepository.findById(form.getStudentSubmissionId())
+        .orElseThrow(() -> new NotFoundException("Student submission not found", ErrorCode.STUDENT_SUBMISSION_ERROR_NOT_FOUND));
     Account account = accountRepository.findAccountByUsername(form.getUsername());
     if (account == null){
       throw new NotFoundException("Account not found", ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
@@ -81,12 +81,13 @@ public class ReviewSubmissionController extends ABasicController{
 
     Student student = studentRepository.findById(account.getId())
         .orElseThrow(() -> new NotFoundException("Student not found", ErrorCode.USER_ERROR_NOT_FOUND));
-    ReviewSubmission reviewSubmission = reviewSubmissionRepository.findByCorrectAnswerIdAndStudentId(correctAnswer.getId(), student.getId());
+    ReviewSubmission reviewSubmission = reviewSubmissionRepository.findByStudentSubmissionIdAndStudentId(
+        studentSubmission.getId(), student.getId());
     if (reviewSubmission != null){
       throw new BadRequestException("Review submission already exist", ErrorCode.REVIEW_SUBMISSION_ERROR_EXIST);
     }
     reviewSubmission.setContent(form.getContent());
-    reviewSubmission.setCorrectAnswer(correctAnswer);
+    reviewSubmission.setStudentSubmission(studentSubmission);
     reviewSubmission.setStudent(student);
     reviewSubmissionRepository.save(reviewSubmission);
     apiMessageDto.setMessage("Create review submission success");
@@ -160,8 +161,8 @@ public class ReviewSubmissionController extends ABasicController{
       throw new UnauthorizationException("User is not an educator");
     }
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
-    Course course = courseRepository.findById(form.getCourseId())
-        .orElseThrow(() -> new NotFoundException("Course error not found", ErrorCode.COURSE_ERROR_NOT_FOUND));
+    Simulation simulation = simulationRepository.findById(form.getSimulationId())
+        .orElseThrow(() -> new NotFoundException("Simulation error not found", ErrorCode.SIMULATION_ERROR_NOT_FOUND));
     Account account = accountRepository.findAccountByUsername(form.getStudentUsername());
     if (account == null) {
       throw new NotFoundException("Account not found", ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
@@ -170,22 +171,22 @@ public class ReviewSubmissionController extends ABasicController{
     Student student = studentRepository.findById(account.getId())
         .orElseThrow(() -> new NotFoundException("Student not found", ErrorCode.USER_ERROR_NOT_FOUND));
 
-    Long totalCorrectAnswer = correctAnswerRepository.countCorrectAnswerByCourseAndStudent(form.getCourseId(), student.getId());
-    Long totalReview = reviewSubmissionRepository.countReviewByCourseAndStudent(form.getCourseId(), student.getId());
-    if (totalCorrectAnswer == null || totalReview == null || !totalCorrectAnswer.equals(totalReview)) {
+    Long totalStudentSubmission = studentSubmissionRepository.countStudentSubmissionBySimulationAndStudent(form.getSimulationId(), student.getId());
+    Long totalReview = reviewSubmissionRepository.countReviewBySimulationAndStudent(form.getSimulationId(), student.getId());
+    if (totalStudentSubmission == null || totalReview == null || !totalStudentSubmission.equals(totalReview)) {
       throw new BadRequestException("Review submission is not completed yet", ErrorCode.REVIEW_SUBMISSION_ERROR_NOT_COMPLETE);
     }
 
     Notification notification = new Notification();
     notification.setTitle("Bài làm của bạn đã được đánh giá");
     notification.setMessage(
-        "Bài làm của bạn trong khóa học "
-            + course.getTitle()
+        "Bài làm của bạn trong bài mô phỏng "
+            + simulation.getTitle()
             + " đã được giảng viên đánh giá. "
-            + "Vui lòng truy cập khóa học để xem chi tiết phản hồi."
+            + "Vui lòng truy cập bài mô phỏng để xem chi tiết phản hồi."
     );
-    notification.setRefType("COURSE_REVIEW_COMPLETED");
-    notification.setRefId(course.getId());
+    notification.setRefType("SIMULATION_REVIEW_COMPLETED");
+    notification.setRefId(simulation.getId());
     notification.setReceiver(account);
     notification.setReadFlag(false);
     notificationRepository.save(notification);

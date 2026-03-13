@@ -4,10 +4,10 @@ import com.base.auth.constant.ITDreamConstant;
 import com.base.auth.form.BaseMsgForm;
 import com.base.auth.form.ProcessVideoSuccessForm;
 import com.base.auth.form.RequestProcessVideoMessageForm;
-import com.base.auth.model.Course;
-import com.base.auth.model.Lesson;
-import com.base.auth.repository.CourseRepository;
-import com.base.auth.repository.LessonRepository;
+import com.base.auth.model.Simulation;
+import com.base.auth.model.Task;
+import com.base.auth.repository.SimulationRepository;
+import com.base.auth.repository.TaskRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Objects;
@@ -27,10 +27,10 @@ public class ProcessVideoService {
   RabbitMQService rabbitService;
 
   @Autowired
-  CourseRepository courseRepository;
+  SimulationRepository simulationRepository;
 
   @Autowired
-  LessonRepository lessonRepository;
+  TaskRepository taskRepository;
 
   @Value("${rabbitmq.video.app}")
   String videoApp;
@@ -58,11 +58,11 @@ public class ProcessVideoService {
       }
       if(form.getCmd().equals(ITDreamConstant.MEDIA_COMPLETED_PROCESS_VIDEO_CMD)){
         ProcessVideoSuccessForm data = objectMapper.convertValue(form.getData(), ProcessVideoSuccessForm.class);
-        if (Objects.equals(data.getKind(), ITDreamConstant.KIND_LESSON)){
+        if (Objects.equals(data.getKind(), ITDreamConstant.KIND_TASK)){
           // update lesson when received data success
-          updateLessonProcessed(data);
+          updateTaskProcessed(data);
         } else {
-          updateCourseProcessed(data);
+          updateSimulationProcessed(data);
         }
       }
       else {
@@ -71,31 +71,31 @@ public class ProcessVideoService {
     }
   }
 
-  void updateLessonProcessed(ProcessVideoSuccessForm processVideoSuccessForm){
-    log.info("Update state lesson processed.............");
-    Lesson lesson = lessonRepository.findById(processVideoSuccessForm.getId()).orElse(null);
-    if (lesson != null){
+  void updateTaskProcessed(ProcessVideoSuccessForm processVideoSuccessForm){
+    log.info("Update state task processed.............");
+    Task task = taskRepository.findById(processVideoSuccessForm.getId()).orElse(null);
+    if (task != null){
       if (!processVideoSuccessForm.getIsSuccess()){
-        lesson.setVideoState(ITDreamConstant.STATE_LESSON_FAIL);
+        task.setVideoState(ITDreamConstant.STATE_TASK_FAIL);
       } else {
-        lesson.setVideoPath(processVideoSuccessForm.getContentPath());
-        lesson.setVideoState(ITDreamConstant.STATE_LESSON_DONE);
+        task.setVideoPath(processVideoSuccessForm.getContentPath());
+        task.setVideoState(ITDreamConstant.STATE_TASK_DONE);
       }
-      lessonRepository.save(lesson);
+      taskRepository.save(task);
     }
   }
 
-  void updateCourseProcessed(ProcessVideoSuccessForm processVideoSuccessForm){
-    log.info("Update state course processed.............");
-    Course course = courseRepository.findById(processVideoSuccessForm.getId()).orElse(null);
-    if (course != null){
+  void updateSimulationProcessed(ProcessVideoSuccessForm processVideoSuccessForm){
+    log.info("Update state simulation processed.............");
+    Simulation simulation = simulationRepository.findById(processVideoSuccessForm.getId()).orElse(null);
+    if (simulation != null){
       if (!processVideoSuccessForm.getIsSuccess()){
-        course.setVideoState(ITDreamConstant.STATE_COURSE_FAIL);
+        simulation.setVideoState(ITDreamConstant.STATE_SIMULATION_FAIL);
       } else {
-        course.setVideoPath(processVideoSuccessForm.getContentPath());
-        course.setVideoState(ITDreamConstant.STATE_COURSE_DONE);
+        simulation.setVideoPath(processVideoSuccessForm.getContentPath());
+        simulation.setVideoState(ITDreamConstant.STATE_SIMULATION_DONE);
       }
-      courseRepository.save(course);
+      simulationRepository.save(simulation);
     }
   }
 }

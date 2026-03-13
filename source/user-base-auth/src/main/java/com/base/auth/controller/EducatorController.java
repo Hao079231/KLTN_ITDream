@@ -10,7 +10,6 @@ import com.base.auth.dto.educator.ProfileEducatorDto;
 import com.base.auth.exception.BadRequestException;
 import com.base.auth.exception.NotFoundException;
 import com.base.auth.exception.UnauthorizationException;
-import com.base.auth.form.account.VerifyUserForm;
 import com.base.auth.form.educator.RequestEducatorIdForm;
 import com.base.auth.form.educator.SignUpEducatorForm;
 import com.base.auth.form.educator.UpdateEducatorForm;
@@ -18,17 +17,16 @@ import com.base.auth.form.educator.UpdateProfileEducatorForm;
 import com.base.auth.mapper.AccountMapper;
 import com.base.auth.mapper.EducatorMapper;
 import com.base.auth.model.Account;
-import com.base.auth.model.Course;
+import com.base.auth.model.Simulation;
 import com.base.auth.model.Educator;
 import com.base.auth.model.Group;
 import com.base.auth.model.criteria.EducatorCriteria;
 import com.base.auth.repository.AccountRepository;
 import com.base.auth.repository.EducatorRepository;
 import com.base.auth.repository.GroupRepository;
-import com.base.auth.repository.CourseRepository;
-import com.base.auth.service.CourseService;
+import com.base.auth.repository.SimulationRepository;
+import com.base.auth.service.SimulationService;
 import com.base.auth.utils.AESUtils;
-import com.base.auth.utils.ConvertUtils;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -76,10 +74,10 @@ public class EducatorController extends ABasicController{
   GroupRepository groupRepository;
 
   @Autowired
-  CourseRepository courseRepository;
+  SimulationRepository simulationRepository;
 
   @Autowired
-  CourseService courseService;
+  SimulationService simulationService;
 
   @PostMapping(value = "/signup", produces= MediaType.APPLICATION_JSON_VALUE)
   public ApiMessageDto<OtpDto> create(@Valid @RequestBody SignUpEducatorForm signUpEducatorForm, BindingResult bindingResult)
@@ -237,15 +235,15 @@ public class EducatorController extends ABasicController{
       throw new BadRequestException("Not allow delete admin", ErrorCode.ACCOUNT_ERROR_NOT_ALLOW_DELETE_ADMIN);
     }
 
-    List<Course> courses = courseRepository.findAllByEducatorId(id);
-    for (Course course : courses){
-      courseService.deleteCourse(course);
+    List<Simulation> simulations = simulationRepository.findAllByEducatorId(id);
+    for (Simulation simulation : simulations){
+      simulationService.deleteAllBySimulation(simulation);
     }
 
     if (StringUtils.isNotBlank(educator.getAccount().getAvatarPath())){
       userBaseApiService.deleteByFilePath(educator.getAccount().getAvatarPath());
     }
-    courseRepository.deleteAllByEducatorId(id);
+    simulationRepository.deleteAllByEducatorId(id);
     educatorRepository.delete(educator);
     accountRepository.delete(account);
     apiMessageDto.setMessage("Delete educator success");

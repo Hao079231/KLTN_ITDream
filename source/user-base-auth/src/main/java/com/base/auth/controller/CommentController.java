@@ -9,19 +9,15 @@ import com.base.auth.exception.BadRequestException;
 import com.base.auth.exception.NotFoundException;
 import com.base.auth.form.comment.CreateCommentForm;
 import com.base.auth.form.comment.UpdateCommentForm;
-import com.base.auth.form.comment.UpdateLikeCommentForm;
 import com.base.auth.mapper.CommentMapper;
 import com.base.auth.model.Account;
 import com.base.auth.model.Comment;
-import com.base.auth.model.Lesson;
+import com.base.auth.model.Task;
 import com.base.auth.model.criteria.CommentCriteria;
 import com.base.auth.repository.AccountRepository;
 import com.base.auth.repository.CommentRepository;
-import com.base.auth.repository.LessonRepository;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import com.base.auth.repository.TaskRepository;
 import java.util.List;
-import java.util.Map;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +48,7 @@ public class CommentController extends ABasicController{
   AccountRepository accountRepository;
 
   @Autowired
-  LessonRepository lessonRepository;
+  TaskRepository taskRepository;
 
   @Autowired
   CommentMapper commentMapper;
@@ -63,16 +59,16 @@ public class CommentController extends ABasicController{
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Account user = accountRepository.findById(getCurrentUser())
         .orElseThrow(() -> new NotFoundException("User not found", ErrorCode.USER_ERROR_NOT_FOUND));
-    Lesson lesson = lessonRepository.findById(form.getLessonId())
-        .orElseThrow(() -> new NotFoundException("Lesson not found", ErrorCode.LESSON_ERROR_NOT_FOUND));
+    Task task = taskRepository.findById(form.getTaskId())
+        .orElseThrow(() -> new NotFoundException("Task not found", ErrorCode.TASK_ERROR_NOT_FOUND));
     Comment comment = commentMapper.fromCreateCommentFormToEntity(form);
-    comment.setLesson(lesson);
+    comment.setTask(task);
     comment.setUser(user);
     if (form.getParentId() != null){
       Comment parent = commentRepository.findById(form.getParentId())
           .orElseThrow(() -> new NotFoundException("Comment not found", ErrorCode.COMMENT_ERROR_NOT_FOUND));
-      if (!parent.getLesson().getId().equals(lesson.getId())) {
-        throw new BadRequestException("Parent comment not in same lesson", ErrorCode.COMMENT_ERROR_INVALID_PARENT);
+      if (!parent.getTask().getId().equals(task.getId())) {
+        throw new BadRequestException("Parent comment not in same task", ErrorCode.COMMENT_ERROR_INVALID_PARENT);
       }
       if (parent.getRoot() != null){
         comment.setRoot(parent.getRoot());

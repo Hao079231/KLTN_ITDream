@@ -13,11 +13,11 @@ import org.mapstruct.ReportingPolicy;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE,
     nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
-    uses = {StudentMapper.class, LessonMapper.class})
+    uses = {StudentMapper.class, TaskMapper.class})
 public interface ReviewSubmissionMapper {
   @Mapping(source = "id", target = "id")
   @Mapping(source = "content", target = "content")
-  @Mapping(source = "correctAnswer", target = "correctAnswer", qualifiedByName = "fromEntityToCorrectAnswerDisplayDto")
+  @Mapping(source = "studentSubmission", target = "studentSubmission", qualifiedByName = "fromEntityToStudentSubmissionDisplayDto")
   @BeanMapping(ignoreByDefault = true)
   @Named("fromEntityToReviewSubmissionDisplayDto")
   ReviewSubmissionDisplayDto fromEntityToReviewSubmissionDisplayDto(ReviewSubmission reviewSubmission);

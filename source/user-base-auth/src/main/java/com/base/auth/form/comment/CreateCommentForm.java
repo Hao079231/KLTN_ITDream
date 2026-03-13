@@ -12,9 +12,9 @@ public class CreateCommentForm {
   @NotEmpty(message = "content cannot be null")
   @ApiModelProperty(name = "content")
   private String content;
-  @NotNull(message = "lessonId cannot be null")
-  @ApiModelProperty(name = "lessonId")
-  private Long lessonId;
+  @NotNull(message = "taskId cannot be null")
+  @ApiModelProperty(name = "taskId")
+  private Long taskId;
   @ApiModelProperty(name = "parentId")
   private Long parentId;
 }

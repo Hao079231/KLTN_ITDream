@@ -13,40 +13,33 @@ public interface ReviewSubmissionRepository extends JpaRepository<ReviewSubmissi
 
   @Query("select count(rs.id) " +
       "from ReviewSubmission rs " +
-      "where rs.correctAnswer.lessonProgress.courseEnrollment.id = :enrollmentId")
-  long countByCourseEnrollmentId(@Param("enrollmentId") Long enrollmentId);
+      "where rs.studentSubmission.studentTaskProgress.simulationEnrollment.id = :enrollmentId")
+  long countBySimulationEnrollmentId(@Param("enrollmentId") Long enrollmentId);
 
   @Transactional
   void deleteAllByStudentId(Long studentId);
 
   @Query("SELECT COUNT(rs) " +
       "FROM ReviewSubmission rs " +
-      "JOIN rs.correctAnswer ca " +
-      "JOIN ca.lessonProgress lp " +
-      "JOIN lp.lesson l " +
-      "JOIN l.chapter ch " +
-      "JOIN ch.course c " +
-      "WHERE c.id = :courseId " +
+      "JOIN rs.studentSubmission ssm " +
+      "JOIN ssm.studentTaskProgress stp " +
+      "JOIN stp.task t " +
+      "JOIN t.simulation s " +
+      "WHERE s.id = :simulationId " +
       "AND rs.student.id = :studentId")
-  Long countReviewByCourseAndStudent(@Param("courseId") Long courseId, @Param("studentId") Long studentId);
+  Long countReviewBySimulationAndStudent(@Param("simulationId") Long simulationId, @Param("studentId") Long studentId);
 
   @Transactional
   @Modifying
   @Query("DELETE FROM ReviewSubmission rs " +
-      "WHERE rs.correctAnswer.lessonQuestion.id = :lessonQuestionId")
-  void deleteAllByLessonQuestionId(@Param("lessonQuestionId") Long lessonQuestionId);
+      "WHERE rs.studentSubmission.taskQuestion.id = :taskQuestionId")
+  void deleteAllByTaskQuestionId(@Param("taskQuestionId") Long taskQuestionId);
 
   @Transactional
   @Modifying
   @Query("DELETE FROM ReviewSubmission rs " +
-      "WHERE rs.correctAnswer.lessonQuestion.lesson.id = :lessonId")
-  void deleteAllByLessonId(@Param("lessonId") Long lessonId);
+      "WHERE rs.studentSubmission.taskQuestion.task.id = :taskId")
+  void deleteAllByTaskId(@Param("taskId") Long taskId);
 
-  @Transactional
-  @Modifying
-  @Query("DELETE FROM ReviewSubmission rs " +
-      "WHERE rs.correctAnswer.lessonQuestion.lesson.chapter.id = :chapterId")
-  void deleteAllByChapterId(@Param("chapterId") Long chapterId);
-
-  ReviewSubmission findByCorrectAnswerIdAndStudentId(Long correctAnswerId, Long studentId);
+  ReviewSubmission findByStudentSubmissionIdAndStudentId(Long studentSubmissionId, Long studentId);
 }

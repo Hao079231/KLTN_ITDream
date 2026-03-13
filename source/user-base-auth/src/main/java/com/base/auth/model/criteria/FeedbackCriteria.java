@@ -1,6 +1,6 @@
 package com.base.auth.model.criteria;
 
-import com.base.auth.model.Course;
+import com.base.auth.model.Simulation;
 import com.base.auth.model.Feedback;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,8 +16,8 @@ import org.springframework.data.jpa.domain.Specification;
 
 @Data
 public class FeedbackCriteria {
-  @NotNull(message = "courseId required")
-  private Long courseId;
+  @NotNull(message = "simulationId required")
+  private Long simulationId;
 
   public Specification<Feedback> getSpecification() {
     return new Specification<Feedback>() {
@@ -26,8 +26,8 @@ public class FeedbackCriteria {
       @Override
       public Predicate toPredicate(Root<Feedback> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
         List<Predicate> predicates = new ArrayList<>();
-        Join<Feedback, Course> courseJoin = root.join("course", JoinType.INNER);
-        predicates.add(cb.equal(courseJoin.get("id"), getCourseId()));
+        Join<Feedback, Simulation> simulationJoin = root.join("simulation", JoinType.INNER);
+        predicates.add(cb.equal(simulationJoin.get("id"), getSimulationId()));
         query.orderBy(cb.desc(root.get("createdDate")));
         return cb.and(predicates.toArray(new Predicate[predicates.size()]));
       }

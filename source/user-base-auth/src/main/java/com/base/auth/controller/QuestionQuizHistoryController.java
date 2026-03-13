@@ -8,15 +8,15 @@ import com.base.auth.exception.NotFoundException;
 import com.base.auth.exception.UnauthorizationException;
 import com.base.auth.form.questionQuizHistory.CreateQuestionQuizHistoryForm;
 import com.base.auth.mapper.QuestionQuizHistoryMapper;
-import com.base.auth.model.CorrectAnswer;
-import com.base.auth.model.Lesson;
-import com.base.auth.model.LessonProgress;
-import com.base.auth.model.LessonQuestion;
+import com.base.auth.model.StudentSubmission;
+import com.base.auth.model.Task;
+import com.base.auth.model.StudentTaskProgress;
+import com.base.auth.model.TaskQuestion;
 import com.base.auth.model.QuestionQuizHistory;
 import com.base.auth.model.Student;
-import com.base.auth.repository.CorrectAnswerRepository;
-import com.base.auth.repository.LessonProgressRepository;
-import com.base.auth.repository.LessonQuestionRepository;
+import com.base.auth.repository.StudentSubmissionRepository;
+import com.base.auth.repository.StudentTaskProgressRepository;
+import com.base.auth.repository.TaskQuestionRepository;
 import com.base.auth.repository.QuestionQuizHistoryRepository;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -39,13 +39,13 @@ public class QuestionQuizHistoryController extends ABasicController{
   QuestionQuizHistoryRepository questionQuizHistoryRepository;
 
   @Autowired
-  LessonProgressRepository lessonProgressRepository;
+  StudentTaskProgressRepository studentTaskProgressRepository;
 
   @Autowired
-  LessonQuestionRepository lessonQuestionRepository;
+  TaskQuestionRepository taskQuestionRepository;
 
   @Autowired
-  CorrectAnswerRepository correctAnswerRepository;
+  StudentSubmissionRepository studentSubmissionRepository;
 
   @Autowired
   QuestionQuizHistoryMapper questionQuizHistoryMapper;
@@ -59,41 +59,39 @@ public class QuestionQuizHistoryController extends ABasicController{
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Student student = studentRepository.findById(getCurrentUser())
         .orElseThrow(() -> new NotFoundException("Student not found", ErrorCode.USER_ERROR_NOT_FOUND));
-    LessonProgress lessonProgress = lessonProgressRepository.findById(form.getLessonProgressId())
-        .orElseThrow(() -> new NotFoundException("Lesson progress not found", ErrorCode.LESSON_PROGRESS_ERROR_NOT_FOUND));
-    Lesson lesson = lessonProgress.getLesson();
-    if (lesson.getTotalError().equals(lessonProgress.getErrorCount())){
-      throw new BadRequestException("Please reset the lesson to try again", ErrorCode.LESSON_PROGRESS_ERROR_FAIL);
+    StudentTaskProgress studentTaskProgress = studentTaskProgressRepository.findById(form.getStudentTaskProgressId())
+        .orElseThrow(() -> new NotFoundException("Task progress not found", ErrorCode.STUDENT_TASK_PROGRESS_ERROR_NOT_FOUND));
+    Task task = studentTaskProgress.getTask();
+    if (task.getTotalError().equals(studentTaskProgress.getErrorCount())){
+      throw new BadRequestException("Please reset the task to try again", ErrorCode.STUDENT_TASK_PROGRESS_ERROR_FAIL);
     }
-    LessonQuestion lessonQuestion = lessonQuestionRepository.findById(form.getLessonQuestionId())
-        .orElseThrow(() -> new NotFoundException("Lesson question not found", ErrorCode.LESSON_QUESTION_ERROR_NOT_FOUND));
+    TaskQuestion taskQuestion = taskQuestionRepository.findById(form.getTaskQuestionId())
+        .orElseThrow(() -> new NotFoundException("Task question not found", ErrorCode.TASK_QUESTION_ERROR_NOT_FOUND));
 
-    if (!lessonProgress.getLesson().getId().equals(lessonQuestion.getLesson().getId())){
-      throw new BadRequestException("The question is not in the lesson", ErrorCode.CORRECT_ANSWER_ERROR_NOT_CREATE);
+    if (!studentTaskProgress.getTask().getId().equals(taskQuestion.getTask().getId())){
+      throw new BadRequestException("The question is not in the task", ErrorCode.STUDENT_SUBMISSION_ERROR_NOT_CREATE);
     }
 
-    Boolean existCorrectAnswer = correctAnswerRepository.existsByLessonProgressIdAndAnswer(lessonProgress.getId(), form.getAnswer());
-    if (existCorrectAnswer){
-      throw new BadRequestException("The question has been answered", ErrorCode.CORRECT_ANSWER_ERROR_NOT_CREATE);
+    Boolean existSubmission = studentSubmissionRepository.existsByStudentTaskProgressIdAndAnswer(studentTaskProgress.getId(), form.getAnswer());
+    if (existSubmission){
+      throw new BadRequestException("The question has been answered", ErrorCode.STUDENT_SUBMISSION_ERROR_NOT_CREATE);
     }
 
     if (Boolean.TRUE.equals(form.getIsCorrect())){
-      CorrectAnswer correctAnswer = new CorrectAnswer();
-      correctAnswer.setAnswer(form.getAnswer());
-      correctAnswer.setLessonProgress(lessonProgress);
-      correctAnswer.setLessonQuestion(lessonQuestion);
-      correctAnswerRepository.save(correctAnswer);
-      questionQuizHistoryRepository.deleteAllByLessonQuestionId(lessonQuestion.getId());
-      student.setScore(student.getScore() + ITDreamConstant.SCORE_COMPLETE_QUESTION);
-      studentRepository.save(student);
-    } else if (ITDreamConstant.QUESTION_TYPE_QUIZ.equals(lessonQuestion.getQuestionType())){
+      StudentSubmission studentSubmission = new StudentSubmission();
+      studentSubmission.setAnswer(form.getAnswer());
+      studentSubmission.setStudentTaskProgress(studentTaskProgress);
+      studentSubmission.setTaskQuestion(taskQuestion);
+      studentSubmissionRepository.save(studentSubmission);
+      questionQuizHistoryRepository.deleteAllByTaskQuestionId(taskQuestion.getId());
+    } else if (ITDreamConstant.QUESTION_TYPE_QUIZ.equals(taskQuestion.getQuestionType())){
         QuestionQuizHistory questionQuizHistory = questionQuizHistoryMapper.fromCreateQuestionQuizHistoryFormToEntity(form);
-        questionQuizHistory.setLessonProgress(lessonProgress);
-        questionQuizHistory.setLessonQuestion(lessonQuestion);
+        questionQuizHistory.setStudentTaskProgress(studentTaskProgress);
+        questionQuizHistory.setTaskQuestion(taskQuestion);
         questionQuizHistoryRepository.save(questionQuizHistory);
 
-        lessonProgress.setErrorCount(lessonProgress.getErrorCount() + 1);
-        lessonProgressRepository.save(lessonProgress);
+        studentTaskProgress.setErrorCount(studentTaskProgress.getErrorCount() + 1);
+        studentTaskProgressRepository.save(studentTaskProgress);
     }
 
     apiMessageDto.setMessage("Create question quiz history success");

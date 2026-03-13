@@ -27,30 +27,26 @@ public class ITDreamConstant {
     public static final Integer STATUS_LOCK = -1;
     public static final Integer STATUS_REJECT = -2;
 
-    public static final Integer COURSE_STATUS_ACTIVE = 1;
-    public static final Integer COURSE_STATUS_WAITING_APPROVE = 2;
-    public static final Integer COURSE_STATUS_WAITING_APPROVE_DELETE = 3;
-    public static final Integer COURSE_STATUS_REJECT = -1;
+    public static final Integer SIMULATION_STATUS_ACTIVE = 1;
+    public static final Integer SIMULATION_STATUS_WAITING_APPROVE = 2;
+    public static final Integer SIMULATION_STATUS_WAITING_APPROVE_DELETE = 3;
+    public static final Integer SIMULATION_STATUS_REJECT = -1;
 
-    public static final Integer STATE_COURSE_PROCESSING = 1;
-    public static final Integer STATE_COURSE_DONE = 2;
-    public static final Integer STATE_COURSE_FAIL = 3;
+    public static final Integer STATE_SIMULATION_PROCESSING = 1;
+    public static final Integer STATE_SIMULATION_DONE = 2;
+    public static final Integer STATE_SIMULATION_FAIL = 3;
 
-    public static final Integer STATE_LESSON_PROCESSING = 1;
-    public static final Integer STATE_LESSON_DONE = 2;
-    public static final Integer STATE_LESSON_FAIL = 3;
+    public static final Integer STATE_TASK_PROCESSING = 1;
+    public static final Integer STATE_TASK_DONE = 2;
+    public static final Integer STATE_TASK_FAIL = 3;
 
-    public static final Integer KIND_COURSE = 1;
-    public static final Integer KIND_LESSON = 2;
+    public static final Integer KIND_SIMULATION = 1;
+    public static final Integer KIND_TASK = 2;
 
-    public static final Integer COURSE_LEVEL_BEGINNER = 1;
-    public static final Integer COURSE_LEVEL_INTERMEDIATE = 2;
-    public static final Integer COURSE_LEVEL_ADVANCED = 3;
-    public static final List<Integer> COURSE_LEVELS = List.of(COURSE_LEVEL_BEGINNER, COURSE_LEVEL_INTERMEDIATE, COURSE_LEVEL_ADVANCED);
-
-    public static final Integer COURSE_TYPE_COURSE = 1;
-    public static final Integer COURSE_TYPE_SIMULATION = 2;
-    public static final List<Integer> COURSE_TYPES = List.of(COURSE_TYPE_COURSE, COURSE_TYPE_SIMULATION);
+    public static final Integer SIMULATION_LEVEL_BEGINNER = 1;
+    public static final Integer SIMULATION_LEVEL_INTERMEDIATE = 2;
+    public static final Integer SIMULATION_LEVEL_ADVANCED = 3;
+    public static final List<Integer> SIMULATION_LEVELS = List.of(SIMULATION_LEVEL_BEGINNER, SIMULATION_LEVEL_INTERMEDIATE, SIMULATION_LEVEL_ADVANCED);
 
     public static final Integer RESTART_ERROR_COUNT = 0;
 
@@ -59,14 +55,14 @@ public class ITDreamConstant {
     public static final Integer QUESTION_TYPE_QUIZ = 3;
     public static final List<Integer> QUESTION_TYPES = List.of(QUESTION_TYPE_FILE, QUESTION_TYPE_TEXT, QUESTION_TYPE_QUIZ);
 
-    public static final Integer COURSE_ENROLLMENT_COMPLETED = 1;
-    public static final Integer COURSE_ENROLLMENT_IN_PROGRESS = 2;
+    public static final Integer SIMULATION_ENROLLMENT_COMPLETED = 1;
+    public static final Integer SIMULATION_ENROLLMENT_IN_PROGRESS = 2;
 
-    public static final Integer LESSON_PROGRESS_COMPLETED = 1;
-    public static final Integer LESSON_PROGRESS_IN_PROGRESS = 2;
+    public static final Integer STUDENT_TASK_PROGRESS_COMPLETED = 1;
+    public static final Integer STUDENT_TASK_PROGRESS_IN_PROGRESS = 2;
 
     public static final Integer SCORE_COMPLETE_QUESTION = 10;
-    public static final Integer SCORE_COMPLETE_LESSON = 20;
+    public static final Integer SCORE_COMPLETE_TASK = 20;
 
     public static final String BACKEND_PROCESS_VIDEO_CMD = "BACKEND_PROCESS_VIDEO";
     public static final String MEDIA_COMPLETED_PROCESS_VIDEO_CMD = "MEDIA_COMPLETED_PROCESS_VIDEO";
