@@ -220,7 +220,7 @@ public class UserServiceImpl implements UserDetailsService {
 
         Set<GrantedAuthority> grantedAuthorities = getAccountPermission(user);
 
-        UserDetails userDetails = new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword() == null ? user.getPassword() : "N/A", true, true, true, true, grantedAuthorities);
+        UserDetails userDetails = new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), true, true, true, true, grantedAuthorities);
 
         OAuth2Request oAuth2Request = new OAuth2Request(requestParameters, clientId,
             userDetails.getAuthorities(), approved, client.getScope(),
@@ -231,7 +231,7 @@ public class UserServiceImpl implements UserDetailsService {
         return tokenServices.createAccessToken(auth);
     }
 
-    public OAuth2AccessToken getAccessTokenForGoogleEducator(ClientDetails client, TokenRequest tokenRequest, String accessToken, AuthorizationServerTokenServices tokenServices) throws GeneralSecurityException, IOException {
+    public OAuth2AccessToken getAccessTokenForGoogleEducator(ClientDetails client, TokenRequest tokenRequest, String accessToken, String organizationId, AuthorizationServerTokenServices tokenServices) throws GeneralSecurityException, IOException {
         Map<String, String> requestParameters = new HashMap<>();
         requestParameters.put("grantType", SecurityConstant.GRANT_TYPE_EDUCATOR);
 
@@ -241,7 +241,11 @@ public class UserServiceImpl implements UserDetailsService {
         responseTypes.add("code");
         Map<String, Serializable> extensionProperties = new HashMap<>();
 
-        Account user = googleAuthService.authenticateWithGoogleEducator(accessToken);
+        Account user = googleAuthService.authenticateWithGoogleEducator(accessToken, organizationId);
+        if (Objects.equals(ITDreamConstant.STATUS_WAITING_APPROVE, user.getStatus())){
+            throw new CustomOauthException("Please wait for approval");
+        }
+
         if (!Objects.equals(ITDreamConstant.STATUS_ACTIVE, user.getStatus())){
             throw new CustomOauthException("User is not active", ErrorCode.ACCOUNT_ERROR_NOT_ACTIVE);
         }
@@ -254,7 +258,7 @@ public class UserServiceImpl implements UserDetailsService {
 
         Set<GrantedAuthority> grantedAuthorities = getAccountPermission(user);
 
-        UserDetails userDetails = new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword() == null ? user.getPassword() : "N/A", true, true, true, true, grantedAuthorities);
+        UserDetails userDetails = new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), true, true, true, true, grantedAuthorities);
 
         OAuth2Request oAuth2Request = new OAuth2Request(requestParameters, clientId,
             userDetails.getAuthorities(), approved, client.getScope(),

@@ -3,24 +3,27 @@ package com.base.auth.service;
 import com.base.auth.constant.ITDreamConstant;
 import com.base.auth.dto.ErrorCode;
 import com.base.auth.exception.BadRequestException;
-import com.base.auth.form.GoogleLoginForm;
+import com.base.auth.exception.oauth.CustomOauthException;
 import com.base.auth.form.GoogleUserInfoForm;
 import com.base.auth.model.Account;
 import com.base.auth.model.Educator;
 import com.base.auth.model.Group;
+import com.base.auth.model.Organization;
 import com.base.auth.model.Student;
 import com.base.auth.repository.AccountRepository;
 import com.base.auth.repository.EducatorRepository;
 import com.base.auth.repository.GroupRepository;
+import com.base.auth.repository.OrganizationRepository;
 import com.base.auth.repository.StudentRepository;
+import com.base.auth.utils.ConvertUtils;
 import java.util.Map;
-import java.util.Objects;
-import javax.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 @Service
@@ -39,6 +42,9 @@ public class GoogleAuthService {
   @Autowired
   GroupRepository groupRepository;
 
+  @Autowired
+  OrganizationRepository organizationRepository;
+
   final RestTemplate restTemplate = new RestTemplate();
 
   public Account authenticateWithGoogleStudent(String accessToken){
@@ -54,6 +60,7 @@ public class GoogleAuthService {
       newAccount.setUsername(googleUserInfoForm.getUserName());
       newAccount.setFullName(googleUserInfoForm.getFullName());
       newAccount.setAvatarPath(googleUserInfoForm.getAvatarPath());
+      newAccount.setPassword("N/A");
       Group group = groupRepository.findFirstByKind(ITDreamConstant.USER_KIND_STUDENT);
       if (group != null){
         newAccount.setGroup(group);
@@ -69,7 +76,8 @@ public class GoogleAuthService {
     return account;
   }
 
-  public Account authenticateWithGoogleEducator(String accessToken){
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  public Account authenticateWithGoogleEducator(String accessToken, String organizationId){
     GoogleUserInfoForm googleUserInfoForm = verifyGoogleToken(accessToken);
     if (googleUserInfoForm == null){
       throw new BadRequestException("Invalid Google access token", ErrorCode.GOOGLE_ERROR_ACCESS_TOKEN_INVALID);
@@ -82,17 +90,24 @@ public class GoogleAuthService {
       newAccount.setUsername(googleUserInfoForm.getUserName());
       newAccount.setFullName(googleUserInfoForm.getFullName());
       newAccount.setAvatarPath(googleUserInfoForm.getAvatarPath());
+      newAccount.setPassword("N/A");
       Group group = groupRepository.findFirstByKind(ITDreamConstant.USER_KIND_EDUCATOR);
       if (group != null){
         newAccount.setGroup(group);
       }
       newAccount.setKind(ITDreamConstant.USER_KIND_EDUCATOR);
       newAccount.setStatus(ITDreamConstant.STATUS_WAITING_APPROVE);
-      accountRepository.saveAndFlush(newAccount);
+      accountRepository.save(newAccount);
 
       Educator educator = new Educator();
+      Long convertOrganizationId = ConvertUtils.convertStringToLong(organizationId);
+      Organization organization = organizationRepository.findById(convertOrganizationId).orElse(null);
+      if (organization == null){
+        throw new CustomOauthException("Invalid organization");
+      }
       educator.setAccount(newAccount);
-      educatorRepository.saveAndFlush(educator);
+      educator.setOrganization(organization);
+      educatorRepository.save(educator);
       return newAccount;
     }
     return account;
