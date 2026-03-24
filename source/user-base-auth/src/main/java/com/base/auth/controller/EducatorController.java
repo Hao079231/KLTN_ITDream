@@ -17,6 +17,7 @@ import com.base.auth.form.educator.UpdateProfileEducatorForm;
 import com.base.auth.mapper.AccountMapper;
 import com.base.auth.mapper.EducatorMapper;
 import com.base.auth.model.Account;
+import com.base.auth.model.Organization;
 import com.base.auth.model.Simulation;
 import com.base.auth.model.Educator;
 import com.base.auth.model.Group;
@@ -24,6 +25,7 @@ import com.base.auth.model.criteria.EducatorCriteria;
 import com.base.auth.repository.AccountRepository;
 import com.base.auth.repository.EducatorRepository;
 import com.base.auth.repository.GroupRepository;
+import com.base.auth.repository.OrganizationRepository;
 import com.base.auth.repository.SimulationRepository;
 import com.base.auth.service.SimulationService;
 import com.base.auth.utils.AESUtils;
@@ -79,6 +81,9 @@ public class EducatorController extends ABasicController{
   @Autowired
   SimulationService simulationService;
 
+  @Autowired
+  OrganizationRepository organizationRepository;
+
   @PostMapping(value = "/signup", produces= MediaType.APPLICATION_JSON_VALUE)
   public ApiMessageDto<OtpDto> create(@Valid @RequestBody SignUpEducatorForm signUpEducatorForm, BindingResult bindingResult)
   {
@@ -99,6 +104,10 @@ public class EducatorController extends ABasicController{
     {
       throw new BadRequestException("Phone already exists", ErrorCode.ACCOUNT_ERROR_PHONE_EXIST);
     }
+
+    Organization organization = organizationRepository.findById(signUpEducatorForm.getOrganizationId())
+        .orElseThrow(() -> new NotFoundException("Organization not found", ErrorCode.ORGANIZATION_ERROR_NOT_FOUND));
+
     Account account = accountMapper.fromSignUpEducatorToAccount(signUpEducatorForm);
     account.setPassword(passwordEncoder.encode(signUpEducatorForm.getPassword()));
     account.setKind(ITDreamConstant.USER_KIND_EDUCATOR);
@@ -116,6 +125,7 @@ public class EducatorController extends ABasicController{
 
     Educator educator = new Educator();
     educator.setAccount(account);
+    educator.setOrganization(organization);
     educatorRepository.save(educator);
 
     sendVerifyAccount(account);

@@ -6,6 +6,7 @@ import com.base.auth.validation.Phone;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.Date;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import lombok.Data;
 
@@ -29,4 +30,7 @@ public class SignUpEducatorForm {
   @ApiModelProperty(name = "birthday")
   @Past(message = "birthday must be in the past")
   private Date birthday;
+  @NotNull(message = "organizationId cannot be null")
+  @ApiModelProperty(name = "organizationId")
+  private Long organizationId;
 }
