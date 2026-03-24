@@ -342,7 +342,7 @@ public class AccountController extends ABasicController{
     }
 
     @PostMapping(value = "/verify", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ApiMessageDto<String> verifyAccountStudent(@RequestBody @Valid VerifyUserForm verifyUserForm){
+    public ApiMessageDto<String> verifyAccount(@RequestBody @Valid VerifyUserForm verifyUserForm){
         ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
         String[] hash = AESUtils.decrypt(verifyUserForm.getIdHash(),true).split(";",2);
         Long id = ConvertUtils.convertStringToLong(hash[0]);

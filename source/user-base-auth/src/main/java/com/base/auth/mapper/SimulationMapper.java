@@ -89,6 +89,8 @@ public interface SimulationMapper {
   @Mapping(source = "description", target = "description")
   @Mapping(source = "level", target = "level")
   @Mapping(source = "duration", target = "duration")
+  @Mapping(source = "thumbnail", target = "thumbnail")
+  @Mapping(source = "videoPath", target = "videoPath")
   @BeanMapping(ignoreByDefault = true)
   void fromUpdateSimulationFormToEntity(UpdateSimulationForm updateSimulationForm, @MappingTarget Simulation simulation);
 }

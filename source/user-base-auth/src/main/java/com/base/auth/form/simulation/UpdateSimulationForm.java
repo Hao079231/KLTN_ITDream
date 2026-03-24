@@ -27,8 +27,10 @@ public class UpdateSimulationForm {
   @NotEmpty(message = "duration cannot be null")
   @ApiModelProperty(name = "duration")
   private String duration;
+  @NotEmpty(message = "thumbnail cannot be null")
   @ApiModelProperty(name = "thumbnail")
   private String thumbnail;
+  @NotEmpty(message = "videoPath cannot be null")
   @ApiModelProperty(name = "videoPath")
   private String videoPath;
   @NotNull(message = "categoryId cannot be null")

@@ -18,6 +18,7 @@ import org.mapstruct.ReportingPolicy;
 public interface EducatorMapper {
   @Mapping(source = "id",target = "id")
   @Mapping(source ="account",target = "account",qualifiedByName="fromAccountToDto")
+  @Mapping(source ="organization",target = "organization",qualifiedByName="fromEntityToOrganizationDto")
   @BeanMapping(ignoreByDefault = true)
   @Named("fromEntityToEducatorDto")
   EducatorDto fromEntityToEducatorDto(Educator educator);
@@ -27,6 +28,7 @@ public interface EducatorMapper {
   List<EducatorDto> fromEducatorListToEducatorDtoList(List<Educator> list);
 
   @Mapping(source = "account", target = "profileAccountDto", qualifiedByName = "fromAccountToProfileDto")
+  @Mapping(source ="organization",target = "organization",qualifiedByName="fromEntityToOrganizationClientDto")
   @BeanMapping(ignoreByDefault = true)
   @Named("fromEducatorToProfileDto")
   ProfileEducatorDto fromEducatorToProfileDto(Educator Educator);

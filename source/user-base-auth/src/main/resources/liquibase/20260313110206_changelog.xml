@@ -396,4 +396,39 @@
     <changeSet author="Authentication" id="1773399733404-43">
         <addForeignKeyConstraint baseColumnNames="student_id" baseTableName="db_it_dream_feedback" constraintName="FKthw95tk958uhbnxcbf85r3un0" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="db_it_dream_student" validate="true"/>
     </changeSet>
+    <changeSet author="Authentication" id="1773399733404-44">
+        <createTable tableName="db_it_dream_organization">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="db_it_dream_organizationPK"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="short_name" type="VARCHAR(255)"/>
+            <column name="hotline" type="VARCHAR(255)"/>
+            <column name="logo_url" type="VARCHAR(255)"/>
+            <column name="type" type="INT"/>
+            <column name="status" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="Authentication" id="1773399733404-45">
+        <addColumn tableName="db_it_dream_educator">
+            <column name="organization_id" type="bigint"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="Authentication" id="1773399733404-46">
+        <addForeignKeyConstraint baseColumnNames="organization_id" baseTableName="db_it_dream_educator" constraintName="FKiyno4wguu0bcjgna2orp6kmnq" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="db_it_dream_organization" validate="true"/>
+    </changeSet>
 </databaseChangeLog>

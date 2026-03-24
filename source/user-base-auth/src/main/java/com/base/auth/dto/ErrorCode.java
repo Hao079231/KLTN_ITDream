@@ -161,4 +161,10 @@ public class ErrorCode {
      * */
     public static final String FEEDBACK_ERROR_NOT_FOUND = "FEEDBACK-ERROR-0000";
     public static final String FEEDBACK_ERROR_EXIST = "FEEDBACK-ERROR-0001";
+
+    /**
+     * Starting error code Organization
+     * */
+    public static final String ORGANIZATION_ERROR_NOT_FOUND = "ORGANIZATION-ERROR-0000";
+    public static final String ORGANIZATION_ERROR_EXIST = "ORGANIZATION-ERROR-0001";
 }

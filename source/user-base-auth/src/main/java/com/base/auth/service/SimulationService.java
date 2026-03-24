@@ -1,5 +1,6 @@
 package com.base.auth.service;
 
+import com.base.auth.constant.ITDreamConstant;
 import com.base.auth.model.Simulation;
 import com.base.auth.model.Task;
 import com.base.auth.repository.AchievementRepository;
@@ -35,6 +36,9 @@ public class SimulationService {
   @Autowired
   TaskService taskService;
 
+  @Autowired
+  UserBaseApiService userBaseApiService;
+
   public void deleteAllBySimulation(Simulation simulation) {
     List<Task> tasks = taskRepository.findAllBySimulationId(simulation.getId());
     for (Task task : tasks){
@@ -44,5 +48,15 @@ public class SimulationService {
     feedbackRepository.deleteAllBySimulationId(simulation.getId());
     simulationEnrollmentRepository.deleteAllBySimulationId(simulation.getId());
     simulationRepository.delete(simulation);
+  }
+
+  public void deleteFileSimulation(Simulation simulation){
+    if (!simulation.getThumbnail().matches(ITDreamConstant.FILE_PATH_PATTERN)){
+      userBaseApiService.deleteByFilePath(simulation.getThumbnail());
+    }
+
+    if (!simulation.getVideoPath().matches(ITDreamConstant.FILE_PATH_PATTERN)){
+      userBaseApiService.deleteByFilePath(simulation.getVideoPath());
+    }
   }
 }
