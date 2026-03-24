@@ -92,14 +92,14 @@ public class SimulationController extends ABasicController{
     simulation.setStatus(ITDreamConstant.SIMULATION_STATUS_WAITING_APPROVE);
     simulation.setCategory(category);
     simulation.setEducator(educator);
-    if (StringUtils.isNotBlank(form.getVideoPath()) && form.getVideoPath().toLowerCase().startsWith(File.separator + "video")){
+    if (!form.getVideoPath().toLowerCase().matches(ITDreamConstant.FILE_PATH_PATTERN)){
       simulation.setVideoState(ITDreamConstant.STATE_SIMULATION_PROCESSING);
     } else {
       simulation.setVideoState(ITDreamConstant.STATE_SIMULATION_DONE);
     }
     simulationRepository.saveAndFlush(simulation);
 
-    if (StringUtils.isNotBlank(simulation.getVideoPath()) && simulation.getVideoPath().toLowerCase().startsWith(File.separator + "video")){
+    if (!simulation.getVideoPath().toLowerCase().matches(ITDreamConstant.FILE_PATH_PATTERN)){
       RequestProcessVideoMessageForm data = new RequestProcessVideoMessageForm();
       data.setId(simulation.getId());
       data.setKind(ITDreamConstant.KIND_SIMULATION);
@@ -246,25 +246,26 @@ public class SimulationController extends ABasicController{
       simulation.setCategory(category);
     }
 
-    if (StringUtils.isNotBlank(form.getThumbnail()) &&
-        simulation.getThumbnail().toLowerCase().startsWith(File.separator + "image") &&
+    if (!simulation.getThumbnail().toLowerCase().matches(ITDreamConstant.FILE_PATH_PATTERN) &&
         !Objects.equals(form.getThumbnail(), simulation.getThumbnail())){
       userBaseApiService.deleteByFilePath(simulation.getThumbnail());
-      simulation.setThumbnail(form.getThumbnail());
     }
 
-    if (StringUtils.isNotBlank(form.getVideoPath()) &&
-        simulation.getVideoPath().toLowerCase().startsWith(File.separator + "video") &&
+    if (!simulation.getVideoPath().toLowerCase().matches(ITDreamConstant.FILE_PATH_PATTERN) &&
         !Objects.equals(form.getVideoPath(), simulation.getVideoPath())){
       userBaseApiService.deleteByFilePath(simulation.getVideoPath());
-      simulation.setVideoPath(form.getVideoPath());
     }
 
     simulationMapper.fromUpdateSimulationFormToEntity(form, simulation);
+    if (!form.getVideoPath().toLowerCase().matches(ITDreamConstant.FILE_PATH_PATTERN)){
+      simulation.setVideoState(ITDreamConstant.STATE_SIMULATION_PROCESSING);
+    } else {
+      simulation.setVideoState(ITDreamConstant.STATE_SIMULATION_DONE);
+    }
     simulation.setStatus(ITDreamConstant.SIMULATION_STATUS_WAITING_APPROVE);
-    simulationRepository.save(simulation);
+    simulationRepository.saveAndFlush(simulation);
 
-    if (StringUtils.isNotBlank(form.getVideoPath()) && form.getVideoPath().toLowerCase().startsWith(File.separator + "video")){
+    if (!simulation.getVideoPath().toLowerCase().matches(ITDreamConstant.FILE_PATH_PATTERN)){
       RequestProcessVideoMessageForm data = new RequestProcessVideoMessageForm();
       data.setId(simulation.getId());
       data.setKind(ITDreamConstant.KIND_SIMULATION);
@@ -289,6 +290,8 @@ public class SimulationController extends ABasicController{
     if (!Objects.equals(ITDreamConstant.SIMULATION_STATUS_WAITING_APPROVE_DELETE, simulation.getStatus())) {
       throw new BadRequestException("Simulation cannot be deleted", ErrorCode.SIMULATION_ERROR_NOT_DELETE);
     }
+
+    simulationService.deleteFileSimulation(simulation);
     simulationService.deleteAllBySimulation(simulation);
     apiMessageDto.setMessage("Approve delete simulation success");
     return apiMessageDto;
@@ -368,6 +371,7 @@ public class SimulationController extends ABasicController{
     if (!Objects.equals(ITDreamConstant.SIMULATION_STATUS_WAITING_APPROVE, simulation.getStatus())){
       throw new BadRequestException("Simulation cannot be deleted", ErrorCode.SIMULATION_ERROR_NOT_DELETE);
     }
+    simulationService.deleteFileSimulation(simulation);
     simulationService.deleteAllBySimulation(simulation);
     apiMessageDto.setMessage("Delete simulation success");
     return apiMessageDto;

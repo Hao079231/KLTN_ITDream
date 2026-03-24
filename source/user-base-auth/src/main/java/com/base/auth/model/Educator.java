@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -19,8 +20,13 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 public class Educator{
   @Id
   private Long id;
+
   @OneToOne
   @MapsId
   @JoinColumn(name = "id")
   private Account account;
+
+  @ManyToOne
+  @JoinColumn(name = "organization_id")
+  Organization organization;
 }

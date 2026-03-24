@@ -61,8 +61,10 @@ public class ITDreamConstant {
     public static final Integer STUDENT_TASK_PROGRESS_COMPLETED = 1;
     public static final Integer STUDENT_TASK_PROGRESS_IN_PROGRESS = 2;
 
-    public static final Integer SCORE_COMPLETE_QUESTION = 10;
-    public static final Integer SCORE_COMPLETE_TASK = 20;
+    public static final Integer ORGANIZATION_TYPE_UNIVERSITY = 1;
+    public static final Integer ORGANIZATION_TYPE_COMPANY = 2;
+    public static final List<Integer> ORGANIZATION_TYPES = List.of(ORGANIZATION_TYPE_UNIVERSITY, ORGANIZATION_TYPE_COMPANY);
+
 
     public static final String BACKEND_PROCESS_VIDEO_CMD = "BACKEND_PROCESS_VIDEO";
     public static final String MEDIA_COMPLETED_PROCESS_VIDEO_CMD = "MEDIA_COMPLETED_PROCESS_VIDEO";
@@ -75,7 +77,8 @@ public class ITDreamConstant {
     public static final String PASSWORD_PATTERN = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,15}$";
     public static final String EMAIL_PATTERN = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
     public static final String PHONE_PATTERN = "^0\\d{9}$";
-    public static final String FILE_PATH_PATTERN = "^(https?:\\/\\/|\\/)?([\\w\\-]+\\/?)+\\.[A-Za-z0-9]{2,6}$";
+    public static final String FILE_PATH_PATTERN = "^(https?:\\/\\/)?([\\w\\-]+\\/?)+\\.[A-Za-z0-9]{2,6}$";
+    public static final String VIETNAM_HOTLINE_PATTERN = "^(0(2[0-9]{9}|[3|5|7|8|9][0-9]{8})|(1[8|9]00[0-9]{4,6}))$";
 
 
     public static final String NOTIFICATION_TYPE_REVIEW_SUBMISSION = "REVIEW_SUBMISSION";
