@@ -1,6 +1,7 @@
 package com.base.auth.config;
 
 import com.base.auth.service.impl.UserServiceImpl;
+import com.base.auth.utils.ConvertUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
@@ -46,8 +47,9 @@ public class CustomTokenGranter extends AbstractTokenGranter {
                 String email = tokenRequest.getRequestParameters().get("email");
                 String password = tokenRequest.getRequestParameters().get("password");
                 String accessToken = tokenRequest.getRequestParameters().get("accessToken");
+                String organizationId = tokenRequest.getRequestParameters().get("organizationId");
                 if (StringUtils.isNotBlank(accessToken)){
-                    return userService.getAccessTokenForGoogleEducator(client, tokenRequest, accessToken ,this.getTokenServices());
+                    return userService.getAccessTokenForGoogleEducator(client, tokenRequest, accessToken, organizationId ,this.getTokenServices());
                 }
                 return userService.getAccessTokenForEducator(client, tokenRequest, password, email ,this.getTokenServices());
             } else {
