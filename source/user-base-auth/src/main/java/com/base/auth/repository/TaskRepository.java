@@ -18,4 +18,6 @@ public interface TaskRepository extends JpaRepository<Task, Long>, JpaSpecificat
   @Query("SELECT COUNT(t) FROM Task t WHERE t.simulation.id = :simulationId")
   @Transactional
   Integer countTaskBySimulationId(@Param("simulationId") Long simulationId);
+
+  List<Task> findAllByParentId(Long parentId);
 }

@@ -204,7 +204,7 @@ public class TaskQuestionController extends ABasicController{
     TaskQuestion taskQuestion = taskQuestionRepository.findById(id).orElseThrow(()
     -> new NotFoundException("Task question not found", ErrorCode.TASK_QUESTION_ERROR_NOT_FOUND));
 
-    reviewSubmissionRepository.deleteAllByTaskId(id);
+    reviewSubmissionRepository.deleteAllByTaskQuestionId(id);
     questionQuizHistoryRepository.deleteAllByTaskQuestionId(id);
     studentSubmissionRepository.deleteAllByTaskQuestionId(id);
     Task task = taskQuestion.getTask();

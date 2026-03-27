@@ -31,25 +31,26 @@ public interface StudentSubmissionRepository extends JpaRepository<StudentSubmis
   @Transactional
   void deleteAllByTaskQuestionId(@Param("taskQuestionId") Long taskQuestionId);
 
-  List<StudentSubmission> findAllByTaskQuestionId(Long taskQuestionId);
-
-  List<StudentSubmission> findAllByTaskQuestionTaskId(Long taskId);
+  @Transactional
+  @Modifying
+  @Query(value =
+      "DELETE ss FROM db_it_dream_student_submission ss " +
+          "JOIN db_it_dream_task_question tq ON ss.task_question_id = tq.id " +
+          "WHERE tq.task_id = :taskId",
+      nativeQuery = true)
+  void deleteAllByTaskId(@Param("taskId") Long taskId);
 
   @Transactional
-  void deleteAllByTaskQuestionTaskId(Long taskId);
-
-  @Transactional
-  void deleteAllByStudentTaskProgressSimulationEnrollmentStudentId(Long studentId);
+  @Modifying
+  @Query(value =
+      "DELETE ss FROM db_it_dream_student_submission ss " +
+          "JOIN db_it_dream_student_task_progress stp ON ss.student_task_progress_id = stp.id " +
+          "JOIN db_it_dream_simulation_enrollment se ON stp.simulation_enrollment_id = se.id " +
+          "WHERE se.student_id = :studentId",
+      nativeQuery = true)
+  void deleteAllByStudentId(@Param("studentId") Long studentId);
 
   Boolean existsByStudentTaskProgressIdAndAnswer(Long studentTaskProgressId, String answer);
-
-  Optional<StudentSubmission> findByTaskQuestionId(Long taskQuestionId);
-
-  @Modifying
-  @Query(" delete from StudentSubmission ssm where ssm.taskQuestion.id in "
-      + "(select tq.id from TaskQuestion tq where tq.task.id = :taskId)")
-  @Transactional
-  void deleteAllByStudentTaskProgressTaskId(Long taskId);
 
   @Query("select count(ssm.id) " +
       "from StudentSubmission ssm " +

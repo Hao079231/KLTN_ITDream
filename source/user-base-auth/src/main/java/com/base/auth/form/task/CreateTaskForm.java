@@ -31,7 +31,6 @@ public class CreateTaskForm {
   private String filePath;
   @ApiModelProperty(name = "videoPath")
   private String videoPath;
-  @NotNull(message = "parentId cannot be null")
   @ApiModelProperty(name = "parentId")
   private Long parentId;
   @NotNull(message = "simulationId cannot be null")

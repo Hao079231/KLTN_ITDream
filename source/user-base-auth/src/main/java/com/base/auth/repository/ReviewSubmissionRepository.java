@@ -29,16 +29,37 @@ public interface ReviewSubmissionRepository extends JpaRepository<ReviewSubmissi
       "AND rs.student.id = :studentId")
   Long countReviewBySimulationAndStudent(@Param("simulationId") Long simulationId, @Param("studentId") Long studentId);
 
-  @Transactional
-  @Modifying
-  @Query("DELETE FROM ReviewSubmission rs " +
-      "WHERE rs.studentSubmission.taskQuestion.id = :taskQuestionId")
-  void deleteAllByTaskQuestionId(@Param("taskQuestionId") Long taskQuestionId);
+//  @Transactional
+//  @Modifying
+//  @Query("DELETE FROM ReviewSubmission rs " +
+//      "WHERE rs.studentSubmission.taskQuestion.id = :taskQuestionId")
+//  void deleteAllByTaskQuestionId(@Param("taskQuestionId") Long taskQuestionId);
 
   @Transactional
   @Modifying
-  @Query("DELETE FROM ReviewSubmission rs " +
-      "WHERE rs.studentSubmission.taskQuestion.task.id = :taskId")
+  @Query(value =
+      "DELETE rs " +
+          "FROM db_it_dream_review_submission rs " +
+          "JOIN db_it_dream_student_submission ss ON rs.student_submission_id = ss.id " +
+          "WHERE ss.task_question_id = :taskQuestionId",
+      nativeQuery = true)
+  void deleteAllByTaskQuestionId(@Param("taskQuestionId") Long taskQuestionId);
+
+//  @Transactional
+//  @Modifying
+//  @Query("DELETE FROM ReviewSubmission rs " +
+//      "WHERE rs.studentSubmission.taskQuestion.task.id = :taskId")
+//  void deleteAllByTaskId(@Param("taskId") Long taskId);
+
+  @Transactional
+  @Modifying
+  @Query(value =
+      "DELETE rs " +
+          "FROM db_it_dream_review_submission rs " +
+          "JOIN db_it_dream_student_submission ss ON rs.student_submission_id = ss.id " +
+          "JOIN db_it_dream_task_question tq ON ss.task_question_id = tq.id " +
+          "WHERE tq.task_id = :taskId",
+      nativeQuery = true)
   void deleteAllByTaskId(@Param("taskId") Long taskId);
 
   ReviewSubmission findByStudentSubmissionIdAndStudentId(Long studentSubmissionId, Long studentId);
