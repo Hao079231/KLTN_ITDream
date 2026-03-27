@@ -92,14 +92,14 @@ public class SimulationController extends ABasicController{
     simulation.setStatus(ITDreamConstant.SIMULATION_STATUS_WAITING_APPROVE);
     simulation.setCategory(category);
     simulation.setEducator(educator);
-    if (!form.getVideoPath().toLowerCase().matches(ITDreamConstant.FILE_PATH_PATTERN)){
+    if (StringUtils.isNotBlank(form.getVideoPath()) && !form.getVideoPath().toLowerCase().matches(ITDreamConstant.FILE_PATH_PATTERN)){
       simulation.setVideoState(ITDreamConstant.STATE_SIMULATION_PROCESSING);
     } else {
       simulation.setVideoState(ITDreamConstant.STATE_SIMULATION_DONE);
     }
     simulationRepository.saveAndFlush(simulation);
 
-    if (!simulation.getVideoPath().toLowerCase().matches(ITDreamConstant.FILE_PATH_PATTERN)){
+    if (StringUtils.isNotBlank(form.getVideoPath()) && !simulation.getVideoPath().toLowerCase().matches(ITDreamConstant.FILE_PATH_PATTERN)){
       RequestProcessVideoMessageForm data = new RequestProcessVideoMessageForm();
       data.setId(simulation.getId());
       data.setKind(ITDreamConstant.KIND_SIMULATION);
@@ -251,28 +251,27 @@ public class SimulationController extends ABasicController{
       userBaseApiService.deleteByFilePath(simulation.getThumbnail());
     }
 
-    if (!simulation.getVideoPath().toLowerCase().matches(ITDreamConstant.FILE_PATH_PATTERN) &&
+    if (StringUtils.isNotBlank(form.getVideoPath()) &&
+        !simulation.getVideoPath().toLowerCase().matches(ITDreamConstant.FILE_PATH_PATTERN) &&
         !Objects.equals(form.getVideoPath(), simulation.getVideoPath())){
       userBaseApiService.deleteByFilePath(simulation.getVideoPath());
     }
 
     simulationMapper.fromUpdateSimulationFormToEntity(form, simulation);
-    if (!form.getVideoPath().toLowerCase().matches(ITDreamConstant.FILE_PATH_PATTERN)){
+    if (StringUtils.isNotBlank(form.getVideoPath()) && !form.getVideoPath().toLowerCase().matches(ITDreamConstant.FILE_PATH_PATTERN)){
       simulation.setVideoState(ITDreamConstant.STATE_SIMULATION_PROCESSING);
-    } else {
-      simulation.setVideoState(ITDreamConstant.STATE_SIMULATION_DONE);
-    }
-    simulation.setStatus(ITDreamConstant.SIMULATION_STATUS_WAITING_APPROVE);
-    simulationRepository.saveAndFlush(simulation);
-
-    if (!simulation.getVideoPath().toLowerCase().matches(ITDreamConstant.FILE_PATH_PATTERN)){
       RequestProcessVideoMessageForm data = new RequestProcessVideoMessageForm();
       data.setId(simulation.getId());
       data.setKind(ITDreamConstant.KIND_SIMULATION);
       data.setUrl(form.getVideoPath());
       data.setTsSecond(tsSecond);
       processVideoService.sendProcessVideoMessage(data);
+    } else {
+      simulation.setVideoState(ITDreamConstant.STATE_SIMULATION_DONE);
     }
+    simulation.setStatus(ITDreamConstant.SIMULATION_STATUS_WAITING_APPROVE);
+    simulationRepository.save(simulation);
+
     apiMessageDto.setMessage("Update success. Please wait for approval");
     return apiMessageDto;
   }

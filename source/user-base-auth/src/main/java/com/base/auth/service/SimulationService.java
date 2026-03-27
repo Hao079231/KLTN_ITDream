@@ -11,6 +11,7 @@ import com.base.auth.repository.TaskRepository;
 import java.util.List;
 import javax.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,10 +40,12 @@ public class SimulationService {
   @Autowired
   UserBaseApiService userBaseApiService;
 
+  @Transactional
   public void deleteAllBySimulation(Simulation simulation) {
     List<Task> tasks = taskRepository.findAllBySimulationId(simulation.getId());
     for (Task task : tasks){
-      taskService.deleteAllByTask(task);
+      taskService.deleteFileInTask(task);
+      taskService.deleteAllTask(task);
     }
     achievementRepository.setNullBySimulationId(simulation.getId());
     feedbackRepository.deleteAllBySimulationId(simulation.getId());
@@ -51,11 +54,11 @@ public class SimulationService {
   }
 
   public void deleteFileSimulation(Simulation simulation){
-    if (!simulation.getThumbnail().matches(ITDreamConstant.FILE_PATH_PATTERN)){
+    if (StringUtils.isNotBlank(simulation.getThumbnail()) && !simulation.getThumbnail().matches(ITDreamConstant.FILE_PATH_PATTERN)){
       userBaseApiService.deleteByFilePath(simulation.getThumbnail());
     }
 
-    if (!simulation.getVideoPath().matches(ITDreamConstant.FILE_PATH_PATTERN)){
+    if (StringUtils.isNotBlank(simulation.getVideoPath()) && !simulation.getVideoPath().matches(ITDreamConstant.FILE_PATH_PATTERN)){
       userBaseApiService.deleteByFilePath(simulation.getVideoPath());
     }
   }

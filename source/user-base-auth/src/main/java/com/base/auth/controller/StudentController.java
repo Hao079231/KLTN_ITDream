@@ -251,9 +251,9 @@ public class StudentController extends ABasicController{
     }
     achievementRepository.deleteAllByStudentId(id);
     reviewSubmissionRepository.deleteAllByStudentId(id);
-    studentSubmissionRepository.deleteAllByStudentTaskProgressSimulationEnrollmentStudentId(id);
-    questionQuizHistoryRepository.deleteAllByStudentTaskProgressSimulationEnrollmentStudentId(id);
-    studentTaskProgressRepository.deleteAllBySimulationEnrollmentStudentId(id);
+    studentSubmissionRepository.deleteAllByStudentId(id);
+    questionQuizHistoryRepository.deleteAllByStudentId(id);
+    studentTaskProgressRepository.deleteAllByStudentId(id);
     simulationEnrollmentRepository.deleteAllByStudentId(id);
     if (StringUtils.isNotBlank(student.getAccount().getAvatarPath())){
       userBaseApiService.deleteByFilePath(student.getAccount().getAvatarPath());

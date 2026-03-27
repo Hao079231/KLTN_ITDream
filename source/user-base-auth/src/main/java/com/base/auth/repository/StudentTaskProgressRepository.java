@@ -6,6 +6,7 @@ import java.util.Optional;
 import javax.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -27,7 +28,13 @@ public interface StudentTaskProgressRepository extends JpaRepository<StudentTask
   List<StudentTaskProgress> findAllByTaskId(Long taskId);
 
   @Transactional
-  void deleteAllBySimulationEnrollmentStudentId(Long studentId);
+  @Modifying
+  @Query(value =
+      "DELETE stp FROM db_it_dream_student_task_progress stp " +
+          "JOIN db_it_dream_simulation_enrollment se ON stp.simulation_enrollment_id = se.id " +
+          "WHERE se.student_id = :studentId",
+      nativeQuery = true)
+  void deleteAllByStudentId(@Param("studentId") Long studentId);
 
   Boolean existsBySimulationEnrollmentIdAndStatus(Long simulationEnrollmentId, Integer studentTaskProgress);
 }

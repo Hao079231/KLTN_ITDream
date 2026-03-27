@@ -116,11 +116,15 @@ public class TaskController extends ABasicController{
     Task task = taskMapper.fromCreateTaskFormToEntity(form);
     task.setSimulation(simulation);
     if (form.getKind().equals(ITDreamConstant.TASK_KIND_SUBTASK)){
+      if (form.getParentId() == null){
+        throw new BadRequestException("Task cannot be null", ErrorCode.TASK_ERROR_NOT_FOUND);
+      }
       Task parent = taskRepository.findById(form.getParentId())
           .orElseThrow(() -> new NotFoundException("Parent not found", ErrorCode.TASK_ERROR_NOT_FOUND));
       task.setParent(parent);
     }
-    if (StringUtils.isNotBlank(form.getVideoPath()) && form.getVideoPath().toLowerCase().startsWith(File.separator + "video")){
+
+    if (StringUtils.isNotBlank(form.getVideoPath()) && !form.getVideoPath().matches(ITDreamConstant.FILE_PATH_PATTERN)){
       task.setVideoState(ITDreamConstant.STATE_TASK_PROCESSING);
     } else {
       task.setVideoState(ITDreamConstant.STATE_TASK_DONE);
@@ -130,7 +134,7 @@ public class TaskController extends ABasicController{
     simulation.setStatus(ITDreamConstant.SIMULATION_STATUS_WAITING_APPROVE);
     simulationRepository.save(simulation);
 
-    if (StringUtils.isNotBlank(task.getVideoPath()) && task.getVideoPath().toLowerCase().startsWith(File.separator + "video")){
+    if (StringUtils.isNotBlank(task.getVideoPath()) && !task.getVideoPath().toLowerCase().matches(ITDreamConstant.FILE_PATH_PATTERN)){
       RequestProcessVideoMessageForm data = new RequestProcessVideoMessageForm();
       data.setId(task.getId());
       data.setUrl(task.getVideoPath());
@@ -250,21 +254,21 @@ public class TaskController extends ABasicController{
     }
 
     if (StringUtils.isNotBlank(form.getImagePath()) &&
-        task.getImagePath().toLowerCase().startsWith(File.separator + "image") &&
+        !task.getImagePath().toLowerCase().matches(ITDreamConstant.FILE_PATH_PATTERN) &&
         !Objects.equals(form.getImagePath(), task.getImagePath())){
       userBaseApiService.deleteByFilePath(task.getImagePath());
       task.setImagePath(form.getImagePath());
     }
 
     if (StringUtils.isNotBlank(form.getFilePath()) &&
-        task.getFilePath().toLowerCase().startsWith(File.separator + "document") &&
+        !task.getFilePath().toLowerCase().matches(ITDreamConstant.FILE_PATH_PATTERN) &&
         !Objects.equals(form.getFilePath(), task.getFilePath())){
       userBaseApiService.deleteByFilePath(task.getFilePath());
       task.setFilePath(form.getFilePath());
     }
 
     if (StringUtils.isNotBlank(form.getVideoPath()) &&
-        task.getVideoPath().toLowerCase().startsWith(File.separator + "video") &&
+        !task.getVideoPath().toLowerCase().matches(ITDreamConstant.FILE_PATH_PATTERN) &&
         !Objects.equals(form.getVideoPath(), task.getVideoPath())){
       userBaseApiService.deleteByFilePath(task.getVideoPath());
       task.setVideoPath(form.getVideoPath());
@@ -273,7 +277,7 @@ public class TaskController extends ABasicController{
     taskMapper.fromUpdateTaskFormToEntity(form, task);
     taskRepository.save(task);
 
-    if (StringUtils.isNotBlank(form.getVideoPath()) && task.getVideoPath().toLowerCase().startsWith(File.separator + "video")){
+    if (StringUtils.isNotBlank(form.getVideoPath()) && !task.getVideoPath().toLowerCase().matches(ITDreamConstant.FILE_PATH_PATTERN)){
       RequestProcessVideoMessageForm data = new RequestProcessVideoMessageForm();
       data.setId(task.getId());
       data.setKind(ITDreamConstant.KIND_TASK);
@@ -298,22 +302,8 @@ public class TaskController extends ABasicController{
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Task task = taskRepository.findById(id).orElseThrow(()
     -> new NotFoundException("Task not found", ErrorCode.TASK_ERROR_NOT_FOUND));
-    if (StringUtils.isNotBlank(task.getImagePath()) &&
-        task.getImagePath().toLowerCase().startsWith(File.separator + "image")){
-      userBaseApiService.deleteByFilePath(task.getImagePath());
-    }
-
-    if (StringUtils.isNotBlank(task.getFilePath()) &&
-        task.getFilePath().toLowerCase().startsWith(File.separator + "document")){
-      userBaseApiService.deleteByFilePath(task.getFilePath());
-    }
-
-    if (StringUtils.isNotBlank(task.getVideoPath()) &&
-        task.getVideoPath().toLowerCase().startsWith(File.separator + "video")){
-      userBaseApiService.deleteByFilePath(task.getVideoPath());
-    }
-
-    taskService.deleteAllByTask(task);
+    taskService.deleteFileInTask(task);
+    taskService.deleteAllTask(task);
     Simulation simulation = task.getSimulation();
     simulation.setStatus(ITDreamConstant.SIMULATION_STATUS_WAITING_APPROVE);
     simulationRepository.save(simulation);

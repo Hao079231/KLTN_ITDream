@@ -29,7 +29,6 @@ public class CreateSimulationForm {
   @NotEmpty(message = "thumbnail cannot be null")
   @ApiModelProperty(name = "thumbnail")
   private String thumbnail;
-  @NotEmpty(message = "videoPath cannot be null")
   @ApiModelProperty(name = "videoPath")
   private String videoPath;
   @NotNull(message = "categoryId cannot be null")
