@@ -45,6 +45,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .antMatchers("/v1/category/auto-complete").permitAll()
                 .antMatchers("/v1/simulation/guest_list", "/v1/simulation/guest_get/**").permitAll()
                 .antMatchers("/v1/task/student_list").permitAll()
+                .antMatchers("/v1/organization/guest_list").permitAll()
                 .antMatchers("/**").authenticated()
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().exceptionHandling().accessDeniedHandler(new OAuth2AccessDeniedHandler());
