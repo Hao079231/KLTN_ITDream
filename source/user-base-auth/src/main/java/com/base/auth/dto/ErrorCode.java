@@ -107,6 +107,7 @@ public class ErrorCode {
      * */
     public static final String SIMULATION_ENROLLMENT_ERROR_NOT_FOUND = "SIMULATION-ENROLLMENT-ERROR-0000";
     public static final String SIMULATION_ENROLLMENT_ERROR_NOT_CREATE = "SIMULATION-ENROLLMENT-ERROR-0001";
+    public static final String SIMULATION_ENROLLMENT_ERROR_EXIST = "SIMULATION-ENROLLMENT-ERROR-0002";
 
     /**
      * Starting error code Student task progress

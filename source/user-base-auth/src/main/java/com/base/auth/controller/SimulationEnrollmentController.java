@@ -64,6 +64,10 @@ public class SimulationEnrollmentController extends ABasicController{
       throw new UnauthorizationException("User is not a student");
     }
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
+    Boolean existSimulationEnrollment = simulationEnrollmentRepository.existsBySimulationIdAndStudentId(form.getSimulationId(), getCurrentUser());
+    if (existSimulationEnrollment){
+      throw new BadRequestException("Simulation enrollment already exist", ErrorCode.SIMULATION_ENROLLMENT_ERROR_EXIST);
+    }
     Student student = studentRepository.findById(getCurrentUser()).orElseThrow(()
     -> new NotFoundException("Student not found", ErrorCode.USER_ERROR_NOT_FOUND));
     Simulation simulation = simulationRepository.findById(form.getSimulationId()).orElseThrow(()

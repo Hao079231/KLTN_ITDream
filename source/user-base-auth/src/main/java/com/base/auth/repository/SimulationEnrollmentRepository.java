@@ -3,6 +3,7 @@ package com.base.auth.repository;
 import com.base.auth.model.SimulationEnrollment;
 import java.util.Optional;
 import javax.transaction.Transactional;
+import javax.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
@@ -17,4 +18,6 @@ public interface SimulationEnrollmentRepository extends JpaRepository<Simulation
   void deleteAllByStudentId(Long studentId);
 
   Optional<SimulationEnrollment> findByStudentIdAndSimulationId(Long studentId, Long simulationId);
+
+  Boolean existsBySimulationIdAndStudentId(Long simulationId, long currentUser);
 }
