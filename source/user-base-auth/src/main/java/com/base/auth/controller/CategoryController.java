@@ -12,6 +12,7 @@ import com.base.auth.form.category.UpdateCategoryForm;
 import com.base.auth.mapper.CategoryMapper;
 import com.base.auth.model.Category;
 import com.base.auth.model.criteria.CategoryCriteria;
+import com.base.auth.repository.BlogRepository;
 import com.base.auth.repository.SimulationRepository;
 import com.base.auth.repository.CategoryRepository;
 import java.util.List;
@@ -47,6 +48,9 @@ public class CategoryController extends ABasicController{
 
   @Autowired
   SimulationRepository simulationRepository;
+
+  @Autowired
+  BlogRepository blogRepository;
 
   @PostMapping(value = "/create", produces= MediaType.APPLICATION_JSON_VALUE)
   @PreAuthorize("hasRole('CA_C')")
@@ -117,6 +121,11 @@ public class CategoryController extends ABasicController{
     -> new NotFoundException("Category not found", ErrorCode.CATEGORY_ERROR_NOT_FOUND));
     Boolean existCourse = simulationRepository.existsByCategoryId(id);
     if (existCourse){
+      throw new BadRequestException("Category cannot be deleted", ErrorCode.CATEGORY_ERROR_DELETE);
+    }
+
+    Boolean existBlog = blogRepository.existsByCategoryId(id);
+    if (existBlog){
       throw new BadRequestException("Category cannot be deleted", ErrorCode.CATEGORY_ERROR_DELETE);
     }
     categoryRepository.delete(category);

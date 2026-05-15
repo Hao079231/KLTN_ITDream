@@ -1,5 +1,6 @@
 package com.base.auth.form.task;
 
+import com.base.auth.validation.TaskType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import javax.validation.constraints.NotEmpty;
@@ -25,6 +26,9 @@ public class UpdateTaskForm {
   private String description;
   @ApiModelProperty(name = "content")
   private String content;
+  @TaskType
+  @ApiModelProperty(name = "type")
+  private Integer type;
   @ApiModelProperty(name = "imagePath")
   private String imagePath;
   @ApiModelProperty(name = "filePath")

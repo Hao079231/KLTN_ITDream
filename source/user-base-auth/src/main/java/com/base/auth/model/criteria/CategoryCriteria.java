@@ -14,6 +14,7 @@ import org.springframework.data.jpa.domain.Specification;
 @Data
 public class CategoryCriteria {
   private String name;
+  private Integer kind;
   public Specification<Category> getSpecification() {
     return new Specification<Category>() {
       private static final long serialVersionUID = 1L;
@@ -25,6 +26,10 @@ public class CategoryCriteria {
         if (!StringUtils.isBlank(getName()))
         {
           predicates.add(cb.like(cb.lower(root.get("name")),"%"+ getName()+"%"));
+        }
+
+        if (getKind() != null){
+          predicates.add(cb.equal(root.get("kind"), getKind()));
         }
 
         return cb.and(predicates.toArray(new Predicate[predicates.size()]));

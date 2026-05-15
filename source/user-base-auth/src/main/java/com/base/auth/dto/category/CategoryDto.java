@@ -6,4 +6,5 @@ import lombok.Data;
 @Data
 public class CategoryDto extends ABasicAdminDto {
   private String name;
+  private Integer kind;
 }

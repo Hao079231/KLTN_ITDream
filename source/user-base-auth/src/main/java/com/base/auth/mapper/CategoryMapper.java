@@ -19,11 +19,13 @@ import org.mapstruct.ReportingPolicy;
     nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface CategoryMapper {
   @Mapping(source = "name", target = "name")
+  @Mapping(source = "kind", target = "kind")
   @BeanMapping(ignoreByDefault = true)
   Category fromCreateCategoryFormToEntity(CreateCategoryForm createCategoryForm);
 
   @Mapping(source = "id", target = "id")
   @Mapping(source = "name", target = "name")
+  @Mapping(source = "kind", target = "kind")
   @Mapping(source = "createdDate", target = "createdDate")
   @Mapping(source = "modifiedDate", target = "modifiedDate")
   @BeanMapping(ignoreByDefault = true)
@@ -32,6 +34,7 @@ public interface CategoryMapper {
 
   @Mapping(source = "id", target = "id")
   @Mapping(source = "name", target = "name")
+  @Mapping(source = "kind", target = "kind")
   @BeanMapping(ignoreByDefault = true)
   @Named("fromEntityToCategoryAutoCompleteDto")
   CategoryAutoCompleteDto fromEntityToCategoryAutoCompleteDto(Category category);
@@ -46,5 +49,6 @@ public interface CategoryMapper {
 
   @Mapping(source = "id", target = "id")
   @Mapping(source = "name", target = "name")
+  @Mapping(source = "kind", target = "kind")
   void fromUpdateCategoryFormToEntity(UpdateCategoryForm updateCategoryForm, @MappingTarget Category category);
 }
