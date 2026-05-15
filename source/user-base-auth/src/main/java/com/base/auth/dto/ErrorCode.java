@@ -168,4 +168,17 @@ public class ErrorCode {
      * */
     public static final String ORGANIZATION_ERROR_NOT_FOUND = "ORGANIZATION-ERROR-0000";
     public static final String ORGANIZATION_ERROR_EXIST = "ORGANIZATION-ERROR-0001";
+
+
+    /**
+     * Starting error code Blog
+     * */
+    public static final String BLOG_ERROR_NOT_FOUND = "BLOG-ERROR-0000";
+    public static final String BLOG_ERROR_EXIST = "BLOG-ERROR-0001";
+    public static final String BLOG_ERROR_NAME_SUBJECT_NOT_NULL = "BLOG-ERROR-0002";
+    public static final String BLOG_ERROR_CATEGORY_PARENT_BOTH_NULL = "BLOG-ERROR-0003";
+    public static final String BLOG_ERROR_NAME_NOT_NULL = "BLOG-ERROR-0004";
+    public static final String BLOG_ERROR_SUBJECT_NOT_NULL = "BLOG-ERROR-0005";
+    public static final String BLOG_ERROR_NAME_SUBJECT_EXIST = "BLOG-ERROR-0006";
+    public static final String BLOG_ERROR_CATEGORY_PARENT_BOTH_NOT_NULL = "BLOG-ERROR-0007";
 }

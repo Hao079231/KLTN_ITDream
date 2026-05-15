@@ -17,12 +17,14 @@ import com.base.auth.form.educator.UpdateProfileEducatorForm;
 import com.base.auth.mapper.AccountMapper;
 import com.base.auth.mapper.EducatorMapper;
 import com.base.auth.model.Account;
+import com.base.auth.model.Blog;
 import com.base.auth.model.Organization;
 import com.base.auth.model.Simulation;
 import com.base.auth.model.Educator;
 import com.base.auth.model.Group;
 import com.base.auth.model.criteria.EducatorCriteria;
 import com.base.auth.repository.AccountRepository;
+import com.base.auth.repository.BlogRepository;
 import com.base.auth.repository.EducatorRepository;
 import com.base.auth.repository.GroupRepository;
 import com.base.auth.repository.OrganizationRepository;
@@ -83,6 +85,9 @@ public class EducatorController extends ABasicController{
 
   @Autowired
   OrganizationRepository organizationRepository;
+
+  @Autowired
+  BlogRepository blogRepository;
 
   @PostMapping(value = "/signup", produces= MediaType.APPLICATION_JSON_VALUE)
   public ApiMessageDto<OtpDto> create(@Valid @RequestBody SignUpEducatorForm signUpEducatorForm, BindingResult bindingResult)
@@ -248,6 +253,21 @@ public class EducatorController extends ABasicController{
     List<Simulation> simulations = simulationRepository.findAllByEducatorId(id);
     for (Simulation simulation : simulations){
       simulationService.deleteAllBySimulation(simulation);
+    }
+
+    List<Blog> blogs = blogRepository.findAllByEducatorId(id);
+    for (Blog blog : blogs){
+      if (!blog.getImage().toLowerCase().matches(ITDreamConstant.FILE_PATH_PATTERN)){
+        userBaseApiService.deleteByFilePath(blog.getImage());
+      }
+      List<Blog> subjects = blogRepository.findAllByParentId(blog.getId());
+      for (Blog subject : subjects){
+        if (!subject.getImage().toLowerCase().matches(ITDreamConstant.FILE_PATH_PATTERN)){
+          userBaseApiService.deleteByFilePath(blog.getImage());
+        }
+        blogRepository.delete(subject);
+      }
+      blogRepository.delete(blog);
     }
 
     if (StringUtils.isNotBlank(educator.getAccount().getAvatarPath())){

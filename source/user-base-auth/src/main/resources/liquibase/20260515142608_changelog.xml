@@ -1,0 +1,56 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet author="Authentication" id="1778855175894-1">
+        <createTable tableName="db_it_dream_blog">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="db_it_dream_blogPK"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="subject" type="VARCHAR(255)"/>
+            <column name="content" type="TEXT"/>
+            <column name="image" type="VARCHAR(255)"/>
+            <column name="parent_id" type="BIGINT"/>
+            <column name="category_id" type="BIGINT"/>
+            <column name="educator_id" type="BIGINT"/>
+            <column name="status" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="Authentication" id="1778855175894-2">
+        <addColumn tableName="db_it_dream_category">
+            <column name="kind" type="integer" afterColumn="name"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="Authentication" id="1778855175894-3">
+        <addColumn tableName="db_it_dream_task">
+            <column name="type" type="integer" afterColumn="kind"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="Authentication" id="1778855175894-4">
+        <addForeignKeyConstraint baseColumnNames="category_id" baseTableName="db_it_dream_blog" constraintName="FKo7cw3ohy5bklhf3n36l6jw77h" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="db_it_dream_category" validate="true"/>
+    </changeSet>
+    <changeSet author="Authentication" id="1778855175894-5">
+        <addForeignKeyConstraint baseColumnNames="educator_id" baseTableName="db_it_dream_blog" constraintName="FKpt6cxx116sp6njkp8jsmp0mrs" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="db_it_dream_educator" validate="true"/>
+    </changeSet>
+    <changeSet author="Authentication" id="1778855175894-6">
+        <addForeignKeyConstraint baseColumnNames="parent_id" baseTableName="db_it_dream_blog" constraintName="FKtapa2ptilcbmol6e84yta4kv7" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="db_it_dream_blog" validate="true"/>
+    </changeSet>
+    <changeSet author="Authentication" id="1778856340053-1">
+        <addColumn tableName="db_it_dream_blog">
+            <column name="notice" type="varchar(255)" afterColumn="content"/>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>

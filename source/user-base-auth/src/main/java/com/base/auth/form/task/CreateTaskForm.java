@@ -1,5 +1,7 @@
 package com.base.auth.form.task;
 
+import com.base.auth.validation.TaskKind;
+import com.base.auth.validation.TaskType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import javax.validation.constraints.NotEmpty;
@@ -23,8 +25,12 @@ public class CreateTaskForm {
   @NotEmpty(message = "content cannot be null")
   @ApiModelProperty(name = "content")
   private String content;
+  @TaskKind
   @ApiModelProperty(name = "kind")
   private Integer kind;
+  @TaskType
+  @ApiModelProperty(name = "type")
+  private Integer type;
   @ApiModelProperty(name = "imagePath")
   private String imagePath;
   @ApiModelProperty(name = "filePath")
