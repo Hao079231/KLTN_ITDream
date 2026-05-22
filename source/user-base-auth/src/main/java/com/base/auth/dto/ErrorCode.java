@@ -25,12 +25,14 @@ public class ErrorCode {
      * */
     public static final String GROUP_ERROR_NOT_FOUND = "ERROR-GROUP-0000";
     public static final String GROUP_ERROR_EXIST = "ERROR-GROUP-0001";
+    public static final String GROUP_ERROR_DELETE = "ERROR-GROUP-0002";
 
     /**
      * Starting error code Permission
      * */
     public static final String PERMISSION_ERROR_NOT_FOUND = "ERROR-PERMISSION-0000";
     public static final String PERMISSION_ERROR_EXIST = "ERROR-PERMISSION-0001";
+    public static final String PERMISSION_ERROR_DELETE = "ERROR-PERMISSION-002";
 
     /**
      * Starting error code USER

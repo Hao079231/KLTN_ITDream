@@ -21,4 +21,6 @@ public interface AccountRepository extends JpaRepository<Account, Long>, JpaSpec
     Boolean existsByEmail(String email);
 
     Boolean existsByPhone(String phone);
+
+    Boolean existsByGroupId(Long groupId);
 }

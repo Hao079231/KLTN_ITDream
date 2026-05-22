@@ -9,6 +9,7 @@ import com.base.auth.form.group.CreateGroupForm;
 import com.base.auth.form.group.UpdateGroupForm;
 import com.base.auth.model.Group;
 import com.base.auth.model.Permission;
+import com.base.auth.repository.AccountRepository;
 import com.base.auth.repository.GroupRepository;
 import com.base.auth.repository.PermissionRepository;
 import com.base.auth.dto.ResponseListDto;
@@ -20,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -38,6 +40,9 @@ public class GroupController extends ABasicController{
     GroupRepository groupRepository;
     @Autowired
     PermissionRepository permissionRepository;
+
+    @Autowired
+    AccountRepository accountRepository;
 
     @PostMapping(value = "/create", produces= MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('GR_C')")
@@ -125,6 +130,26 @@ public class GroupController extends ABasicController{
         ResponseListDto<Group> responseListDto = new ResponseListDto(groups.getContent() , groups.getTotalElements(), groups.getTotalPages());
         apiMessageDto.setData(responseListDto);
         apiMessageDto.setMessage("Get list group success");
+        return apiMessageDto;
+    }
+
+    @Transactional
+    @DeleteMapping(value = "/delete/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('GR_D')")
+    public ApiMessageDto<String> delete(@PathVariable("id") Long id){
+        if (!isSuperAdmin()){
+            throw new UnauthorizationException("Not allow delete");
+        }
+        ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
+        Group group = groupRepository.findById(id)
+            .orElseThrow(() -> new NotFoundException("Group not found", ErrorCode.GROUP_ERROR_NOT_FOUND));
+        Boolean usedGroup = accountRepository.existsByGroupId(id);
+        if (usedGroup){
+            throw new BadRequestException("Cannot delete group", ErrorCode.GROUP_ERROR_DELETE);
+        }
+        group.getPermissions().clear();
+        groupRepository.delete(group);
+        apiMessageDto.setMessage("Delete group success");
         return apiMessageDto;
     }
 }

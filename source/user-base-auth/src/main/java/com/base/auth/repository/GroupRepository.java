@@ -20,4 +20,12 @@ public interface GroupRepository extends JpaRepository<Group, Long>, JpaSpecific
    Group findFirstByKind(int kind);
 
   Boolean existsByName(String name);
+
+   @Query(
+       "SELECT COUNT(r) > 0 " +
+           "FROM Group g " +
+           "JOIN g.permissions p " +
+           "WHERE p.id = :permissionId"
+   )
+   Boolean existsByPermissionId(@Param("permissionId") Long permissionId);
 }
