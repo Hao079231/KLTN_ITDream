@@ -86,7 +86,7 @@ public class BlogController extends ABasicController{
         throw new BadRequestException("Cannot create blog if name is null", ErrorCode.BLOG_ERROR_NAME_NOT_NULL);
       }
       if (StringUtils.isNotEmpty(createBlogForm.getSubject())){
-        throw new BadRequestException("Cannot create blog if both category and parent are exist", ErrorCode.BLOG_ERROR_NAME_SUBJECT_EXIST);
+        throw new BadRequestException("Cannot create blog if both category and subject are exist", ErrorCode.BLOG_ERROR_NAME_SUBJECT_EXIST);
       }
       Boolean existBlog = blogRepository.existsByNameAndCategoryIdAndEducatorId(createBlogForm.getName(), createBlogForm.getCategoryId(), getCurrentUser());
       if (existBlog){
@@ -94,7 +94,7 @@ public class BlogController extends ABasicController{
       }
     } else if (createBlogForm.getParentId() != null){
       if (nameBlogNotNull){
-        throw new BadRequestException("Cannot create blog if both category and parent are exist", ErrorCode.BLOG_ERROR_NAME_SUBJECT_EXIST);
+        throw new BadRequestException("Cannot create blog if both parent and name are exist", ErrorCode.BLOG_ERROR_NAME_SUBJECT_EXIST);
       }
       if (StringUtils.isEmpty(createBlogForm.getSubject())){
         throw new BadRequestException("Cannot create blog if subject is null", ErrorCode.BLOG_ERROR_SUBJECT_NOT_NULL);
