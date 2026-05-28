@@ -1,7 +1,6 @@
 package com.base.auth.model.criteria;
 
 import com.base.auth.model.Simulation;
-import com.base.auth.model.Simulation;
 import com.base.auth.model.Task;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +19,7 @@ public class TaskCriteria {
   @NotNull(message = "simulationId is required")
   private Long simulationId;
   private Integer status;
+  private Integer kind;
 
   public Specification<Task> getSpecification() {
     return new Specification<Task>() {
@@ -31,6 +31,10 @@ public class TaskCriteria {
 
         Join<Task, Simulation> simulationJoin = root.join("simulation", JoinType.INNER);
         predicates.add(cb.equal(simulationJoin.get("id"), getSimulationId()));
+
+        if (getKind() != null){
+          predicates.add(cb.equal(simulationJoin.get("kind"), getKind()));
+        }
 
         if (getStatus() != null){
           predicates.add(cb.equal(simulationJoin.get("status"), getStatus()));
