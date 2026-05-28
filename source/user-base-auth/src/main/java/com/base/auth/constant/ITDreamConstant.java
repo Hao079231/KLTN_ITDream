@@ -47,6 +47,9 @@ public class ITDreamConstant {
     public static final Integer KIND_SIMULATION = 1;
     public static final Integer KIND_TASK = 2;
 
+    public static final Boolean TASK_SHOW_WITH_SIMULATION = true;
+    public static final Boolean TASK_HIDE_WITH_SIMULATION = false;
+
     public static final Integer SIMULATION_LEVEL_BEGINNER = 1;
     public static final Integer SIMULATION_LEVEL_INTERMEDIATE = 2;
     public static final Integer SIMULATION_LEVEL_ADVANCED = 3;

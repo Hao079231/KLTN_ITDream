@@ -20,6 +20,7 @@ public class TaskCriteria {
   private Long simulationId;
   private Integer status;
   private Integer kind;
+  private Boolean isShowSimulation;
 
   public Specification<Task> getSpecification() {
     return new Specification<Task>() {

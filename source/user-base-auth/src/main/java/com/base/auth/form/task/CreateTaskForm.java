@@ -31,6 +31,9 @@ public class CreateTaskForm {
   @TaskType
   @ApiModelProperty(name = "type")
   private Integer type;
+  @NotNull(message = "isShowSimulation cannot be null")
+  @ApiModelProperty(name = "isShowSimulation")
+  private Boolean isShowSimulation;
   @ApiModelProperty(name = "imagePath")
   private String imagePath;
   @ApiModelProperty(name = "filePath")

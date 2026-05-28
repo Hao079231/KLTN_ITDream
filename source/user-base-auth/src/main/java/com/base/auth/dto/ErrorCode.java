@@ -84,8 +84,8 @@ public class ErrorCode {
     public static final String TASK_ERROR_NOT_FOUND = "TASK-ERROR-0000";
     public static final String TASK_ERROR_EXIST = "TASK-ERROR-0001";
     public static final String TASK_ERROR_POSITION = "TASK-ERROR-0002";
-    public static final String TASK_ERROR_SAME_CHAPTER = "TASK-ERROR-0003";
-    public static final String TASK_ERROR_CREATE = "TASK-ERROR-0004";
+    public static final String TASK_ERROR_PARENT_KIND_TASK = "TASK-ERROR-0003";
+    public static final String TASK_ERROR_MUST_HAVE_PARENT = "TASK-ERROR-0004";
     public static final String TASK_ERROR_UPDATE = "TASK-ERROR-0005";
 
     /**

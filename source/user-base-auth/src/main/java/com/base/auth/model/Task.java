@@ -35,6 +35,9 @@ public class Task {
   private String content;
   private Integer kind; // 1 - task, 2 - subtask
   private Integer type; // 1 - content, 2 - question, 3 - answer
+  @Column(name = "is_show_simulation")
+  private Boolean isShowSimulation; // true - show, false - hide
+  private Integer orderInParent;
   private String videoPath;
   private String filePath;
   private String imagePath;

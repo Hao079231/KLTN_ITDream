@@ -14,6 +14,7 @@ import com.base.auth.exception.UnauthorizationException;
 import com.base.auth.form.RequestProcessVideoMessageForm;
 import com.base.auth.form.task.CreateTaskForm;
 import com.base.auth.form.task.UpdateTaskForm;
+import com.base.auth.form.task.UpdateTaskPositionForm;
 import com.base.auth.mapper.TaskMapper;
 import com.base.auth.model.Simulation;
 import com.base.auth.model.Task;
@@ -101,12 +102,7 @@ public class TaskController extends ABasicController{
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Simulation simulation = simulationRepository.findById(form.getSimulationId())
         .orElseThrow(() -> new NotFoundException("Simulation not found", ErrorCode.SIMULATION_ERROR_NOT_FOUND));
-    if (form.getKind().equals(ITDreamConstant.TASK_KIND_TASK)){
-      Boolean existTask = taskRepository.existsBySimulationIdAndName(form.getSimulationId(), form.getName());
-      if (existTask){
-        throw new BadRequestException("Task name already exist", ErrorCode.TASK_ERROR_EXIST);
-      }
-    } else if (form.getKind().equals(ITDreamConstant.TASK_KIND_SUBTASK)){
+    if (form.getKind().equals(ITDreamConstant.TASK_KIND_SUBTASK)){
       Boolean existSubtask = taskRepository.existsBySimulationIdAndNameAndTitle(form.getSimulationId(), form.getName(), form.getTitle());
       if (existSubtask){
         throw new BadRequestException("Subtask title already exist", ErrorCode.TASK_ERROR_EXIST);
@@ -115,13 +111,23 @@ public class TaskController extends ABasicController{
 
     Task task = taskMapper.fromCreateTaskFormToEntity(form);
     task.setSimulation(simulation);
-    if (form.getKind().equals(ITDreamConstant.TASK_KIND_SUBTASK)){
+    if (form.getKind().equals(ITDreamConstant.TASK_KIND_TASK)) {
+      Integer order = taskService.generateOrderInParent(simulation.getId(), null, form.getKind(), form.getIsShowSimulation());
+
+      task.setOrderInParent(order);
+    }
+
+    if (form.getKind().equals(ITDreamConstant.TASK_KIND_SUBTASK)) {
+      task.setIsShowSimulation(ITDreamConstant.TASK_HIDE_WITH_SIMULATION);
       if (form.getParentId() == null){
-        throw new BadRequestException("Task cannot be null", ErrorCode.TASK_ERROR_NOT_FOUND);
+        throw new NotFoundException("Task cannot be null", ErrorCode.TASK_ERROR_NOT_FOUND);
       }
+
       Task parent = taskRepository.findById(form.getParentId())
           .orElseThrow(() -> new NotFoundException("Parent not found", ErrorCode.TASK_ERROR_NOT_FOUND));
       task.setParent(parent);
+      Integer order = taskService.generateOrderInParent(simulation.getId(), parent.getId(), form.getKind(), ITDreamConstant.TASK_HIDE_WITH_SIMULATION);
+      task.setOrderInParent(order);
     }
 
     if (StringUtils.isNotBlank(form.getVideoPath()) && !form.getVideoPath().matches(ITDreamConstant.FILE_PATH_PATTERN)){
@@ -216,6 +222,21 @@ public class TaskController extends ABasicController{
     return apiMessageDto;
   }
 
+  @GetMapping(value = "/guest_list", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ApiMessageDto<ResponseListDto<List<TaskDisplayDto>>> listByGuest(TaskCriteria criteria, Pageable pageable){
+    ApiMessageDto<ResponseListDto<List<TaskDisplayDto>>> apiMessageDto = new ApiMessageDto<>();
+    ResponseListDto<List<TaskDisplayDto>> responseListDto = new ResponseListDto<>();
+    criteria.setKind(ITDreamConstant.TASK_KIND_TASK);
+    criteria.setIsShowSimulation(ITDreamConstant.TASK_SHOW_WITH_SIMULATION);
+    Page<Task> tasks = taskRepository.findAll(criteria.getSpecification(), pageable);
+    responseListDto.setContent(taskMapper.fromEntityToTaskDisplayDtoList(tasks.getContent()));
+    responseListDto.setTotalElements(tasks.getTotalElements());
+    responseListDto.setTotalPages(tasks.getTotalPages());
+    apiMessageDto.setData(responseListDto);
+    apiMessageDto.setMessage("Get list task success");
+    return apiMessageDto;
+  }
+
   @GetMapping(value = "/student_get/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   @PreAuthorize("hasRole('TA_ST_V')")
   public ApiMessageDto<TaskStudentDto> getByStudent(@PathVariable("id") Long id){
@@ -239,13 +260,7 @@ public class TaskController extends ABasicController{
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Task task = taskRepository.findById(form.getId()).orElseThrow(()
     -> new NotFoundException("Task not found", ErrorCode.TASK_ERROR_NOT_FOUND));
-
-    if (task.getKind().equals(ITDreamConstant.TASK_KIND_TASK)){
-      Boolean existTask = taskRepository.existsBySimulationIdAndName(task.getSimulation().getId(), form.getName());
-      if (existTask){
-        throw new BadRequestException("Task name already exist", ErrorCode.TASK_ERROR_EXIST);
-      }
-    } else if (task.getKind().equals(ITDreamConstant.TASK_KIND_SUBTASK)){
+    if (task.getKind().equals(ITDreamConstant.TASK_KIND_SUBTASK) && !form.getTitle().equals(task.getTitle())){
       Boolean existSubtask = taskRepository.existsBySimulationIdAndNameAndTitle(task.getSimulation().getId(),
           form.getName(), form.getTitle());
       if (existSubtask){
@@ -308,6 +323,21 @@ public class TaskController extends ABasicController{
     simulation.setStatus(ITDreamConstant.SIMULATION_STATUS_WAITING_APPROVE);
     simulationRepository.save(simulation);
     apiMessageDto.setMessage("Delete task success");
+    return apiMessageDto;
+  }
+
+  @PutMapping(value = "/update-order", produces = MediaType.APPLICATION_JSON_VALUE)
+  @PreAuthorize("hasRole('TA_ED_UO')")
+  public ApiMessageDto<String> updateOrder(@Valid @RequestBody UpdateTaskPositionForm form, BindingResult bindingResult){
+    ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
+    Task task = taskRepository.findById(form.getId())
+        .orElseThrow(() -> new NotFoundException("Task not found", ErrorCode.TASK_ERROR_NOT_FOUND));
+    if (task.getKind().equals(ITDreamConstant.TASK_KIND_TASK)){
+      taskService.updateTaskPosition(task, form);
+    } else {
+      taskService.updateSubtaskPosition(task, form);
+    }
+    apiMessageDto.setMessage("Update order success");
     return apiMessageDto;
   }
 }
