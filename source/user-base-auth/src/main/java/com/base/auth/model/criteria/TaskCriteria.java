@@ -34,7 +34,11 @@ public class TaskCriteria {
         predicates.add(cb.equal(simulationJoin.get("id"), getSimulationId()));
 
         if (getKind() != null){
-          predicates.add(cb.equal(simulationJoin.get("kind"), getKind()));
+          predicates.add(cb.equal(root.get("kind"), getKind()));
+        }
+
+        if (getIsShowSimulation() != null){
+          predicates.add(cb.equal(root.get("isShowSimulation"), getIsShowSimulation()));
         }
 
         if (getStatus() != null){
