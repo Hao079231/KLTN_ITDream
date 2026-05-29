@@ -79,46 +79,33 @@ public class TaskService {
     }
   }
 
-  public Integer generateOrderInParent(Long simulationId, Long parentId, Integer kind, Boolean isShowSimulation){
-    Integer maxOrder = taskRepository.findMaxOrderInParent(simulationId, parentId, kind, isShowSimulation);
+  public Integer generateOrderInParent(Long simulationId, Long parentId, Integer kind){
+    Integer maxOrder = taskRepository.findMaxOrderInParent(simulationId, parentId, kind);
     return maxOrder == null ? 1 : maxOrder + 1;
   }
 
+  @Transactional
   public void updateTaskPosition(Task task, UpdateTaskPositionForm form){
-    Boolean oldShow = task.getIsShowSimulation();
-    Boolean newShow = form.getIsShowSimulation();
 
-    Integer oldOrder = task.getOrderInParent();
+    if(form.getNewOrder() == null || form.getNewOrder() < 1){
+      throw new BadRequestException("New order invalid",ErrorCode.TASK_ERROR_POSITION);
+    }
 
-    Long simulationId = task.getSimulation().getId();
-
-    taskRepository.decreaseOrderAfterRemove(simulationId, null,ITDreamConstant.TASK_KIND_TASK,oldShow,oldOrder);
-
-    if(!oldShow.equals(newShow)){
-      Integer maxOrder = generateOrderInParent(simulationId,null,ITDreamConstant.TASK_KIND_TASK,newShow);
-
-      task.setOrderInParent(maxOrder);
-      task.setIsShowSimulation(newShow);
-
-      taskRepository.save(task);
-
+    if(task.getOrderInParent().equals(form.getNewOrder())){
       return;
     }
 
-    taskRepository.increaseOrderForInsert(simulationId,null, ITDreamConstant.TASK_KIND_TASK, newShow,form.getNewOrder());
-
+    if(form.getNewOrder() < task.getOrderInParent()){
+      taskRepository.increaseOrderWhenMoveUp(task.getSimulation().getId(),null,ITDreamConstant.TASK_KIND_TASK,form.getNewOrder(),task.getOrderInParent());
+    } else {
+      taskRepository.decreaseOrderWhenMoveDown(task.getSimulation().getId(),null,ITDreamConstant.TASK_KIND_TASK, task.getOrderInParent(), form.getNewOrder());
+    }
     task.setOrderInParent(form.getNewOrder());
-
     taskRepository.save(task);
   }
 
+  @Transactional
   public void updateSubtaskPosition(Task task, UpdateTaskPositionForm form){
-
-    if(form.getIsShowSimulation()){
-      throw new BadRequestException(
-          "Subtask cannot move to show simulation list", ErrorCode.TASK_ERROR_POSITION);
-    }
-
     if(form.getNewParentId() == null){
       throw new BadRequestException("Subtask must have parent",ErrorCode.TASK_ERROR_MUST_HAVE_PARENT);
     }
@@ -127,62 +114,47 @@ public class TaskService {
         .orElseThrow(() -> new NotFoundException("Parent not found",ErrorCode.TASK_ERROR_NOT_FOUND));
 
     if(newParent.getKind().equals(ITDreamConstant.TASK_KIND_SUBTASK)){
-      throw new BadRequestException("Parent must be task", ErrorCode.TASK_ERROR_PARENT_KIND_TASK);
+      throw new BadRequestException("Parent must be task",ErrorCode.TASK_ERROR_PARENT_KIND_TASK);
     }
 
-    if(newParent.getIsShowSimulation()){
-      throw new BadRequestException("Cannot move subtask into show simulation task", ErrorCode.TASK_ERROR_POSITION);
+    if(!newParent.getSimulation().getId().equals(task.getSimulation().getId())){
+      throw new BadRequestException("Cannot move subtask to another simulation",ErrorCode.TASK_ERROR_POSITION);
     }
 
-    Long simulationId = task.getSimulation().getId();
-
-    Long oldParentId = task.getParent().getId();
-
-    Integer oldOrder = task.getOrderInParent();
-
-    taskRepository.decreaseOrderAfterRemove(simulationId,oldParentId,ITDreamConstant.TASK_KIND_SUBTASK, ITDreamConstant.TASK_HIDE_WITH_SIMULATION, oldOrder);
-
-    if(!oldParentId.equals(newParent.getId())){
-
-      Integer maxOrder = generateOrderInParent(simulationId,newParent.getId(),ITDreamConstant.TASK_KIND_SUBTASK,ITDreamConstant.TASK_HIDE_WITH_SIMULATION);
-
+    if(!task.getParent().getId().equals(form.getNewParentId())){
+      taskRepository.decreaseOrderAfterDelete(task.getSimulation().getId(),task.getParent().getId(),ITDreamConstant.TASK_KIND_SUBTASK,task.getOrderInParent());
+      Integer maxOrder = generateOrderInParent(task.getSimulation().getId(),form.getNewParentId(), ITDreamConstant.TASK_KIND_SUBTASK);
       task.setParent(newParent);
       task.setOrderInParent(maxOrder);
-
       taskRepository.save(task);
-
       return;
     }
 
-    taskRepository.increaseOrderForInsert(simulationId,newParent.getId(),ITDreamConstant.TASK_KIND_SUBTASK,ITDreamConstant.TASK_HIDE_WITH_SIMULATION, form.getNewOrder());
+    if(form.getNewOrder() == null || form.getNewOrder() < 1){
+      throw new BadRequestException("New order invalid", ErrorCode.TASK_ERROR_POSITION);
+    }
 
+    if(task.getOrderInParent().equals(form.getNewOrder())){
+      return;
+    }
+
+    if(form.getNewOrder() < task.getOrderInParent()){
+      taskRepository.increaseOrderWhenMoveUp(task.getSimulation().getId(), task.getParent().getId(), ITDreamConstant.TASK_KIND_SUBTASK,form.getNewOrder(),task.getOrderInParent());
+    } else {
+      taskRepository.decreaseOrderWhenMoveDown(task.getSimulation().getId(), task.getParent().getId(), ITDreamConstant.TASK_KIND_SUBTASK,task.getOrderInParent(),form.getNewOrder());
+    }
     task.setOrderInParent(form.getNewOrder());
-
     taskRepository.save(task);
   }
 
   private void updateOrderAfterDelete(Task task){
     if(task.getKind().equals(ITDreamConstant.TASK_KIND_TASK)){
-
-      taskRepository.decreaseOrderAfterDelete(
-          task.getSimulation().getId(),
-          null,
-          ITDreamConstant.TASK_KIND_TASK,
-          task.getIsShowSimulation(),
-          task.getOrderInParent()
-      );
-
+      taskRepository.decreaseOrderAfterDelete(task.getSimulation().getId(),null,ITDreamConstant.TASK_KIND_TASK,task.getOrderInParent());
       return;
     }
 
     if(task.getKind().equals(ITDreamConstant.TASK_KIND_SUBTASK)){
-      taskRepository.decreaseOrderAfterDelete(
-          task.getSimulation().getId(),
-          task.getParent().getId(),
-          ITDreamConstant.TASK_KIND_SUBTASK,
-          ITDreamConstant.TASK_HIDE_WITH_SIMULATION,
-          task.getOrderInParent()
-      );
+      taskRepository.decreaseOrderAfterDelete(task.getSimulation().getId(),task.getParent().getId(),ITDreamConstant.TASK_KIND_SUBTASK,task.getOrderInParent());
     }
   }
 }

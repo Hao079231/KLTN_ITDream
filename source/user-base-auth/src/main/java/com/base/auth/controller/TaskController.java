@@ -112,13 +112,12 @@ public class TaskController extends ABasicController{
     Task task = taskMapper.fromCreateTaskFormToEntity(form);
     task.setSimulation(simulation);
     if (form.getKind().equals(ITDreamConstant.TASK_KIND_TASK)) {
-      Integer order = taskService.generateOrderInParent(simulation.getId(), null, form.getKind(), form.getIsShowSimulation());
+      Integer order = taskService.generateOrderInParent(simulation.getId(), null, form.getKind());
 
       task.setOrderInParent(order);
     }
 
     if (form.getKind().equals(ITDreamConstant.TASK_KIND_SUBTASK)) {
-      task.setIsShowSimulation(ITDreamConstant.TASK_HIDE_WITH_SIMULATION);
       if (form.getParentId() == null){
         throw new NotFoundException("Task cannot be null", ErrorCode.TASK_ERROR_NOT_FOUND);
       }
@@ -126,7 +125,7 @@ public class TaskController extends ABasicController{
       Task parent = taskRepository.findById(form.getParentId())
           .orElseThrow(() -> new NotFoundException("Parent not found", ErrorCode.TASK_ERROR_NOT_FOUND));
       task.setParent(parent);
-      Integer order = taskService.generateOrderInParent(simulation.getId(), parent.getId(), form.getKind(), ITDreamConstant.TASK_HIDE_WITH_SIMULATION);
+      Integer order = taskService.generateOrderInParent(simulation.getId(), parent.getId(), form.getKind());
       task.setOrderInParent(order);
     }
 
@@ -227,7 +226,6 @@ public class TaskController extends ABasicController{
     ApiMessageDto<ResponseListDto<List<TaskDisplayDto>>> apiMessageDto = new ApiMessageDto<>();
     ResponseListDto<List<TaskDisplayDto>> responseListDto = new ResponseListDto<>();
     criteria.setKind(ITDreamConstant.TASK_KIND_TASK);
-    criteria.setIsShowSimulation(ITDreamConstant.TASK_SHOW_WITH_SIMULATION);
     Page<Task> tasks = taskRepository.findAll(criteria.getSpecification(), pageable);
     responseListDto.setContent(taskMapper.fromEntityToTaskDisplayDtoList(tasks.getContent()));
     responseListDto.setTotalElements(tasks.getTotalElements());

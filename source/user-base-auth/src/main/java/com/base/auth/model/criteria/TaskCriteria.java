@@ -20,7 +20,6 @@ public class TaskCriteria {
   private Long simulationId;
   private Integer status;
   private Integer kind;
-  private Boolean isShowSimulation;
 
   public Specification<Task> getSpecification() {
     return new Specification<Task>() {
@@ -35,10 +34,6 @@ public class TaskCriteria {
 
         if (getKind() != null){
           predicates.add(cb.equal(root.get("kind"), getKind()));
-        }
-
-        if (getIsShowSimulation() != null){
-          predicates.add(cb.equal(root.get("isShowSimulation"), getIsShowSimulation()));
         }
 
         if (getStatus() != null){

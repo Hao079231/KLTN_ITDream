@@ -27,13 +27,11 @@ public interface TaskRepository extends JpaRepository<Task, Long>, JpaSpecificat
       "WHERE t.simulation.id = :simulationId " +
       "AND ((:parentId IS NULL AND t.parent IS NULL) " +
       "OR (t.parent.id = :parentId)) " +
-      "AND t.kind = :kind " +
-      "AND t.isShowSimulation = :isShowSimulation")
+      "AND t.kind = :kind")
   Integer findMaxOrderInParent(
       @Param("simulationId") Long simulationId,
       @Param("parentId") Long parentId,
-      @Param("kind") Integer kind,
-      @Param("isShowSimulation") Boolean isShowSimulation
+      @Param("kind") Integer kind
   );
 
   @Query("SELECT t FROM Task t " +
@@ -41,13 +39,11 @@ public interface TaskRepository extends JpaRepository<Task, Long>, JpaSpecificat
       "AND t.kind = :kind " +
       "AND ((:parentId IS NULL AND t.parent IS NULL) " +
       "OR (t.parent.id = :parentId)) " +
-      "AND t.isShowSimulation = :isShowSimulation " +
       "ORDER BY t.orderInParent ASC")
   List<Task> findAllForReOrder(
       @Param("simulationId") Long simulationId,
       @Param("parentId") Long parentId,
-      @Param("kind") Integer kind,
-      @Param("isShowSimulation") Boolean isShowSimulation
+      @Param("kind") Integer kind
   );
 
   @Transactional
@@ -58,13 +54,11 @@ public interface TaskRepository extends JpaRepository<Task, Long>, JpaSpecificat
       "AND t.kind = :kind " +
       "AND ((:parentId IS NULL AND t.parent IS NULL) " +
       "OR (t.parent.id = :parentId)) " +
-      "AND t.isShowSimulation = :isShowSimulation " +
       "AND t.orderInParent > :currentOrder")
   void decreaseOrderAfterRemove(
       @Param("simulationId") Long simulationId,
       @Param("parentId") Long parentId,
       @Param("kind") Integer kind,
-      @Param("isShowSimulation") Boolean isShowSimulation,
       @Param("currentOrder") Integer currentOrder
   );
 
@@ -76,13 +70,31 @@ public interface TaskRepository extends JpaRepository<Task, Long>, JpaSpecificat
       "AND t.kind = :kind " +
       "AND ((:parentId IS NULL AND t.parent IS NULL) " +
       "OR (t.parent.id = :parentId)) " +
-      "AND t.isShowSimulation = :isShowSimulation " +
-      "AND t.orderInParent >= :newOrder")
-  void increaseOrderForInsert(
+      "AND t.orderInParent >= :newOrder " +
+      "AND t.orderInParent < :oldOrder")
+  void increaseOrderWhenMoveUp(
       @Param("simulationId") Long simulationId,
       @Param("parentId") Long parentId,
       @Param("kind") Integer kind,
-      @Param("isShowSimulation") Boolean isShowSimulation,
+      @Param("newOrder") Integer newOrder,
+      @Param("oldOrder") Integer oldOrder
+  );
+
+  @Transactional
+  @Modifying
+  @Query("UPDATE Task t " +
+      "SET t.orderInParent = t.orderInParent - 1 " +
+      "WHERE t.simulation.id = :simulationId " +
+      "AND t.kind = :kind " +
+      "AND ((:parentId IS NULL AND t.parent IS NULL) " +
+      "OR (t.parent.id = :parentId)) " +
+      "AND t.orderInParent > :oldOrder " +
+      "AND t.orderInParent <= :newOrder")
+  void decreaseOrderWhenMoveDown(
+      @Param("simulationId") Long simulationId,
+      @Param("parentId") Long parentId,
+      @Param("kind") Integer kind,
+      @Param("oldOrder") Integer oldOrder,
       @Param("newOrder") Integer newOrder
   );
 
@@ -94,13 +106,11 @@ public interface TaskRepository extends JpaRepository<Task, Long>, JpaSpecificat
       "AND t.kind = :kind " +
       "AND ((:parentId IS NULL AND t.parent IS NULL) " +
       "OR (t.parent.id = :parentId)) " +
-      "AND t.isShowSimulation = :isShowSimulation " +
       "AND t.orderInParent > :deletedOrder")
   void decreaseOrderAfterDelete(
       @Param("simulationId") Long simulationId,
       @Param("parentId") Long parentId,
       @Param("kind") Integer kind,
-      @Param("isShowSimulation") Boolean isShowSimulation,
       @Param("deletedOrder") Integer deletedOrder
   );
 }
