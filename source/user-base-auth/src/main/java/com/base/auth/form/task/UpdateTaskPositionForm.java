@@ -17,7 +17,4 @@ public class UpdateTaskPositionForm {
   private Integer newOrder;
 
   private Long newParentId;
-
-  @ApiModelProperty(name = "isShowSimulation")
-  private Boolean isShowSimulation;
 }

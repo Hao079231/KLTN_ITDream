@@ -10,4 +10,7 @@
             <column name="order_in_parent" type="integer" afterColumn="is_show_simulation"/>
         </addColumn>
     </changeSet>
+    <changeSet author="Authentication" id="1780073804338-1">
+        <dropColumn columnName="is_show_simulation" tableName="db_it_dream_task"/>
+    </changeSet>
 </databaseChangeLog>
