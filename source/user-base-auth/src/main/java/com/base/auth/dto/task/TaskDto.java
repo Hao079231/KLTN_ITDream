@@ -8,7 +8,6 @@ public class TaskDto {
   private Long id;
   private String name;
   private String title;
-  private String introduction;
   private String description;
   private String content;
   private Integer kind;

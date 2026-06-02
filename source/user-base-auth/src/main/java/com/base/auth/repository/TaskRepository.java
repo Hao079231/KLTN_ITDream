@@ -34,34 +34,6 @@ public interface TaskRepository extends JpaRepository<Task, Long>, JpaSpecificat
       @Param("kind") Integer kind
   );
 
-  @Query("SELECT t FROM Task t " +
-      "WHERE t.simulation.id = :simulationId " +
-      "AND t.kind = :kind " +
-      "AND ((:parentId IS NULL AND t.parent IS NULL) " +
-      "OR (t.parent.id = :parentId)) " +
-      "ORDER BY t.orderInParent ASC")
-  List<Task> findAllForReOrder(
-      @Param("simulationId") Long simulationId,
-      @Param("parentId") Long parentId,
-      @Param("kind") Integer kind
-  );
-
-  @Transactional
-  @Modifying
-  @Query("UPDATE Task t " +
-      "SET t.orderInParent = t.orderInParent - 1 " +
-      "WHERE t.simulation.id = :simulationId " +
-      "AND t.kind = :kind " +
-      "AND ((:parentId IS NULL AND t.parent IS NULL) " +
-      "OR (t.parent.id = :parentId)) " +
-      "AND t.orderInParent > :currentOrder")
-  void decreaseOrderAfterRemove(
-      @Param("simulationId") Long simulationId,
-      @Param("parentId") Long parentId,
-      @Param("kind") Integer kind,
-      @Param("currentOrder") Integer currentOrder
-  );
-
   @Transactional
   @Modifying
   @Query("UPDATE Task t " +
