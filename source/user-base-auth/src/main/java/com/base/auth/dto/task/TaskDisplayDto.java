@@ -8,7 +8,7 @@ public class TaskDisplayDto {
   private Long id;
   private String name;
   private String title;
-  private String introduction;
+  private String content;
   private String description;
   private SimulationDisplayDto simulation;
 }

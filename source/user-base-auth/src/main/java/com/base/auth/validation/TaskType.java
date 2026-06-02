@@ -16,7 +16,7 @@ import javax.validation.Payload;
 public @interface TaskType {
   boolean allowNull() default false;
 
-  String message() default "Task type invalid";
+  String message() default "Task type invalid 0 - overview, 1 - content, 2 - question, 3 - answer";
 
   Class<?>[] groups() default {};
 
