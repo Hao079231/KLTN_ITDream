@@ -1,6 +1,5 @@
 package com.base.auth.dto.task;
 
-import com.base.auth.dto.simulation.SimulationDisplayDto;
 import lombok.Data;
 
 @Data
@@ -17,5 +16,4 @@ public class TaskStudentDto {
   private String videoPath;
   private Integer totalQuestion;
   private Integer totalError;
-  private SimulationDisplayDto simulation;
 }
