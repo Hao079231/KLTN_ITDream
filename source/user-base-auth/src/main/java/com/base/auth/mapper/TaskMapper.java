@@ -39,6 +39,7 @@ public interface TaskMapper {
   @Mapping(source = "description", target = "description")
   @Mapping(source = "content", target = "content")
   @Mapping(source = "kind", target = "kind")
+  @Mapping(source = "orderInParent", target = "orderInParent")
   @Mapping(source = "parent", target = "parent", qualifiedByName = "fromEntityToTaskDisplayDto")
   @BeanMapping(ignoreByDefault = true)
   @Named("fromEntityToTaskDisplayDto")
@@ -59,7 +60,6 @@ public interface TaskMapper {
   @Mapping(source = "videoPath", target = "videoPath")
   @Mapping(source = "totalError", target = "totalError")
   @Mapping(source = "totalQuestion", target = "totalQuestion")
-  @Mapping(source = "simulation", target = "simulation", qualifiedByName = "fromEntityToSimulationDto")
   @BeanMapping(ignoreByDefault = true)
   @Named("fromEntityToTaskDto")
   TaskDto fromEntityToTaskDto(Task task);
@@ -69,7 +69,6 @@ public interface TaskMapper {
   @Mapping(source = "title", target = "title")
   @Mapping(source = "description", target = "description")
   @Mapping(source = "content", target = "content")
-  @Mapping(source = "simulation", target = "simulation", qualifiedByName = "fromEntityToCourseDto")
   @BeanMapping(ignoreByDefault = true)
   @Named("fromEntityToTaskDisplayAdminDto")
   TaskDto fromEntityToTaskDisplayAdminDto(Task task);
@@ -89,7 +88,6 @@ public interface TaskMapper {
   @Mapping(source = "videoPath", target = "videoPath")
   @Mapping(source = "totalError", target = "totalError")
   @Mapping(source = "totalQuestion", target = "totalQuestion")
-  @Mapping(source = "simulation", target = "simulation", qualifiedByName = "fromEntityToSimulationDisplayDto")
   @BeanMapping(ignoreByDefault = true)
   @Named("fromEntityToTaskStudentDto")
   TaskStudentDto fromEntityToTaskStudentDto(Task task);
@@ -106,7 +104,6 @@ public interface TaskMapper {
   @Mapping(source = "videoPath", target = "videoPath")
   @Mapping(source = "totalError", target = "totalError")
   @Mapping(source = "totalQuestion", target = "totalQuestion")
-  @Mapping(source = "simulation", target = "simulation", qualifiedByName = "fromEntityToSimulationDisplayDto")
   @BeanMapping(ignoreByDefault = true)
   @Named("fromEntityToTaskEducatorDto")
   TaskEducatorDto fromEntityToTaskEducatorDto(Task task);
