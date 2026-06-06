@@ -1,6 +1,5 @@
 package com.base.auth.dto.task;
 
-import com.base.auth.dto.simulation.SimulationDisplayDto;
 import lombok.Data;
 
 @Data
@@ -10,5 +9,6 @@ public class TaskDisplayDto {
   private String title;
   private String content;
   private String description;
-  private SimulationDisplayDto simulation;
+  private Integer kind;
+  private TaskDisplayDto parent;
 }

@@ -38,7 +38,8 @@ public interface TaskMapper {
   @Mapping(source = "title", target = "title")
   @Mapping(source = "description", target = "description")
   @Mapping(source = "content", target = "content")
-  @Mapping(source = "simulation", target = "simulation", qualifiedByName = "fromEntityToSimulationDisplayDto")
+  @Mapping(source = "kind", target = "kind")
+  @Mapping(source = "parent", target = "parent", qualifiedByName = "fromEntityToTaskDisplayDto")
   @BeanMapping(ignoreByDefault = true)
   @Named("fromEntityToTaskDisplayDto")
   TaskDisplayDto fromEntityToTaskDisplayDto(Task task);

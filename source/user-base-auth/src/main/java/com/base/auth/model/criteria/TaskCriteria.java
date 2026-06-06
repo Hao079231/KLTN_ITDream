@@ -20,6 +20,7 @@ public class TaskCriteria {
   private Long simulationId;
   private Integer status;
   private Integer kind;
+  private Long parentId;
 
   public Specification<Task> getSpecification() {
     return new Specification<Task>() {
@@ -34,6 +35,11 @@ public class TaskCriteria {
 
         if (getKind() != null){
           predicates.add(cb.equal(root.get("kind"), getKind()));
+        }
+
+        if (getParentId() != null){
+          Join<Task, Task> taskJoin = root.join("parent", JoinType.INNER);
+          predicates.add(cb.equal(taskJoin.get("id"), getParentId()));
         }
 
         if (getStatus() != null){
