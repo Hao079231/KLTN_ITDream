@@ -27,9 +27,9 @@ public class ITDreamConstant {
     public static final Integer STATUS_LOCK = -1;
     public static final Integer STATUS_REJECT = -2;
 
-    public static final Integer  BLOG_STATUS_WAITING_APPROVE = 0;
-    public static final Integer  BLOG_STATUS_ACTIVE = 1;
-    public static final Integer  BLOG_STATUS_REJECT = -1;
+    public static final Integer BLOG_STATUS_WAITING_APPROVE = 0;
+    public static final Integer BLOG_STATUS_ACTIVE = 1;
+    public static final Integer BLOG_STATUS_REJECT = -1;
 
     public static final Integer SIMULATION_STATUS_ACTIVE = 1;
     public static final Integer SIMULATION_STATUS_WAITING_APPROVE = 2;

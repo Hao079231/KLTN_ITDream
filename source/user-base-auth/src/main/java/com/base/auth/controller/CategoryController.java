@@ -7,6 +7,7 @@ import com.base.auth.dto.category.CategoryAutoCompleteDto;
 import com.base.auth.dto.category.CategoryDto;
 import com.base.auth.exception.BadRequestException;
 import com.base.auth.exception.NotFoundException;
+import com.base.auth.exception.UnauthorizationException;
 import com.base.auth.form.category.CreateCategoryForm;
 import com.base.auth.form.category.UpdateCategoryForm;
 import com.base.auth.mapper.CategoryMapper;
@@ -92,6 +93,21 @@ public class CategoryController extends ABasicController{
     responseListDto.setTotalPages(categories.getTotalPages());
     apiMessageDto.setData(responseListDto);
     apiMessageDto.setMessage("Get list category success");
+    return apiMessageDto;
+  }
+
+  @GetMapping(value = "/get/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+  @PreAuthorize("hasRole('CA_V')")
+  public ApiMessageDto<CategoryDto> get(@PathVariable("id") Long id){
+    if (!isAdmin()){
+      throw new UnauthorizationException("User is not an admin");
+    }
+    ApiMessageDto<CategoryDto> apiMessageDto = new ApiMessageDto<>();
+    Category category = categoryRepository.findById(id)
+        .orElseThrow(() -> new NotFoundException("Category not found", ErrorCode.CATEGORY_ERROR_NOT_FOUND));
+    CategoryDto categoryDto = categoryMapper.fromEntityToCategoryDto(category);
+    apiMessageDto.setData(categoryDto);
+    apiMessageDto.setMessage("Get detail category success");
     return apiMessageDto;
   }
 
