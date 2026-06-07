@@ -250,7 +250,7 @@ public class AccountController extends ABasicController{
             throw new NotFoundException("Account not found", ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
         }
 
-        if (!Objects.equals(account.getStatus(), ITDreamConstant.STATUS_ACTIVE)){
+        if (!Objects.equals(account.getStatus(), ITDreamConstant.STATUS_ACTIVE) && !Objects.equals(account.getStatus(), ITDreamConstant.STATUS_FORGET_PASSWORD)){
             throw new BadRequestException("Account cannot active", ErrorCode.ACCOUNT_ERROR_NOT_ACTIVE);
         }
 
