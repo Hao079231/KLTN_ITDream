@@ -1,6 +1,5 @@
 package com.base.auth.form.simulation;
 
-import com.base.auth.validation.TaskKind;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import javax.validation.constraints.NotEmpty;
@@ -30,7 +29,6 @@ public class UpdateSimulationForm {
   @NotEmpty(message = "thumbnail cannot be null")
   @ApiModelProperty(name = "thumbnail")
   private String thumbnail;
-  @NotEmpty(message = "videoPath cannot be null")
   @ApiModelProperty(name = "videoPath")
   private String videoPath;
   @NotNull(message = "categoryId cannot be null")
