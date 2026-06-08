@@ -25,8 +25,6 @@ public interface StudentTaskProgressRepository extends JpaRepository<StudentTask
 
   Optional<StudentTaskProgress> findByTaskIdAndSimulationEnrollmentStudentId(Long taskId, long studentId);
 
-  List<StudentTaskProgress> findAllByTaskId(Long taskId);
-
   @Transactional
   @Modifying
   @Query(value =
@@ -37,4 +35,9 @@ public interface StudentTaskProgressRepository extends JpaRepository<StudentTask
   void deleteAllByStudentId(@Param("studentId") Long studentId);
 
   Boolean existsBySimulationEnrollmentIdAndStatus(Long simulationEnrollmentId, Integer studentTaskProgress);
+
+  @Query("SELECT COUNT(stp.id) FROM StudentTaskProgress stp JOIN stp.task t "
+      + "WHERE stp.task.id = :taskId "
+      + "AND stp.status = :status")
+  Integer countCompletedSubtaskInTask(@Param("taskId") Long taskId, @Param("status") Integer studentTaskProgressCompleted);
 }

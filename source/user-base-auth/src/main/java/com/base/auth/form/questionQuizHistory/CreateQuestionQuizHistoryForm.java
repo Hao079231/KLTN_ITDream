@@ -18,7 +18,6 @@ public class CreateQuestionQuizHistoryForm {
   @NotNull(message = "studentTaskProgressId cannot be null")
   @ApiModelProperty(name = "studentTaskProgressId")
   private Long studentTaskProgressId;
-  @NotNull(message = "taskQuestionId cannot be null")
   @ApiModelProperty(name = "taskQuestionId")
   private Long taskQuestionId;
 }

@@ -2,6 +2,7 @@ package com.base.auth.mapper;
 
 import com.base.auth.dto.studentTaskProgress.StudentTaskProgressDisplayDto;
 import com.base.auth.dto.studentTaskProgress.StudentTaskProgressDto;
+import com.base.auth.dto.studentTaskProgress.StudentTaskProgressDetailDto;
 import com.base.auth.model.StudentTaskProgress;
 import java.util.List;
 import org.mapstruct.BeanMapping;
@@ -41,4 +42,11 @@ public interface StudentTaskProgressMapper {
 
   @IterableMapping(elementTargetType = StudentTaskProgressDisplayDto.class, qualifiedByName = "fromEntityToStudentTaskProgressDisplayDto")
   List<StudentTaskProgressDisplayDto> fromEntityToStudentTaskProgressDisplayDtoList(List<StudentTaskProgress> studentTaskProgressList);
+
+  @Mapping(source = "id", target = "id")
+  @Mapping(source = "errorCount", target = "errorCount")
+  @Mapping(source = "task", target = "task", qualifiedByName = "fromEntityToTaskDisplayDto")
+  @BeanMapping(ignoreByDefault = true)
+  @Named("fromEntityToStudentTaskProgressStudentDto")
+  StudentTaskProgressDetailDto fromEntityToStudentTaskProgressStudentDto(StudentTaskProgress studentTaskProgress);
 }

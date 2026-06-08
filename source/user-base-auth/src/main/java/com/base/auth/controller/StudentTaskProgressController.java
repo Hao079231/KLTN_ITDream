@@ -5,19 +5,24 @@ import com.base.auth.dto.ApiMessageDto;
 import com.base.auth.dto.ErrorCode;
 import com.base.auth.dto.ResponseListDto;
 import com.base.auth.dto.achievement.AchievementDisplayDto;
+import com.base.auth.dto.studentSubmission.StudentSubmissionDisplayDto;
 import com.base.auth.dto.studentTaskProgress.StudentTaskProgressDisplayDto;
 import com.base.auth.dto.studentTaskProgress.StudentTaskProgressDto;
+import com.base.auth.dto.studentTaskProgress.StudentTaskProgressDetailDto;
 import com.base.auth.exception.BadRequestException;
 import com.base.auth.exception.NotFoundException;
 import com.base.auth.exception.UnauthorizationException;
 import com.base.auth.form.studentTaskProgress.CreateStudentTaskProgressForm;
 import com.base.auth.form.studentTaskProgress.RequestTaskIdForm;
+import com.base.auth.mapper.StudentSubmissionMapper;
 import com.base.auth.mapper.StudentTaskProgressMapper;
 import com.base.auth.model.Achievement;
 import com.base.auth.model.SimulationEnrollment;
+import com.base.auth.model.StudentSubmission;
 import com.base.auth.model.Task;
 import com.base.auth.model.StudentTaskProgress;
 import com.base.auth.model.Student;
+import com.base.auth.model.criteria.StudentSubmissionCriteria;
 import com.base.auth.model.criteria.StudentTaskProgressCriteria;
 import com.base.auth.repository.AchievementRepository;
 import com.base.auth.repository.StudentSubmissionRepository;
@@ -25,19 +30,20 @@ import com.base.auth.repository.SimulationEnrollmentRepository;
 import com.base.auth.repository.StudentTaskProgressRepository;
 import com.base.auth.repository.TaskQuestionRepository;
 import com.base.auth.repository.TaskRepository;
-import com.base.auth.repository.QuestionQuizHistoryRepository;
 import java.util.List;
 import java.util.Objects;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -65,13 +71,13 @@ public class StudentTaskProgressController extends ABasicController{
   StudentSubmissionRepository studentSubmissionRepository;
 
   @Autowired
-  QuestionQuizHistoryRepository questionQuizHistoryRepository;
-
-  @Autowired
   AchievementRepository achievementRepository;
 
   @Autowired
   StudentTaskProgressMapper studentTaskProgressMapper;
+
+  @Autowired
+  StudentSubmissionMapper studentSubmissionMapper;
 
   @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
   @PreAuthorize("hasRole('STP_ST_C')")
@@ -108,12 +114,12 @@ public class StudentTaskProgressController extends ABasicController{
     ApiMessageDto<ResponseListDto<List<StudentTaskProgressDto>>> apiMessageDto = new ApiMessageDto<>();
     ResponseListDto<List<StudentTaskProgressDto>> responseListDto = new ResponseListDto<>();
     Page<StudentTaskProgress> studentTaskProgresses = studentTaskProgressRepository.findAll(criteria.getSpecification(), pageable);
-    List<StudentTaskProgressDto> lessonProgressDtos = studentTaskProgressMapper.fromEntityToStudentTaskProgressDtoList(studentTaskProgresses.getContent());
-    responseListDto.setContent(lessonProgressDtos);
+    List<StudentTaskProgressDto> taskProgressDtos = studentTaskProgressMapper.fromEntityToStudentTaskProgressDtoList(studentTaskProgresses.getContent());
+    responseListDto.setContent(taskProgressDtos);
     responseListDto.setTotalElements(studentTaskProgresses.getTotalElements());
     responseListDto.setTotalPages(studentTaskProgresses.getTotalPages());
     apiMessageDto.setData(responseListDto);
-    apiMessageDto.setMessage("Get list lesson progress success");
+    apiMessageDto.setMessage("Get list task progress success");
     return apiMessageDto;
   }
 
@@ -124,12 +130,107 @@ public class StudentTaskProgressController extends ABasicController{
     ApiMessageDto<ResponseListDto<List<StudentTaskProgressDisplayDto>>> apiMessageDto = new ApiMessageDto<>();
     ResponseListDto<List<StudentTaskProgressDisplayDto>> responseListDto = new ResponseListDto<>();
     Page<StudentTaskProgress> studentTaskProgresses = studentTaskProgressRepository.findAll(criteria.getSpecification(), pageable);
-    List<StudentTaskProgressDisplayDto> lessonProgressDtos = studentTaskProgressMapper.fromEntityToStudentTaskProgressDisplayDtoList(studentTaskProgresses.getContent());
-    responseListDto.setContent(lessonProgressDtos);
+    List<StudentTaskProgressDisplayDto> taskProgressDtos = studentTaskProgressMapper.fromEntityToStudentTaskProgressDisplayDtoList(studentTaskProgresses.getContent());
+    responseListDto.setContent(taskProgressDtos);
     responseListDto.setTotalElements(studentTaskProgresses.getTotalElements());
     responseListDto.setTotalPages(studentTaskProgresses.getTotalPages());
     apiMessageDto.setData(responseListDto);
-    apiMessageDto.setMessage("Get list lesson progress success");
+    apiMessageDto.setMessage("Get list task progress success");
+    return apiMessageDto;
+  }
+
+  @GetMapping(value = "/educator_list", produces = MediaType.APPLICATION_JSON_VALUE)
+  @PreAuthorize("hasRole('STP_ST_L')")
+  public ApiMessageDto<ResponseListDto<List<StudentTaskProgressDisplayDto>>> listByEducator(
+      StudentTaskProgressCriteria criteria, Pageable pageable){
+    ApiMessageDto<ResponseListDto<List<StudentTaskProgressDisplayDto>>> apiMessageDto = new ApiMessageDto<>();
+    ResponseListDto<List<StudentTaskProgressDisplayDto>> responseListDto = new ResponseListDto<>();
+    criteria.setStatus(ITDreamConstant.STUDENT_TASK_PROGRESS_COMPLETED);
+    Page<StudentTaskProgress> studentTaskProgresses = studentTaskProgressRepository.findAll(criteria.getSpecification(), pageable);
+    List<StudentTaskProgressDisplayDto> taskProgressDtos = studentTaskProgressMapper.fromEntityToStudentTaskProgressDisplayDtoList(studentTaskProgresses.getContent());
+    responseListDto.setContent(taskProgressDtos);
+    responseListDto.setTotalElements(studentTaskProgresses.getTotalElements());
+    responseListDto.setTotalPages(studentTaskProgresses.getTotalPages());
+    apiMessageDto.setData(responseListDto);
+    apiMessageDto.setMessage("Get list task progress success");
+    return apiMessageDto;
+  }
+
+  @GetMapping(value = "/get/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+  @PreAuthorize("hasRole('STP_V')")
+  public ApiMessageDto<StudentTaskProgressDetailDto> get(@PathVariable("id") Long id){
+    if (!isAdmin()){
+      throw new UnauthorizationException("User is not an admin");
+    }
+    ApiMessageDto<StudentTaskProgressDetailDto> apiMessageDto = new ApiMessageDto<>();
+    StudentTaskProgress studentTaskProgress = studentTaskProgressRepository.findById(id)
+        .orElseThrow(() -> new NotFoundException("Student task progress not found", ErrorCode.STUDENT_TASK_PROGRESS_ERROR_NOT_FOUND));
+    StudentTaskProgressDetailDto studentTaskProgressDetailDto = studentTaskProgressMapper.fromEntityToStudentTaskProgressStudentDto(studentTaskProgress);
+
+    ResponseListDto<List<StudentSubmissionDisplayDto>> responseListDto = new ResponseListDto<>();
+    StudentSubmissionCriteria studentSubmissionCriteria = new StudentSubmissionCriteria();
+    studentSubmissionCriteria.setStudentTaskProgressId(studentTaskProgress.getId());
+    Pageable pageable = PageRequest.of(0, 100);
+    Page<StudentSubmission> studentSubmissions = studentSubmissionRepository.findAll(studentSubmissionCriteria.getSpecification(), pageable);
+    List<StudentSubmissionDisplayDto> studentSubmissionDisplayDtos = studentSubmissionMapper.fromEntityToStudentSubmissionDisplayDtoList(studentSubmissions.getContent());
+    responseListDto.setContent(studentSubmissionDisplayDtos);
+    responseListDto.setTotalElements(studentSubmissions.getTotalElements());
+    responseListDto.setTotalPages(studentSubmissions.getTotalPages());
+    studentTaskProgressDetailDto.setStudentSubmission(responseListDto);
+    apiMessageDto.setData(studentTaskProgressDetailDto);
+    apiMessageDto.setMessage("Get student task progress success");
+    return apiMessageDto;
+  }
+
+  @GetMapping(value = "/student_get/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+  @PreAuthorize("hasRole('STP_ST_V')")
+  public ApiMessageDto<StudentTaskProgressDetailDto> getByStudent(@PathVariable("id") Long id){
+    if (!isStudent()){
+      throw new UnauthorizationException("User is not a student");
+    }
+    ApiMessageDto<StudentTaskProgressDetailDto> apiMessageDto = new ApiMessageDto<>();
+    StudentTaskProgress studentTaskProgress = studentTaskProgressRepository.findById(id)
+        .orElseThrow(() -> new NotFoundException("Student task progress not found", ErrorCode.STUDENT_TASK_PROGRESS_ERROR_NOT_FOUND));
+    StudentTaskProgressDetailDto studentTaskProgressDetailDto = studentTaskProgressMapper.fromEntityToStudentTaskProgressStudentDto(studentTaskProgress);
+
+    ResponseListDto<List<StudentSubmissionDisplayDto>> responseListDto = new ResponseListDto<>();
+    StudentSubmissionCriteria studentSubmissionCriteria = new StudentSubmissionCriteria();
+    studentSubmissionCriteria.setStudentTaskProgressId(studentTaskProgress.getId());
+    Pageable pageable = PageRequest.of(0, 100);
+    Page<StudentSubmission> studentSubmissions = studentSubmissionRepository.findAll(studentSubmissionCriteria.getSpecification(), pageable);
+    List<StudentSubmissionDisplayDto> studentSubmissionDisplayDtos = studentSubmissionMapper.fromEntityToStudentSubmissionDisplayDtoList(studentSubmissions.getContent());
+    responseListDto.setContent(studentSubmissionDisplayDtos);
+    responseListDto.setTotalElements(studentSubmissions.getTotalElements());
+    responseListDto.setTotalPages(studentSubmissions.getTotalPages());
+    studentTaskProgressDetailDto.setStudentSubmission(responseListDto);
+    apiMessageDto.setData(studentTaskProgressDetailDto);
+    apiMessageDto.setMessage("Get student task progress success");
+    return apiMessageDto;
+  }
+
+  @GetMapping(value = "/educator_get/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+  @PreAuthorize("hasRole('STP_ED_V')")
+  public ApiMessageDto<StudentTaskProgressDetailDto> getByEducator(@PathVariable("id") Long id){
+    if (!isEducator()){
+      throw new UnauthorizationException("User is not an educator");
+    }
+    ApiMessageDto<StudentTaskProgressDetailDto> apiMessageDto = new ApiMessageDto<>();
+    StudentTaskProgress studentTaskProgress = studentTaskProgressRepository.findById(id)
+        .orElseThrow(() -> new NotFoundException("Student task progress not found", ErrorCode.STUDENT_TASK_PROGRESS_ERROR_NOT_FOUND));
+    StudentTaskProgressDetailDto studentTaskProgressDetailDto = studentTaskProgressMapper.fromEntityToStudentTaskProgressStudentDto(studentTaskProgress);
+
+    ResponseListDto<List<StudentSubmissionDisplayDto>> responseListDto = new ResponseListDto<>();
+    StudentSubmissionCriteria studentSubmissionCriteria = new StudentSubmissionCriteria();
+    studentSubmissionCriteria.setStudentId(studentTaskProgress.getId());
+    Pageable pageable = PageRequest.of(0, 100);
+    Page<StudentSubmission> studentSubmissions = studentSubmissionRepository.findAll(studentSubmissionCriteria.getSpecification(), pageable);
+    List<StudentSubmissionDisplayDto> studentSubmissionDisplayDtos = studentSubmissionMapper.fromEntityToStudentSubmissionDisplayDtoList(studentSubmissions.getContent());
+    responseListDto.setContent(studentSubmissionDisplayDtos);
+    responseListDto.setTotalElements(studentSubmissions.getTotalElements());
+    responseListDto.setTotalPages(studentSubmissions.getTotalPages());
+    studentTaskProgressDetailDto.setStudentSubmission(responseListDto);
+    apiMessageDto.setData(studentTaskProgressDetailDto);
+    apiMessageDto.setMessage("Get student task progress success");
     return apiMessageDto;
   }
 
@@ -142,31 +243,47 @@ public class StudentTaskProgressController extends ABasicController{
     ApiMessageDto<AchievementDisplayDto> apiMessageDto = new ApiMessageDto<>();
     Task task = taskRepository.findById(form.getTaskId())
         .orElseThrow(() -> new NotFoundException("Task not found", ErrorCode.TASK_ERROR_NOT_FOUND));
-    StudentTaskProgress studentTaskProgress = studentTaskProgressRepository.findByTaskIdAndSimulationEnrollmentStudentId(form.getTaskId(), getCurrentUser())
+    StudentTaskProgress studentTaskProgress = studentTaskProgressRepository.findByTaskIdAndSimulationEnrollmentStudentId(task.getId(), getCurrentUser())
         .orElseThrow(() -> new NotFoundException("Task progress not found", ErrorCode.STUDENT_TASK_PROGRESS_ERROR_NOT_FOUND));
-    Integer totalQuestion = taskQuestionRepository.countByTaskId(task.getId());
-    Integer totalSubmission = studentSubmissionRepository.countByStudentTaskProgressId(studentTaskProgress.getId());
-    Integer distinctAnswered = studentSubmissionRepository.countDistinctQuestionByStudentTaskProgress(studentTaskProgress.getId());
-    if (!Objects.equals(totalQuestion, totalSubmission) || !Objects.equals(totalQuestion, distinctAnswered)){
-      throw new BadRequestException("Not all questions are answered correctly", ErrorCode.STUDENT_TASK_PROGRESS_ERROR_NOT_COMPLETED);
+
+    // Kiểm tra xem một subtask loại task truyền vào có kind là gì để kiểm tra khi kind là task hoặc subtask
+    if (Objects.equals(task.getKind(), ITDreamConstant.TASK_KIND_SUBTASK)){
+      Integer totalQuestion = taskQuestionRepository.countByTaskId(task.getId());
+      Integer totalSubmission = studentSubmissionRepository.countByStudentTaskProgressId(studentTaskProgress.getId());
+      if (!Objects.equals(totalQuestion, totalSubmission)){
+        throw new BadRequestException("Not all questions are answered correctly", ErrorCode.STUDENT_TASK_PROGRESS_ERROR_NOT_COMPLETED);
+      }
+      studentTaskProgress.setStatus(ITDreamConstant.STUDENT_TASK_PROGRESS_COMPLETED);
+      studentTaskProgress.setErrorCount(ITDreamConstant.RESTART_ERROR_COUNT);
+      studentTaskProgressRepository.save(studentTaskProgress);
+    } else {
+      Integer totalSubtask = taskRepository.countByParentId(task.getId());
+      Integer totalCompletedSubtask = studentTaskProgressRepository.countCompletedSubtaskInTask(task.getId(), ITDreamConstant.STUDENT_TASK_PROGRESS_COMPLETED);
+      if (!Objects.equals(totalCompletedSubtask, totalSubtask)){
+        throw new BadRequestException("Not all subtasks are completed", ErrorCode.STUDENT_TASK_PROGRESS_ERROR_NOT_COMPLETED);
+      }
+      studentTaskProgress.setStatus(ITDreamConstant.STUDENT_TASK_PROGRESS_COMPLETED);
+      studentTaskProgress.setErrorCount(ITDreamConstant.RESTART_ERROR_COUNT);
+      studentTaskProgressRepository.save(studentTaskProgress);
     }
 
-    Student student = studentTaskProgress.getSimulationEnrollment().getStudent();
-    studentRepository.save(student);
-
+    // Sau khi cập nhật tiến trình của task thì sang cập nhật tiến trình của simulation
     SimulationEnrollment simulationEnrollment = studentTaskProgress.getSimulationEnrollment();
-    studentTaskProgress.setErrorCount(ITDreamConstant.RESTART_ERROR_COUNT);
-    studentTaskProgress.setStatus(ITDreamConstant.STUDENT_TASK_PROGRESS_COMPLETED);
-    studentTaskProgressRepository.saveAndFlush(studentTaskProgress);
-
-    Integer totalLesson = taskRepository.countTaskBySimulationId(task.getSimulation().getId());
-    Integer completedLesson = studentTaskProgressRepository.countCompletedTaskInSimulation(
+    Integer totalTask = taskRepository.countTaskBySimulationId(task.getSimulation().getId());
+    Integer completedTask = studentTaskProgressRepository.countCompletedTaskInSimulation(
         simulationEnrollment.getId(), task.getSimulation().getId(), ITDreamConstant.STUDENT_TASK_PROGRESS_COMPLETED);
-    Float progress =  ((float) completedLesson / totalLesson) * 100;
+    Float progress =  ((float) completedTask / totalTask) * 100;
     simulationEnrollment.setProgress(progress);
-    if (completedLesson.equals(totalLesson)){
+    if (completedTask.equals(totalTask)){
       simulationEnrollment.setStatus(ITDreamConstant.SIMULATION_ENROLLMENT_COMPLETED);
       simulationEnrollmentRepository.save(simulationEnrollment);
+
+      // Cần kiểm tra xem student đã có thành tựu trong simulation này chưa, nếu có rồi thì báo thành công thôi, không có thì tạo mới
+      Boolean existAchievement = achievementRepository.existsBySimulationIdAndStudentId(simulationEnrollment.getSimulation().getId(), simulationEnrollment.getStudent().getId());
+      if (existAchievement){
+        apiMessageDto.setMessage("Complete simulation");
+        return apiMessageDto;
+      }
 
       Achievement achievement = new Achievement();
       achievement.setSimulation(simulationEnrollment.getSimulation());
@@ -195,13 +312,13 @@ public class StudentTaskProgressController extends ABasicController{
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Task task = taskRepository.findById(form.getTaskId())
         .orElseThrow(() -> new NotFoundException("Task not found", ErrorCode.TASK_ERROR_NOT_FOUND));
+    if (Objects.equals(task.getKind(), ITDreamConstant.TASK_KIND_TASK)){
+      throw new BadRequestException("Cannot reset task", ErrorCode.STUDENT_TASK_PROGRESS_ERROR_NOT_RESET);
+    }
     StudentTaskProgress studentTaskProgress = studentTaskProgressRepository.findByTaskIdAndSimulationEnrollmentStudentId(form.getTaskId(), getCurrentUser())
         .orElseThrow(() -> new NotFoundException("Task progress not found", ErrorCode.STUDENT_TASK_PROGRESS_ERROR_NOT_FOUND));
-    Integer submission = studentSubmissionRepository.countByStudentTaskProgressId(studentTaskProgress.getId());
-    if (submission > 0){
-      studentSubmissionRepository.deleteAllByStudentTaskProgressId(studentTaskProgress.getId());
-    }
-    questionQuizHistoryRepository.deleteAllByStudentTaskProgressTaskId(studentTaskProgress.getId());
+    studentSubmissionRepository.deleteQuestionSubmissionsByProgressId(studentTaskProgress.getId());
+    studentTaskProgress.setStatus(ITDreamConstant.STUDENT_TASK_PROGRESS_IN_PROGRESS);
     studentTaskProgress.setErrorCount(ITDreamConstant.RESTART_ERROR_COUNT);
     studentTaskProgressRepository.save(studentTaskProgress);
     apiMessageDto.setMessage("Reset task progress success");

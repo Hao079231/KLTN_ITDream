@@ -1,8 +1,6 @@
 package com.base.auth.repository;
 
 import com.base.auth.model.StudentSubmission;
-import java.util.List;
-import java.util.Optional;
 import javax.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -14,17 +12,13 @@ public interface StudentSubmissionRepository extends JpaRepository<StudentSubmis
     JpaSpecificationExecutor<StudentSubmission> {
 
   @Modifying
-  @Query("DELETE FROM StudentSubmission ssm WHERE ssm.studentTaskProgress.id = :studentTaskProgressId")
   @Transactional
-  void deleteAllByStudentTaskProgressId(@Param("studentTaskProgressId") Long studentTaskProgressId);
+  @Query("DELETE FROM StudentSubmission ssm WHERE ssm.studentTaskProgress.id = :studentTaskProgressId AND ssm.taskQuestion IS NOT NULL")
+  void deleteQuestionSubmissionsByProgressId(@Param("studentTaskProgressId") Long studentTaskProgressId);
 
   @Query("SELECT COUNT(ssm.id) "
       + "FROM StudentSubmission ssm WHERE ssm.studentTaskProgress.id = :studentTaskProgressId")
   Integer countByStudentTaskProgressId(@Param("studentTaskProgressId") Long studentTaskProgressId);
-
-  @Query("SELECT COUNT(DISTINCT ssm.taskQuestion.id)"
-      + " FROM StudentSubmission ssm WHERE ssm.studentTaskProgress.id = :studentTaskProgressId")
-  Integer countDistinctQuestionByStudentTaskProgress(Long studentTaskProgressId);
 
   @Modifying
   @Query("DELETE FROM StudentSubmission ssm WHERE ssm.taskQuestion.id = :taskQuestionId")

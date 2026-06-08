@@ -7,7 +7,6 @@ import lombok.Data;
 public class TaskQuestionDto {
   private Long id;
   private String question;
-  private Integer questionType;
   private String options;
   private TaskDto task;
 }

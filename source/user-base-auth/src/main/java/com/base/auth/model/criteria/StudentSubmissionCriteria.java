@@ -23,6 +23,8 @@ import org.springframework.data.jpa.domain.Specification;
 public class StudentSubmissionCriteria {
   private Long simulationId;
   private String studentUsername;
+  private Long studentId;
+  private Long studentTaskProgressId;
 
   public Specification<StudentSubmission> getSpecification() {
     return new Specification<StudentSubmission>() {
@@ -53,6 +55,14 @@ public class StudentSubmissionCriteria {
 
         if (StringUtils.isNotEmpty(getStudentUsername())) {
           predicates.add(cb.like(cb.lower(accountJoin.get("username")), "%" + getStudentUsername().toLowerCase().trim() + "%"));
+        }
+
+        if (getStudentId() != null){
+          predicates.add(cb.equal(studentJoin.get("id"), getStudentId()));
+        }
+
+        if (getStudentTaskProgressId() != null){
+          predicates.add(cb.equal(studentTaskProgressJoin.get("id"), getStudentTaskProgressId()));
         }
         query.distinct(true);
 
