@@ -19,7 +19,6 @@ public class CreateTaskForm {
   private String title;
   @ApiModelProperty(name = "description")
   private String description;
-  @NotEmpty(message = "content cannot be null")
   @ApiModelProperty(name = "content")
   private String content;
   @TaskKind
