@@ -21,4 +21,6 @@ public interface AchievementRepository extends JpaRepository<Achievement, Long>,
   void setNullBySimulationId(@Param("simulationId") Long simulationId);
 
   List<Achievement> findAllByStudentId(Long studentId);
+
+  Boolean existsBySimulationIdAndStudentId(Long simulationId, Long studentId);
 }

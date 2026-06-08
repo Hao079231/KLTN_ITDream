@@ -1,6 +1,5 @@
 package com.base.auth.controller;
 
-import com.base.auth.constant.ITDreamConstant;
 import com.base.auth.dto.ApiMessageDto;
 import com.base.auth.dto.ErrorCode;
 import com.base.auth.exception.BadRequestException;
@@ -65,11 +64,14 @@ public class QuestionQuizHistoryController extends ABasicController{
     if (task.getTotalError().equals(studentTaskProgress.getErrorCount())){
       throw new BadRequestException("Please reset the task to try again", ErrorCode.STUDENT_TASK_PROGRESS_ERROR_FAIL);
     }
-    TaskQuestion taskQuestion = taskQuestionRepository.findById(form.getTaskQuestionId())
-        .orElseThrow(() -> new NotFoundException("Task question not found", ErrorCode.TASK_QUESTION_ERROR_NOT_FOUND));
 
-    if (!studentTaskProgress.getTask().getId().equals(taskQuestion.getTask().getId())){
-      throw new BadRequestException("The question is not in the task", ErrorCode.STUDENT_SUBMISSION_ERROR_NOT_CREATE);
+    TaskQuestion taskQuestion = null;
+    if (form.getTaskQuestionId() != null){
+      taskQuestion = taskQuestionRepository.findById(form.getTaskQuestionId())
+          .orElseThrow(() -> new NotFoundException("Task question not found", ErrorCode.TASK_QUESTION_ERROR_NOT_FOUND));
+      if (!studentTaskProgress.getTask().getId().equals(taskQuestion.getTask().getId())){
+        throw new BadRequestException("The question is not in the task", ErrorCode.STUDENT_SUBMISSION_ERROR_NOT_CREATE);
+      }
     }
 
     Boolean existSubmission = studentSubmissionRepository.existsByStudentTaskProgressIdAndAnswer(studentTaskProgress.getId(), form.getAnswer());
@@ -77,19 +79,17 @@ public class QuestionQuizHistoryController extends ABasicController{
       throw new BadRequestException("The question has been answered", ErrorCode.STUDENT_SUBMISSION_ERROR_NOT_CREATE);
     }
 
-    if (Boolean.TRUE.equals(form.getIsCorrect())){
+    if (Boolean.TRUE.equals(form.getIsCorrect())){ // Nếu đã làm bằng text, file hoặc trả lời trắc nghiệm đúng
       StudentSubmission studentSubmission = new StudentSubmission();
       studentSubmission.setAnswer(form.getAnswer());
       studentSubmission.setStudentTaskProgress(studentTaskProgress);
       studentSubmission.setTaskQuestion(taskQuestion);
       studentSubmissionRepository.save(studentSubmission);
-      questionQuizHistoryRepository.deleteAllByTaskQuestionId(taskQuestion.getId());
-    } else if (ITDreamConstant.QUESTION_TYPE_QUIZ.equals(taskQuestion.getQuestionType())){
+    } else if (taskQuestion != null){ // Nếu làm trắc nghiệm sai
         QuestionQuizHistory questionQuizHistory = questionQuizHistoryMapper.fromCreateQuestionQuizHistoryFormToEntity(form);
         questionQuizHistory.setStudentTaskProgress(studentTaskProgress);
         questionQuizHistory.setTaskQuestion(taskQuestion);
         questionQuizHistoryRepository.save(questionQuizHistory);
-
         studentTaskProgress.setErrorCount(studentTaskProgress.getErrorCount() + 1);
         studentTaskProgressRepository.save(studentTaskProgress);
     }

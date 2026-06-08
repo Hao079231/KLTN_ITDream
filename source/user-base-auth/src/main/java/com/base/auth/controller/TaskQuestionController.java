@@ -13,11 +13,9 @@ import com.base.auth.exception.UnauthorizationException;
 import com.base.auth.form.taskQuestion.CreateTaskQuestionForm;
 import com.base.auth.form.taskQuestion.UpdateTaskQuestionForm;
 import com.base.auth.mapper.TaskQuestionMapper;
-import com.base.auth.model.StudentSubmission;
 import com.base.auth.model.Simulation;
 import com.base.auth.model.Task;
 import com.base.auth.model.TaskQuestion;
-import com.base.auth.model.Student;
 import com.base.auth.model.criteria.TaskQuestionCriteria;
 import com.base.auth.repository.StudentSubmissionRepository;
 import com.base.auth.repository.SimulationRepository;
@@ -26,7 +24,7 @@ import com.base.auth.repository.TaskRepository;
 import com.base.auth.repository.QuestionQuizHistoryRepository;
 import com.base.auth.repository.ReviewSubmissionRepository;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Objects;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,20 +78,11 @@ public class TaskQuestionController extends ABasicController{
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Task task = taskRepository.findById(form.getTaskId()).orElseThrow(()
     -> new NotFoundException("Task not found", ErrorCode.TASK_ERROR_NOT_FOUND));
-    if (!form.getQuestionType().equals(ITDreamConstant.QUESTION_TYPE_QUIZ)){
-      if (form.getOptions() != null){
-        throw new BadRequestException("Cannot create options when the question type is not quiz", ErrorCode.TASK_QUESTION_ERROR_NOT_CREATE);
-      }
-      Boolean existQuestion = taskQuestionRepository.existsByQuestionAndTaskId(form.getQuestion(), form.getTaskId());
-      if (existQuestion){
-        throw new BadRequestException("Question already exist", ErrorCode.TASK_QUESTION_ERROR_EXIST);
-      }
-    } else {
-      Boolean existQuestion = taskQuestionRepository.existsByQuestionAndOptionsAndTaskId(form.getQuestion(),form.getOptions(), form.getTaskId());
-      if (existQuestion){
-        throw new BadRequestException("Question already exist", ErrorCode.TASK_QUESTION_ERROR_EXIST);
-      }
+    Boolean existQuestion = taskQuestionRepository.existsByQuestionAndOptionsAndTaskId(form.getQuestion(),form.getOptions(), form.getTaskId());
+    if (existQuestion){
+      throw new BadRequestException("Question already exist", ErrorCode.TASK_QUESTION_ERROR_EXIST);
     }
+
     TaskQuestion taskQuestion = taskQuestionMapper.fromCreateTaskQuestionFormToEntity(form);
     taskQuestion.setTask(task);
     taskQuestionRepository.save(taskQuestion);
@@ -168,23 +157,14 @@ public class TaskQuestionController extends ABasicController{
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     TaskQuestion taskQuestion = taskQuestionRepository.findById(form.getId()).orElseThrow(()
     -> new NotFoundException("Task question not found", ErrorCode.TASK_QUESTION_ERROR_NOT_FOUND));
-    if (!form.getQuestionType().equals(taskQuestion.getQuestionType())){
-      if (!form.getQuestionType().equals(ITDreamConstant.QUESTION_TYPE_QUIZ)){
-        if (form.getOptions() != null){
-          throw new BadRequestException("Cannot update options when the question type is not quiz", ErrorCode.TASK_QUESTION_ERROR_NOT_UPDATE);
-        }
-        Boolean existQuestion = taskQuestionRepository.existsByQuestionAndTaskId(form.getQuestion(), taskQuestion.getTask().getId());
-        if (existQuestion) {
-          throw new BadRequestException("Task question already exist", ErrorCode.TASK_QUESTION_ERROR_EXIST);
-        }
-      } else {
-        Boolean existQuestion = taskQuestionRepository.existsByQuestionAndOptionsAndTaskId(form.getQuestion(),
-            form.getOptions(), taskQuestion.getTask().getId());
-        if (existQuestion) {
-          throw new BadRequestException("Task question already exist", ErrorCode.TASK_QUESTION_ERROR_EXIST);
-        }
+    if (!Objects.equals(taskQuestion.getQuestion(), form.getQuestion()) || !Objects.equals(taskQuestion.getOptions(), form.getOptions())){
+      Boolean existQuestion = taskQuestionRepository.existsByQuestionAndOptionsAndTaskId(form.getQuestion(),
+          form.getOptions(), taskQuestion.getTask().getId());
+      if (existQuestion) {
+        throw new BadRequestException("Task question already exist", ErrorCode.TASK_QUESTION_ERROR_EXIST);
       }
     }
+
     taskQuestionMapper.fromUpdateTaskQuestionFormToEntity(form, taskQuestion);
     taskQuestionRepository.save(taskQuestion);
     Simulation simulation = taskQuestion.getTask().getSimulation();

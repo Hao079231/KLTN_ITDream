@@ -55,13 +55,6 @@ public class ErrorCode {
     public static final String  ERROR_DB_QUERY = "ERROR-DB-QUERY-0000";
 
     /**
-     * Starting error code FILE_ERROR
-     *
-     */
-    public static final String FILE_ERROR_UPLOAD_TYPE_INVALID = "ERROR-FILE-QUERY-0000";
-    public static final String FILE_ERROR_UPLOAD_FORMAT_INVALID = "ERROR-FILE-QUERY-0001";
-
-    /**
      * Starting error code Category
      * */
     public static final String CATEGORY_ERROR_NOT_FOUND = "CATEGORY-ERROR-0000";
@@ -76,7 +69,6 @@ public class ErrorCode {
     public static final String SIMULATION_ERROR_NOT_DELETE = "SIMULATION-ERROR-0002";
     public static final String SIMULATION_ERROR_APPROVE = "SIMULATION-ERROR-0003";
     public static final String SIMULATION_ERROR_NOT_AUTHORIZED = "SIMULATION-ERROR-0004";
-    public static final String SIMULATION_ERROR_NOT_ACTIVE = "SIMULATION-ERROR-0005";
 
     /**
      * Starting error code Task
@@ -86,23 +78,12 @@ public class ErrorCode {
     public static final String TASK_ERROR_POSITION = "TASK-ERROR-0002";
     public static final String TASK_ERROR_PARENT_KIND_TASK = "TASK-ERROR-0003";
     public static final String TASK_ERROR_MUST_HAVE_PARENT = "TASK-ERROR-0004";
-    public static final String TASK_ERROR_UPDATE = "TASK-ERROR-0005";
-
-    /**
-     * Starting error code TaskQuestion
-     * */
-    public static final String CHAPTER_ERROR_NOT_FOUND = "CHAPTER-ERROR-0000";
-    public static final String CHAPTER_ERROR_EXIST = "CHAPTER-ERROR-0001";
 
     /**
      * Starting error code TaskQuestion
      * */
     public static final String TASK_QUESTION_ERROR_NOT_FOUND = "TASK_QUESTION-ERROR-0000";
     public static final String TASK_QUESTION_ERROR_EXIST = "TASK_QUESTION-ERROR-0001";
-    public static final String TASK_QUESTION_ERROR_NOT_CREATE = "TASK_QUESTION-ERROR-0002";
-    public static final String TASK_QUESTION_ERROR_NOT_UPDATE = "TASK_QUESTION-ERROR-0003";
-    public static final String TASK_QUESTION_ERROR_NOT_CREATE_OPTION = "TASK_QUESTION-ERROR-0004";
-    public static final String TASK_QUESTION_ERROR_OPTION_NOT_NULL = "TASK_QUESTION-ERROR-0005";
 
     /**
      * Starting error code Simulation enrollment
@@ -119,6 +100,8 @@ public class ErrorCode {
     public static final String STUDENT_TASK_PROGRESS_ERROR_NOT_COMPLETED = "STUDENT_TASK-PROGRESS-ERROR-0002";
     public static final String STUDENT_TASK_PROGRESS_ERROR_NOT_CREATE = "STUDENT_TASK-PROGRESS-ERROR-0003";
     public static final String STUDENT_TASK_PROGRESS_ERROR_FAIL = "STUDENT_TASK-PROGRESS-ERROR-0004";
+    public static final String STUDENT_TASK_PROGRESS_ERROR_NOT_RESET = "STUDENT_TASK-PROGRESS-ERROR-0005";
+
 
     /**
      * Starting error code Google

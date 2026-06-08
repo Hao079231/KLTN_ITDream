@@ -25,7 +25,6 @@ public class TaskQuestion {
   private Long id;
   @Column(name = "question", columnDefinition = "TEXT")
   private String question;
-  private Integer questionType;
   @Column(name = "options" ,  columnDefinition = "TEXT")
   private String options;
   @ManyToOne

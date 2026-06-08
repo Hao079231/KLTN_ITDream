@@ -64,11 +64,6 @@ public class ITDreamConstant {
 
     public static final Integer RESTART_ERROR_COUNT = 0;
 
-    public static final Integer QUESTION_TYPE_FILE = 1;
-    public static final Integer QUESTION_TYPE_TEXT = 2;
-    public static final Integer QUESTION_TYPE_QUIZ = 3;
-    public static final List<Integer> QUESTION_TYPES = List.of(QUESTION_TYPE_FILE, QUESTION_TYPE_TEXT, QUESTION_TYPE_QUIZ);
-
     public static final Integer SIMULATION_ENROLLMENT_COMPLETED = 1;
     public static final Integer SIMULATION_ENROLLMENT_IN_PROGRESS = 2;
 

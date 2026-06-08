@@ -21,14 +21,13 @@ import org.mapstruct.ReportingPolicy;
     uses = {TaskMapper.class})
 public interface TaskQuestionMapper {
   @Mapping(source = "question", target = "question")
-  @Mapping(source = "questionType", target = "questionType")
   @Mapping(source = "options", target = "options")
   @BeanMapping(ignoreByDefault = true)
-  TaskQuestion fromCreateTaskQuestionFormToEntity(CreateTaskQuestionForm createTaskQuestionForm);
+  TaskQuestion fromCreateTaskQuestionFormToEntity(
+      CreateTaskQuestionForm createTaskQuestionForm);
 
   @Mapping(source = "id", target = "id")
   @Mapping(source = "question", target = "question")
-  @Mapping(source = "questionType", target = "questionType")
   @Mapping(source = "options", target = "options")
   @Mapping(source = "task", target = "task", qualifiedByName = "fromEntityToTaskDisplayAdminDto")
   @BeanMapping(ignoreByDefault = true)
@@ -40,7 +39,6 @@ public interface TaskQuestionMapper {
 
   @Mapping(source = "id", target = "id")
   @Mapping(source = "question", target = "question")
-  @Mapping(source = "questionType", target = "questionType")
   @Mapping(source = "options", target = "options")
   @Mapping(source = "task", target = "task", qualifiedByName = "fromEntityToTaskEducatorDto")
   @BeanMapping(ignoreByDefault = true)
@@ -52,7 +50,6 @@ public interface TaskQuestionMapper {
 
   @Mapping(source = "id", target = "id")
   @Mapping(source = "question", target = "question")
-  @Mapping(source = "questionType", target = "questionType")
   @Mapping(source = "options", target = "options")
   @Mapping(source = "task", target = "task", qualifiedByName = "fromEntityToTaskStudentDto")
   @BeanMapping(ignoreByDefault = true)
@@ -63,7 +60,6 @@ public interface TaskQuestionMapper {
   List<TaskQuestionStudentDto> fromEntityToTaskQuestionStudentDtoList(List<TaskQuestion> questions);
 
   @Mapping(source = "question", target = "question")
-  @Mapping(source = "questionType", target = "questionType")
   @Mapping(source = "options", target = "options")
   @BeanMapping(ignoreByDefault = true)
   void fromUpdateTaskQuestionFormToEntity(UpdateTaskQuestionForm updateTaskQuestionForm, @MappingTarget TaskQuestion taskQuestion);
