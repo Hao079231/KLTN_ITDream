@@ -19,9 +19,6 @@ public class UpdateTaskForm {
   @NotEmpty(message = "title cannot be null")
   @ApiModelProperty(name = "title")
   private String title;
-  @ApiModelProperty(name = "introduction")
-  private String introduction;
-  @NotEmpty(message = "description cannot be null")
   @ApiModelProperty(name = "description")
   private String description;
   @ApiModelProperty(name = "content")
