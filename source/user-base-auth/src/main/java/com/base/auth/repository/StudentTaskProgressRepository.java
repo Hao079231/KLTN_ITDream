@@ -4,6 +4,7 @@ import com.base.auth.model.StudentTaskProgress;
 import java.util.List;
 import java.util.Optional;
 import javax.transaction.Transactional;
+import javax.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -34,10 +35,10 @@ public interface StudentTaskProgressRepository extends JpaRepository<StudentTask
       nativeQuery = true)
   void deleteAllByStudentId(@Param("studentId") Long studentId);
 
-  Boolean existsBySimulationEnrollmentIdAndStatus(Long simulationEnrollmentId, Integer studentTaskProgress);
-
   @Query("SELECT COUNT(stp.id) FROM StudentTaskProgress stp JOIN stp.task t "
       + "WHERE stp.task.id = :taskId "
       + "AND stp.status = :status")
   Integer countCompletedSubtaskInTask(@Param("taskId") Long taskId, @Param("status") Integer studentTaskProgressCompleted);
+
+  Boolean existsBySimulationEnrollmentIdAndTaskKindAndStatus(Long simulationEnrollmentId, Integer taskKindSubtask, Integer studentTaskProgressInProgress);
 }
