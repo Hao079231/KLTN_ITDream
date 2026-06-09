@@ -86,7 +86,7 @@ public class StudentTaskProgressController extends ABasicController{
       throw new UnauthorizationException("User is not a student");
     }
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
-    Boolean existStudentTaskProgress = studentTaskProgressRepository.existsBySimulationEnrollmentIdAndStatus(form.getSimulationEnrollmentId(), ITDreamConstant.STUDENT_TASK_PROGRESS_IN_PROGRESS);
+    Boolean existStudentTaskProgress = studentTaskProgressRepository.existsBySimulationEnrollmentIdAndTaskKindAndStatus(form.getSimulationEnrollmentId(), ITDreamConstant.TASK_KIND_SUBTASK, ITDreamConstant.STUDENT_TASK_PROGRESS_IN_PROGRESS);
     if (existStudentTaskProgress){
       throw new BadRequestException("Please complete the previous task", ErrorCode.STUDENT_TASK_PROGRESS_ERROR_NOT_CREATE);
     }
