@@ -32,7 +32,6 @@ public class Task {
   @Column(columnDefinition = "TEXT")
   private String content;
   private Integer kind; // 1 - task, 2 - subtask
-  private Integer type; // 0 - overview, 1 - content, 2 - question, 3 - answer
   private Integer orderInParent;
   private String videoPath;
   private String filePath;

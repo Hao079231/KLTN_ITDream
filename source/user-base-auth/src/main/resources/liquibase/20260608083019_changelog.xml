@@ -3,4 +3,7 @@
     <changeSet author="Authentication" id="1780907427837-7">
         <dropColumn columnName="question_type" tableName="db_it_dream_task_question"/>
     </changeSet>
+    <changeSet author="Authentication" id="1780997231754-7">
+        <dropColumn columnName="type" tableName="db_it_dream_task"/>
+    </changeSet>
 </databaseChangeLog>
