@@ -16,5 +16,6 @@ public class UpdateTaskPositionForm {
   @ApiModelProperty(name = "newOrder")
   private Integer newOrder;
 
+  @ApiModelProperty(name = "newParentId")
   private Long newParentId;
 }
