@@ -1,5 +1,6 @@
 package com.base.auth.controller;
 
+import com.base.auth.constant.ITDreamConstant;
 import com.base.auth.dto.ApiMessageDto;
 import com.base.auth.dto.ErrorCode;
 import com.base.auth.exception.BadRequestException;
@@ -17,6 +18,7 @@ import com.base.auth.repository.StudentSubmissionRepository;
 import com.base.auth.repository.StudentTaskProgressRepository;
 import com.base.auth.repository.TaskQuestionRepository;
 import com.base.auth.repository.QuestionQuizHistoryRepository;
+import java.util.Objects;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,7 +63,7 @@ public class QuestionQuizHistoryController extends ABasicController{
     StudentTaskProgress studentTaskProgress = studentTaskProgressRepository.findById(form.getStudentTaskProgressId())
         .orElseThrow(() -> new NotFoundException("Task progress not found", ErrorCode.STUDENT_TASK_PROGRESS_ERROR_NOT_FOUND));
     Task task = studentTaskProgress.getTask();
-    if (task.getTotalError().equals(studentTaskProgress.getErrorCount())){
+    if (!Objects.equals(task.getTotalError(), ITDreamConstant.TASK_NO_ERROR) && task.getTotalError().equals(studentTaskProgress.getErrorCount())){
       throw new BadRequestException("Please reset the task to try again", ErrorCode.STUDENT_TASK_PROGRESS_ERROR_FAIL);
     }
 
@@ -80,6 +82,11 @@ public class QuestionQuizHistoryController extends ABasicController{
     }
 
     if (Boolean.TRUE.equals(form.getIsCorrect())){ // Nếu đã làm bằng text, file hoặc trả lời trắc nghiệm đúng
+      QuestionQuizHistory questionQuizHistory = questionQuizHistoryMapper.fromCreateQuestionQuizHistoryFormToEntity(form);
+      questionQuizHistory.setStudentTaskProgress(studentTaskProgress);
+      questionQuizHistory.setTaskQuestion(taskQuestion);
+      questionQuizHistoryRepository.save(questionQuizHistory);
+
       StudentSubmission studentSubmission = new StudentSubmission();
       studentSubmission.setAnswer(form.getAnswer());
       studentSubmission.setStudentTaskProgress(studentTaskProgress);

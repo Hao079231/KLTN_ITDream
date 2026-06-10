@@ -248,10 +248,13 @@ public class StudentTaskProgressController extends ABasicController{
 
     // Kiểm tra xem một subtask loại task truyền vào có kind là gì để kiểm tra khi kind là task hoặc subtask
     if (Objects.equals(task.getKind(), ITDreamConstant.TASK_KIND_SUBTASK)){
-      Integer totalQuestion = taskQuestionRepository.countByTaskId(task.getId());
-      Integer totalSubmission = studentSubmissionRepository.countByStudentTaskProgressId(studentTaskProgress.getId());
-      if (!Objects.equals(totalQuestion, totalSubmission)){
-        throw new BadRequestException("Not all questions are answered correctly", ErrorCode.STUDENT_TASK_PROGRESS_ERROR_NOT_COMPLETED);
+      Boolean existTaskQuestion = taskQuestionRepository.existsByTaskId(task.getId());
+      if (existTaskQuestion){
+        Integer totalQuestion = taskQuestionRepository.countByTaskId(task.getId());
+        Integer totalSubmission = studentSubmissionRepository.countByStudentTaskProgressId(studentTaskProgress.getId());
+        if (!Objects.equals(totalQuestion, totalSubmission)){
+          throw new BadRequestException("Not all questions are answered correctly", ErrorCode.STUDENT_TASK_PROGRESS_ERROR_NOT_COMPLETED);
+        }
       }
       studentTaskProgress.setStatus(ITDreamConstant.STUDENT_TASK_PROGRESS_COMPLETED);
       studentTaskProgress.setErrorCount(ITDreamConstant.RESTART_ERROR_COUNT);
