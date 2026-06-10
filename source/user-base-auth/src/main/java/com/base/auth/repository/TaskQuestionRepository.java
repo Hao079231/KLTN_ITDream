@@ -21,4 +21,6 @@ public interface TaskQuestionRepository extends JpaRepository<TaskQuestion, Long
   void deleteAllByTaskId(@Param("taskId") Long taskId);
 
   Integer countByTaskId(Long taskId);
+
+  Boolean existsByTaskId(Long taskId);
 }

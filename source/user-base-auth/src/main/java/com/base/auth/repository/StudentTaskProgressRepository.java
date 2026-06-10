@@ -35,9 +35,11 @@ public interface StudentTaskProgressRepository extends JpaRepository<StudentTask
       nativeQuery = true)
   void deleteAllByStudentId(@Param("studentId") Long studentId);
 
-  @Query("SELECT COUNT(stp.id) FROM StudentTaskProgress stp JOIN stp.task t "
-      + "WHERE stp.task.id = :taskId "
-      + "AND stp.status = :status")
+  @Query("SELECT COUNT(stp.id) " +
+      "FROM StudentTaskProgress stp " +
+      "JOIN stp.task t " +
+      "WHERE t.parent.id = :taskId " +
+      "AND stp.status = :status")
   Integer countCompletedSubtaskInTask(@Param("taskId") Long taskId, @Param("status") Integer studentTaskProgressCompleted);
 
   Boolean existsBySimulationEnrollmentIdAndTaskKindAndStatus(Long simulationEnrollmentId, Integer taskKindSubtask, Integer studentTaskProgressInProgress);
