@@ -66,11 +66,13 @@ public interface AccountMapper {
 
     @Mapping(source = "fullName",target = "fullName")
     @Mapping(source = "birthday", target = "birthday")
+    @Mapping(source = "status", target = "status")
     @BeanMapping(ignoreByDefault = true)
     void fromUpdateStudentFormToEntity(UpdateStudentForm updateStudentForm, @MappingTarget Account account );
 
     @Mapping(source = "fullName",target = "fullName")
     @Mapping(source = "birthday", target = "birthday")
+    @Mapping(source = "status", target = "status")
     @BeanMapping(ignoreByDefault = true)
     void fromUpdateEducatorFormToEntity(UpdateEducatorForm updateEducatorForm, @MappingTarget Account account );
 

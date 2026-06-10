@@ -15,4 +15,5 @@ public class TaskDto {
   private String videoPath;
   private Integer totalError;
   private Integer totalQuestion;
+  private TaskDto parent;
 }
