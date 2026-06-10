@@ -256,8 +256,8 @@ public class TaskController extends ABasicController{
       throw new UnauthorizationException("User is not an educator");
     }
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
-    Task task = taskRepository.findById(form.getId()).orElseThrow(()
-    -> new NotFoundException("Task not found", ErrorCode.TASK_ERROR_NOT_FOUND));
+    Task task = taskRepository.findById(form.getId())
+        .orElseThrow(() -> new NotFoundException("Task not found", ErrorCode.TASK_ERROR_NOT_FOUND));
     if (task.getKind().equals(ITDreamConstant.TASK_KIND_SUBTASK) && !form.getTitle().equals(task.getTitle())){
       Boolean existSubtask = taskRepository.existsBySimulationIdAndNameAndTitle(task.getSimulation().getId(),
           form.getName(), form.getTitle());
@@ -266,31 +266,42 @@ public class TaskController extends ABasicController{
       }
     }
 
-    if (StringUtils.isNotBlank(form.getImagePath()) &&
-        !task.getImagePath().toLowerCase().matches(ITDreamConstant.FILE_PATH_PATTERN) &&
-        !Objects.equals(form.getImagePath(), task.getImagePath())){
-      userBaseApiService.deleteByFilePath(task.getImagePath());
-      task.setImagePath(form.getImagePath());
+    if (StringUtils.isNotBlank(form.getImagePath())){
+      if (task.getImagePath() == null){
+        task.setImagePath(form.getImagePath());
+      } else if (!Objects.equals(task.getImagePath(), ITDreamConstant.FILE_PATH_PATTERN)
+          && !Objects.equals(form.getImagePath(), task.getImagePath())){
+        userBaseApiService.deleteByFilePath(task.getImagePath());
+        task.setImagePath(form.getImagePath());
+      }
     }
 
-    if (StringUtils.isNotBlank(form.getFilePath()) &&
-        !task.getFilePath().toLowerCase().matches(ITDreamConstant.FILE_PATH_PATTERN) &&
-        !Objects.equals(form.getFilePath(), task.getFilePath())){
-      userBaseApiService.deleteByFilePath(task.getFilePath());
-      task.setFilePath(form.getFilePath());
+    if (StringUtils.isNotBlank(form.getFilePath())){
+      if (task.getFilePath() == null){
+        task.setFilePath(form.getFilePath());
+      } else if (!Objects.equals(task.getFilePath(), ITDreamConstant.FILE_PATH_PATTERN)
+          && !Objects.equals(form.getFilePath(), task.getFilePath())){
+        userBaseApiService.deleteByFilePath(task.getFilePath());
+        task.setFilePath(form.getFilePath());
+      }
     }
 
-    if (StringUtils.isNotBlank(form.getVideoPath()) &&
-        !task.getVideoPath().toLowerCase().matches(ITDreamConstant.FILE_PATH_PATTERN) &&
-        !Objects.equals(form.getVideoPath(), task.getVideoPath())){
-      userBaseApiService.deleteByFilePath(task.getVideoPath());
-      task.setVideoPath(form.getVideoPath());
+    if (StringUtils.isNotBlank(form.getVideoPath())){
+      if (task.getVideoPath() == null){
+        task.setVideoPath(form.getVideoPath());
+      } else if (!Objects.equals(task.getVideoPath(), ITDreamConstant.FILE_PATH_PATTERN)
+          && !Objects.equals(form.getVideoPath(), task.getVideoPath())){
+        userBaseApiService.deleteByFilePath(task.getVideoPath());
+        task.setVideoPath(form.getVideoPath());
+      }
     }
 
     taskMapper.fromUpdateTaskFormToEntity(form, task);
     taskRepository.save(task);
 
-    if (StringUtils.isNotBlank(form.getVideoPath()) && !task.getVideoPath().toLowerCase().matches(ITDreamConstant.FILE_PATH_PATTERN)){
+    if (StringUtils.isNotBlank(form.getVideoPath())
+        && task.getVideoPath() != null
+        && !task.getVideoPath().toLowerCase().matches(ITDreamConstant.FILE_PATH_PATTERN)){
       RequestProcessVideoMessageForm data = new RequestProcessVideoMessageForm();
       data.setId(task.getId());
       data.setKind(ITDreamConstant.KIND_TASK);

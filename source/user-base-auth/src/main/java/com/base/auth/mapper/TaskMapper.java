@@ -58,6 +58,7 @@ public interface TaskMapper {
   @Mapping(source = "videoPath", target = "videoPath")
   @Mapping(source = "totalError", target = "totalError")
   @Mapping(source = "totalQuestion", target = "totalQuestion")
+  @Mapping(source = "parent", target = "parent", qualifiedByName = "fromEntityToTaskDto")
   @BeanMapping(ignoreByDefault = true)
   @Named("fromEntityToTaskDto")
   TaskDto fromEntityToTaskDto(Task task);
@@ -65,8 +66,10 @@ public interface TaskMapper {
   @Mapping(source = "id", target = "id")
   @Mapping(source = "name", target = "name")
   @Mapping(source = "title", target = "title")
+  @Mapping(source = "kind", target = "kind")
   @Mapping(source = "description", target = "description")
   @Mapping(source = "content", target = "content")
+  @Mapping(source = "parent", target = "parent", qualifiedByName = "fromEntityToTaskDisplayAdminDto")
   @BeanMapping(ignoreByDefault = true)
   @Named("fromEntityToTaskDisplayAdminDto")
   TaskDto fromEntityToTaskDisplayAdminDto(Task task);

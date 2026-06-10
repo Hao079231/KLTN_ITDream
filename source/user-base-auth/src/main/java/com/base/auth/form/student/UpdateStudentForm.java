@@ -37,4 +37,6 @@ public class UpdateStudentForm {
   private Date birthday;
   @ApiModelProperty(name = "avatarPath")
   private String avatarPath;
+  @ApiModelProperty(name = "status")
+  private Integer status;
 }
