@@ -86,7 +86,7 @@ public class StudentTaskProgressController extends ABasicController{
       throw new UnauthorizationException("User is not a student");
     }
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
-    Boolean existStudentTaskProgress = studentTaskProgressRepository.existsBySimulationEnrollmentIdAndTaskKindAndStatus(form.getSimulationEnrollmentId(), ITDreamConstant.TASK_KIND_SUBTASK, ITDreamConstant.STUDENT_TASK_PROGRESS_IN_PROGRESS);
+    Boolean existStudentTaskProgress = studentTaskProgressRepository.existsBySimulationEnrollmentIdAndTask_KindAndStatus(form.getSimulationEnrollmentId(), ITDreamConstant.TASK_KIND_SUBTASK, ITDreamConstant.STUDENT_TASK_PROGRESS_IN_PROGRESS);
     if (existStudentTaskProgress){
       throw new BadRequestException("Please complete the previous task", ErrorCode.STUDENT_TASK_PROGRESS_ERROR_NOT_CREATE);
     }
@@ -261,7 +261,7 @@ public class StudentTaskProgressController extends ABasicController{
       studentTaskProgressRepository.save(studentTaskProgress);
     } else {
       Integer totalSubtask = taskRepository.countByParentId(task.getId());
-      Integer totalCompletedSubtask = studentTaskProgressRepository.countCompletedSubtaskInTask(task.getId(), ITDreamConstant.STUDENT_TASK_PROGRESS_COMPLETED);
+      Integer totalCompletedSubtask = studentTaskProgressRepository.countCompletedSubtaskInTask(task.getId(), ITDreamConstant.STUDENT_TASK_PROGRESS_COMPLETED, studentTaskProgress.getSimulationEnrollment().getId());
       if (!Objects.equals(totalCompletedSubtask, totalSubtask)){
         throw new BadRequestException("Not all subtasks are completed", ErrorCode.STUDENT_TASK_PROGRESS_ERROR_NOT_COMPLETED);
       }

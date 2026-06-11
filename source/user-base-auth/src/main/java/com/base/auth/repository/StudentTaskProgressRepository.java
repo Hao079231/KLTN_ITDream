@@ -39,8 +39,9 @@ public interface StudentTaskProgressRepository extends JpaRepository<StudentTask
       "FROM StudentTaskProgress stp " +
       "JOIN stp.task t " +
       "WHERE t.parent.id = :taskId " +
-      "AND stp.status = :status")
-  Integer countCompletedSubtaskInTask(@Param("taskId") Long taskId, @Param("status") Integer studentTaskProgressCompleted);
+      "AND stp.status = :status " +
+      "AND stp.simulationEnrollment.id = :enrollmentId")
+  Integer countCompletedSubtaskInTask(@Param("taskId") Long taskId, @Param("status") Integer status, @Param("enrollmentId") Long enrollmentId);
 
-  Boolean existsBySimulationEnrollmentIdAndTaskKindAndStatus(Long simulationEnrollmentId, Integer taskKindSubtask, Integer studentTaskProgressInProgress);
+  Boolean existsBySimulationEnrollmentIdAndTask_KindAndStatus(Long simulationEnrollmentId, Integer taskKindSubtask, Integer studentTaskProgressInProgress);
 }
