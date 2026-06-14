@@ -45,18 +45,4 @@ public interface StudentSubmissionRepository extends JpaRepository<StudentSubmis
   void deleteAllByStudentId(@Param("studentId") Long studentId);
 
   Boolean existsByStudentTaskProgressIdAndAnswer(Long studentTaskProgressId, String answer);
-
-  @Query("select count(ssm.id) " +
-      "from StudentSubmission ssm " +
-      "where ssm.studentTaskProgress.simulationEnrollment.id = :enrollmentId")
-  long countBySimulationEnrollmentId(@Param("enrollmentId") Long enrollmentId);
-
-  @Query("SELECT COUNT(ssm) " +
-      "FROM StudentSubmission ssm " +
-      "JOIN ssm.studentTaskProgress stp " +
-      "JOIN stp.simulationEnrollment se " +
-      "WHERE se.simulation.id = :simulationId " +
-      "AND se.student.id = :studentId")
-  Long countStudentSubmissionBySimulationAndStudent(@Param("simulationId") Long simulationId, @Param("studentId") Long studentId);
-
 }

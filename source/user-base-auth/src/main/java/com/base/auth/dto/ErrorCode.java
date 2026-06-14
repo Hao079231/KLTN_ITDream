@@ -78,6 +78,7 @@ public class ErrorCode {
     public static final String TASK_ERROR_POSITION = "TASK-ERROR-0002";
     public static final String TASK_ERROR_PARENT_KIND_TASK = "TASK-ERROR-0003";
     public static final String TASK_ERROR_MUST_HAVE_PARENT = "TASK-ERROR-0004";
+    public static final String TASK_ERROR_KIND_INVALID = "TASK-ERROR-0005";
 
     /**
      * Starting error code TaskQuestion
@@ -91,6 +92,8 @@ public class ErrorCode {
     public static final String SIMULATION_ENROLLMENT_ERROR_NOT_FOUND = "SIMULATION-ENROLLMENT-ERROR-0000";
     public static final String SIMULATION_ENROLLMENT_ERROR_NOT_CREATE = "SIMULATION-ENROLLMENT-ERROR-0001";
     public static final String SIMULATION_ENROLLMENT_ERROR_EXIST = "SIMULATION-ENROLLMENT-ERROR-0002";
+    public static final String SIMULATION_ENROLLMENT_ERROR_NOT_COMPLETE = "SIMULATION-ENROLLMENT-ERROR-0003";
+
 
     /**
      * Starting error code Student task progress
@@ -121,6 +124,7 @@ public class ErrorCode {
     public static final String REVIEW_SUBMISSION_ERROR_NOT_FOUND = "REVIEW-SUBMISSION-ERROR-0000";
     public static final String REVIEW_SUBMISSION_ERROR_EXIST = "REVIEW-SUBMISSION-ERROR-0001";
     public static final String REVIEW_SUBMISSION_ERROR_NOT_COMPLETE = "REVIEW-SUBMISSION-ERROR-0002";
+    public static final String REVIEW_SUBMISSION_ERROR_NOT_CREATE = "REVIEW-SUBMISSION-ERROR-0003";
 
     /**
      * Starting error code Notification

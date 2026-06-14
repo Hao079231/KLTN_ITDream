@@ -1,10 +1,8 @@
 package com.base.auth.repository;
 
 import com.base.auth.model.StudentTaskProgress;
-import java.util.List;
 import java.util.Optional;
 import javax.transaction.Transactional;
-import javax.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -44,4 +42,22 @@ public interface StudentTaskProgressRepository extends JpaRepository<StudentTask
   Integer countCompletedSubtaskInTask(@Param("taskId") Long taskId, @Param("status") Integer status, @Param("enrollmentId") Long enrollmentId);
 
   Boolean existsBySimulationEnrollmentIdAndTask_KindAndStatus(Long simulationEnrollmentId, Integer taskKindSubtask, Integer studentTaskProgressInProgress);
+
+  @Query(
+      "SELECT CASE WHEN COUNT(stp) > 0 THEN TRUE ELSE FALSE END " +
+          "FROM StudentTaskProgress stp " +
+          "WHERE stp.simulationEnrollment.id = :enrollmentId " +
+          "AND stp.task.kind = :taskKind " +
+          "AND NOT EXISTS (" +
+          "   SELECT tq.id " +
+          "   FROM TaskQuestion tq " +
+          "   WHERE tq.task.id = stp.task.id" +
+          ") " +
+          "AND NOT EXISTS (" +
+          "   SELECT rs.id " +
+          "   FROM ReviewSubmission rs " +
+          "   WHERE rs.studentSubmission.studentTaskProgress.id = stp.id" +
+          ")"
+  )
+  boolean existsUnreviewedTask(@Param("enrollmentId") Long enrollmentId, @Param("taskKind") Integer taskKind);
 }

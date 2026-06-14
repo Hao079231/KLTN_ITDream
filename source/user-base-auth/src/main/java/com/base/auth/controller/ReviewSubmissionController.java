@@ -1,5 +1,6 @@
 package com.base.auth.controller;
 
+import com.base.auth.constant.ITDreamConstant;
 import com.base.auth.dto.ApiMessageDto;
 import com.base.auth.dto.ErrorCode;
 import com.base.auth.dto.ResponseListDto;
@@ -12,18 +13,24 @@ import com.base.auth.form.reviewSubmission.CreateReviewSubmissionForm;
 import com.base.auth.form.reviewSubmission.UpdateReviewSubmissionForm;
 import com.base.auth.mapper.ReviewSubmissionMapper;
 import com.base.auth.model.Account;
+import com.base.auth.model.Educator;
+import com.base.auth.model.SimulationEnrollment;
 import com.base.auth.model.StudentSubmission;
 import com.base.auth.model.Simulation;
 import com.base.auth.model.Notification;
 import com.base.auth.model.ReviewSubmission;
 import com.base.auth.model.Student;
+import com.base.auth.model.StudentTaskProgress;
 import com.base.auth.model.criteria.ReviewSubmissionCriteria;
 import com.base.auth.repository.AccountRepository;
 import com.base.auth.repository.StudentSubmissionRepository;
 import com.base.auth.repository.SimulationRepository;
 import com.base.auth.repository.NotificationRepository;
 import com.base.auth.repository.ReviewSubmissionRepository;
+import com.base.auth.repository.StudentTaskProgressRepository;
+import com.base.auth.repository.TaskQuestionRepository;
 import java.util.List;
+import java.util.Objects;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +70,12 @@ public class ReviewSubmissionController extends ABasicController{
   SimulationRepository simulationRepository;
 
   @Autowired
+  StudentTaskProgressRepository studentTaskProgressRepository;
+
+  @Autowired
+  TaskQuestionRepository taskQuestionRepository;
+
+  @Autowired
   ReviewSubmissionMapper reviewSubmissionMapper;
 
   @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -74,18 +87,28 @@ public class ReviewSubmissionController extends ABasicController{
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     StudentSubmission studentSubmission = studentSubmissionRepository.findById(form.getStudentSubmissionId())
         .orElseThrow(() -> new NotFoundException("Student submission not found", ErrorCode.STUDENT_SUBMISSION_ERROR_NOT_FOUND));
-    Account account = accountRepository.findAccountByUsername(form.getUsername());
-    if (account == null){
-      throw new NotFoundException("Account not found", ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
+    StudentTaskProgress studentTaskProgress = studentTaskProgressRepository.findById(form.getStudentTaskProgressId())
+        .orElseThrow(() -> new NotFoundException("Student task progress not found", ErrorCode.STUDENT_TASK_PROGRESS_ERROR_NOT_FOUND));
+    if (!studentTaskProgress.getTask().getKind().equals(ITDreamConstant.TASK_KIND_SUBTASK)){
+      throw new BadRequestException("Cannot review task", ErrorCode.TASK_ERROR_KIND_INVALID);
     }
 
-    Student student = studentRepository.findById(account.getId())
-        .orElseThrow(() -> new NotFoundException("Student not found", ErrorCode.USER_ERROR_NOT_FOUND));
-    ReviewSubmission reviewSubmission = reviewSubmissionRepository.findByStudentSubmissionIdAndStudentId(
-        studentSubmission.getId(), student.getId());
-    if (reviewSubmission != null){
+    Boolean existTaskQuestion = taskQuestionRepository.existsByTaskId(studentTaskProgress.getTask().getId());
+    if (existTaskQuestion){
+      throw new BadRequestException("No review required for task with a task question", ErrorCode.REVIEW_SUBMISSION_ERROR_NOT_CREATE);
+    }
+
+    SimulationEnrollment simulationEnrollment = studentTaskProgress.getSimulationEnrollment();
+    if (!Objects.equals(simulationEnrollment.getStatus(), ITDreamConstant.SIMULATION_ENROLLMENT_COMPLETED)){
+      throw new BadRequestException("Simulation is not completed", ErrorCode.SIMULATION_ENROLLMENT_ERROR_NOT_COMPLETE);
+    }
+    Student student = simulationEnrollment.getStudent();
+    boolean existReview = reviewSubmissionRepository.existsByStudentTaskProgressId(studentTaskProgress.getId());
+    if (existReview){
       throw new BadRequestException("Review submission already exist", ErrorCode.REVIEW_SUBMISSION_ERROR_EXIST);
     }
+
+    ReviewSubmission reviewSubmission = new ReviewSubmission();
     reviewSubmission.setContent(form.getContent());
     reviewSubmission.setStudentSubmission(studentSubmission);
     reviewSubmission.setStudent(student);
@@ -99,7 +122,6 @@ public class ReviewSubmissionController extends ABasicController{
   public ApiMessageDto<ResponseListDto<List<ReviewSubmissionDisplayDto>>> listReviewSubmissionByStudent(ReviewSubmissionCriteria criteria, Pageable pageable){
     ApiMessageDto<ResponseListDto<List<ReviewSubmissionDisplayDto>>> apiMessageDto = new ApiMessageDto<>();
     ResponseListDto<List<ReviewSubmissionDisplayDto>> responseListDto = new ResponseListDto<>();
-    criteria.setStudentId(getCurrentUser());
     Page<ReviewSubmission> reviewSubmissions = reviewSubmissionRepository.findAll(criteria.getSpecification(), pageable);
     List<ReviewSubmissionDisplayDto> studentLessonsViewDtos = reviewSubmissionMapper.fromEntityToReviewSubmissionDisplayDtoList(reviewSubmissions.getContent());
     responseListDto.setContent(studentLessonsViewDtos);
@@ -122,6 +144,36 @@ public class ReviewSubmissionController extends ABasicController{
     responseListDto.setTotalPages(reviewSubmissions.getTotalPages());
     apiMessageDto.setData(responseListDto);
     apiMessageDto.setMessage("Get list review submission success");
+    return apiMessageDto;
+  }
+
+  @GetMapping(value = "/student_get/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+  @PreAuthorize("hasRole('RS_ST_STV')")
+  public ApiMessageDto<ReviewSubmissionDisplayDto> studentGet(@PathVariable("id") Long id){
+    if (!isStudent()){
+      throw new UnauthorizationException("User is not a student");
+    }
+    ApiMessageDto<ReviewSubmissionDisplayDto> apiMessageDto = new ApiMessageDto<>();
+    ReviewSubmission reviewSubmission = reviewSubmissionRepository.findById(id)
+        .orElseThrow(() -> new NotFoundException("Review submission not found", ErrorCode.REVIEW_SUBMISSION_ERROR_NOT_FOUND));
+    ReviewSubmissionDisplayDto reviewSubmissionDisplayDto = reviewSubmissionMapper.fromEntityToReviewSubmissionDisplayDto(reviewSubmission);
+    apiMessageDto.setData(reviewSubmissionDisplayDto);
+    apiMessageDto.setMessage("Get detail review submission success");
+    return apiMessageDto;
+  }
+
+  @GetMapping(value = "/educator_get/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+  @PreAuthorize("hasRole('RS_ED_STV')")
+  public ApiMessageDto<ReviewSubmissionDisplayDto> educatorGet(@PathVariable("id") Long id){
+    if (!isEducator()){
+      throw new UnauthorizationException("User is not an educator");
+    }
+    ApiMessageDto<ReviewSubmissionDisplayDto> apiMessageDto = new ApiMessageDto<>();
+    ReviewSubmission reviewSubmission = reviewSubmissionRepository.findById(id)
+        .orElseThrow(() -> new NotFoundException("Review submission not found", ErrorCode.REVIEW_SUBMISSION_ERROR_NOT_FOUND));
+    ReviewSubmissionDisplayDto reviewSubmissionDisplayDto = reviewSubmissionMapper.fromEntityToReviewSubmissionDisplayDto(reviewSubmission);
+    apiMessageDto.setData(reviewSubmissionDisplayDto);
+    apiMessageDto.setMessage("Get detail review submission success");
     return apiMessageDto;
   }
 
@@ -163,27 +215,19 @@ public class ReviewSubmissionController extends ABasicController{
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Simulation simulation = simulationRepository.findById(form.getSimulationId())
         .orElseThrow(() -> new NotFoundException("Simulation error not found", ErrorCode.SIMULATION_ERROR_NOT_FOUND));
+    Educator educator = educatorRepository.findById(getCurrentUser())
+        .orElseThrow(() -> new NotFoundException("Educator not found", ErrorCode.USER_ERROR_NOT_FOUND));
     Account account = accountRepository.findAccountByUsername(form.getStudentUsername());
-    if (account == null) {
+    if (account == null){
       throw new NotFoundException("Account not found", ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
     }
-
-    Student student = studentRepository.findById(account.getId())
-        .orElseThrow(() -> new NotFoundException("Student not found", ErrorCode.USER_ERROR_NOT_FOUND));
-
-    Long totalStudentSubmission = studentSubmissionRepository.countStudentSubmissionBySimulationAndStudent(form.getSimulationId(), student.getId());
-    Long totalReview = reviewSubmissionRepository.countReviewBySimulationAndStudent(form.getSimulationId(), student.getId());
-    if (totalStudentSubmission == null || totalReview == null || !totalStudentSubmission.equals(totalReview)) {
-      throw new BadRequestException("Review submission is not completed yet", ErrorCode.REVIEW_SUBMISSION_ERROR_NOT_COMPLETE);
-    }
-
     Notification notification = new Notification();
-    notification.setTitle("Bài làm của bạn đã được đánh giá");
+    notification.setTitle("Bài làm của bạn đã được đánh giá.");
     notification.setMessage(
-        "Bài làm của bạn trong bài mô phỏng "
-            + simulation.getTitle()
-            + " đã được giảng viên đánh giá. "
-            + "Vui lòng truy cập bài mô phỏng để xem chi tiết phản hồi."
+            "📚 Bài mô phỏng: " + simulation.getTitle() + "\n" +
+            "👨‍🏫 Người đánh giá: " + educator.getAccount().getFullName() + "\n" +
+            "🏢 Tổ chức: " + educator.getOrganization().getName() + "\n\n" +
+            "Vui lòng truy cập vào mô phỏng để xem chi tiết."
     );
     notification.setRefType("SIMULATION_REVIEW_COMPLETED");
     notification.setRefId(simulation.getId());

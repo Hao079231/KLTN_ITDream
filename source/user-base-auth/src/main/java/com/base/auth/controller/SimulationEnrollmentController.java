@@ -16,10 +16,9 @@ import com.base.auth.model.Simulation;
 import com.base.auth.model.SimulationEnrollment;
 import com.base.auth.model.Student;
 import com.base.auth.model.criteria.SimulationEnrollmentCriteria;
-import com.base.auth.repository.StudentSubmissionRepository;
 import com.base.auth.repository.SimulationEnrollmentRepository;
 import com.base.auth.repository.SimulationRepository;
-import com.base.auth.repository.ReviewSubmissionRepository;
+import com.base.auth.repository.StudentTaskProgressRepository;
 import java.util.List;
 import java.util.Objects;
 import javax.validation.Valid;
@@ -49,10 +48,7 @@ public class SimulationEnrollmentController extends ABasicController{
   SimulationRepository simulationRepository;
 
   @Autowired
-  StudentSubmissionRepository studentSubmissionRepository;
-
-  @Autowired
-  ReviewSubmissionRepository reviewSubmissionRepository;
+  StudentTaskProgressRepository studentTaskProgressRepository;
 
   @Autowired
   SimulationEnrollmentMapper simulationEnrollmentMapper;
@@ -93,11 +89,11 @@ public class SimulationEnrollmentController extends ABasicController{
       SimulationEnrollmentCriteria criteria, Pageable pageable){
     ApiMessageDto<ResponseListDto<List<SimulationEnrollmentDto>>> apiMessageDto = new ApiMessageDto<>();
     ResponseListDto<List<SimulationEnrollmentDto>> responseListDto = new ResponseListDto<>();
-    Page<SimulationEnrollment> courseEnrollments = simulationEnrollmentRepository.findAll(criteria.getSpecification(), pageable);
-    List<SimulationEnrollmentDto> simulationEnrollmentDtos = simulationEnrollmentMapper.fromEntityToSimulationEnrollmentDtoList(courseEnrollments.getContent());
+    Page<SimulationEnrollment> simulationEnrollments = simulationEnrollmentRepository.findAll(criteria.getSpecification(), pageable);
+    List<SimulationEnrollmentDto> simulationEnrollmentDtos = simulationEnrollmentMapper.fromEntityToSimulationEnrollmentDtoList(simulationEnrollments.getContent());
     responseListDto.setContent(simulationEnrollmentDtos);
-    responseListDto.setTotalElements(courseEnrollments.getTotalElements());
-    responseListDto.setTotalPages(courseEnrollments.getTotalPages());
+    responseListDto.setTotalElements(simulationEnrollments.getTotalElements());
+    responseListDto.setTotalPages(simulationEnrollments.getTotalPages());
     apiMessageDto.setData(responseListDto);
     apiMessageDto.setMessage("Get list simulation enrollment success");
     return apiMessageDto;
@@ -110,11 +106,11 @@ public class SimulationEnrollmentController extends ABasicController{
     ApiMessageDto<ResponseListDto<List<SimulationEnrollmentDisplayDto>>> apiMessageDto = new ApiMessageDto<>();
     ResponseListDto<List<SimulationEnrollmentDisplayDto>> responseListDto = new ResponseListDto<>();
     criteria.setStudentId(getCurrentUser());
-    Page<SimulationEnrollment> courseEnrollments = simulationEnrollmentRepository.findAll(criteria.getSpecification(), pageable);
-    List<SimulationEnrollmentDisplayDto> courseEnrollmentDtos = simulationEnrollmentMapper.fromEntityToSimulationEnrollmentDisplayDtoList(courseEnrollments.getContent());
+    Page<SimulationEnrollment> simulationEnrollments = simulationEnrollmentRepository.findAll(criteria.getSpecification(), pageable);
+    List<SimulationEnrollmentDisplayDto> courseEnrollmentDtos = simulationEnrollmentMapper.fromEntityToSimulationEnrollmentDisplayDtoList(simulationEnrollments.getContent());
     responseListDto.setContent(courseEnrollmentDtos);
-    responseListDto.setTotalElements(courseEnrollments.getTotalElements());
-    responseListDto.setTotalPages(courseEnrollments.getTotalPages());
+    responseListDto.setTotalElements(simulationEnrollments.getTotalElements());
+    responseListDto.setTotalPages(simulationEnrollments.getTotalPages());
     apiMessageDto.setData(responseListDto);
     apiMessageDto.setMessage("Get list simulation enrollment success");
     return apiMessageDto;
@@ -127,22 +123,17 @@ public class SimulationEnrollmentController extends ABasicController{
     ApiMessageDto<ResponseListDto<List<StudentLessonViewsDto>>> apiMessageDto = new ApiMessageDto<>();
     ResponseListDto<List<StudentLessonViewsDto>> responseListDto = new ResponseListDto<>();
     criteria.setStatus(ITDreamConstant.SIMULATION_ENROLLMENT_COMPLETED);
-    Page<SimulationEnrollment> courseEnrollments = simulationEnrollmentRepository.findAll(criteria.getSpecification(), pageable);
-    List<SimulationEnrollment> enrollmentList = courseEnrollments.getContent();
+    Page<SimulationEnrollment> simulationEnrollments = simulationEnrollmentRepository.findAll(criteria.getSpecification(), pageable);
+    List<SimulationEnrollment> enrollmentList = simulationEnrollments.getContent();
     List<StudentLessonViewsDto> courseEnrollmentDtos = simulationEnrollmentMapper.fromEntityToStudentLessonViewsDtoList(enrollmentList);
     for (int i = 0; i < enrollmentList.size(); i++) {
       SimulationEnrollment enrollment = enrollmentList.get(i);
-      long totalCorrect = studentSubmissionRepository.countBySimulationEnrollmentId(enrollment.getId());
-      long totalReviewed = reviewSubmissionRepository.countBySimulationEnrollmentId(enrollment.getId());
-      boolean isReviewed = false;
-      if (totalCorrect > 0 && totalCorrect == totalReviewed) {
-        isReviewed = true;
-      }
-      courseEnrollmentDtos.get(i).setIsReviewed(isReviewed);
+      boolean hasUnreviewedTask = studentTaskProgressRepository.existsUnreviewedTask(enrollment.getId(), ITDreamConstant.TASK_KIND_SUBTASK);
+      courseEnrollmentDtos.get(i).setIsReviewed(!hasUnreviewedTask);
     }
     responseListDto.setContent(courseEnrollmentDtos);
-    responseListDto.setTotalElements(courseEnrollments.getTotalElements());
-    responseListDto.setTotalPages(courseEnrollments.getTotalPages());
+    responseListDto.setTotalElements(simulationEnrollments.getTotalElements());
+    responseListDto.setTotalPages(simulationEnrollments.getTotalPages());
     apiMessageDto.setData(responseListDto);
     apiMessageDto.setMessage("Get list student complete simulation success");
     return apiMessageDto;
