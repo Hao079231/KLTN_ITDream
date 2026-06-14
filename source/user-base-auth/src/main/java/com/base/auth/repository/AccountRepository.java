@@ -11,10 +11,6 @@ public interface AccountRepository extends JpaRepository<Account, Long>, JpaSpec
 
     Account findAccountByUsername(String username);
     Account findAccountByEmail(String email);
-    Account findAccountByPhone(String phone);
-    Account findAccountByResetPwdCode(String resetPwdCode);
-    Account findAccountByEmailOrUsername(String email, String username);
-    Page<Account> findAllByKind(int kind, Pageable pageable);
 
     Boolean existsByUsername(String username);
 

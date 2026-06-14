@@ -12,9 +12,9 @@ public class CreateReviewSubmissionForm {
   @NotNull(message = "studentSubmissionId cannot be null")
   @ApiModelProperty(name = "studentSubmissionId")
   private Long studentSubmissionId;
-  @NotEmpty(message = "student username cannot be null")
-  @ApiModelProperty(name = "username")
-  private String username;
+  @NotNull(message = "studentTaskProgressId cannot be null")
+  @ApiModelProperty(name = "studentTaskProgressId")
+  private Long studentTaskProgressId;
   @NotEmpty(message = "review content cannot be null")
   @ApiModelProperty(name = "content")
   private String content;

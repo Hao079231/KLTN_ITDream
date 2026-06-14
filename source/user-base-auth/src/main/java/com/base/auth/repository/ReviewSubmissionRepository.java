@@ -10,30 +10,8 @@ import org.springframework.data.repository.query.Param;
 
 public interface ReviewSubmissionRepository extends JpaRepository<ReviewSubmission, Long>,
     JpaSpecificationExecutor<ReviewSubmission> {
-
-  @Query("select count(rs.id) " +
-      "from ReviewSubmission rs " +
-      "where rs.studentSubmission.studentTaskProgress.simulationEnrollment.id = :enrollmentId")
-  long countBySimulationEnrollmentId(@Param("enrollmentId") Long enrollmentId);
-
   @Transactional
   void deleteAllByStudentId(Long studentId);
-
-  @Query("SELECT COUNT(rs) " +
-      "FROM ReviewSubmission rs " +
-      "JOIN rs.studentSubmission ssm " +
-      "JOIN ssm.studentTaskProgress stp " +
-      "JOIN stp.task t " +
-      "JOIN t.simulation s " +
-      "WHERE s.id = :simulationId " +
-      "AND rs.student.id = :studentId")
-  Long countReviewBySimulationAndStudent(@Param("simulationId") Long simulationId, @Param("studentId") Long studentId);
-
-//  @Transactional
-//  @Modifying
-//  @Query("DELETE FROM ReviewSubmission rs " +
-//      "WHERE rs.studentSubmission.taskQuestion.id = :taskQuestionId")
-//  void deleteAllByTaskQuestionId(@Param("taskQuestionId") Long taskQuestionId);
 
   @Transactional
   @Modifying
@@ -44,12 +22,6 @@ public interface ReviewSubmissionRepository extends JpaRepository<ReviewSubmissi
           "WHERE ss.task_question_id = :taskQuestionId",
       nativeQuery = true)
   void deleteAllByTaskQuestionId(@Param("taskQuestionId") Long taskQuestionId);
-
-//  @Transactional
-//  @Modifying
-//  @Query("DELETE FROM ReviewSubmission rs " +
-//      "WHERE rs.studentSubmission.taskQuestion.task.id = :taskId")
-//  void deleteAllByTaskId(@Param("taskId") Long taskId);
 
   @Transactional
   @Modifying
@@ -62,5 +34,10 @@ public interface ReviewSubmissionRepository extends JpaRepository<ReviewSubmissi
       nativeQuery = true)
   void deleteAllByTaskId(@Param("taskId") Long taskId);
 
-  ReviewSubmission findByStudentSubmissionIdAndStudentId(Long studentSubmissionId, Long studentId);
+  @Query("SELECT CASE WHEN COUNT(rs) > 0 THEN TRUE ELSE FALSE END " +
+      "FROM ReviewSubmission rs " +
+      "JOIN rs.studentSubmission ss " +
+      "WHERE ss.studentTaskProgress.id = :studentTaskProgressId")
+  boolean existsByStudentTaskProgressId(
+      @Param("studentTaskProgressId") Long studentTaskProgressId);
 }
