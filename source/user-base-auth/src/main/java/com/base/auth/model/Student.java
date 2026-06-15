@@ -1,5 +1,6 @@
 package com.base.auth.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.Id;
@@ -23,4 +24,6 @@ public class Student{
   @MapsId
   @JoinColumn(name = "id")
   private Account account;
+  @Column(columnDefinition = "TEXT")
+  private String preferences;
 }

@@ -2,7 +2,9 @@ package com.base.auth.mapper;
 
 import com.base.auth.dto.student.ProfileStudentDto;
 import com.base.auth.dto.student.StudentDto;
+import com.base.auth.dto.student.StudentPreferencesDto;
 import com.base.auth.model.Student;
+import com.base.auth.utils.JsonUitls;
 import java.util.List;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.IterableMapping;
@@ -27,9 +29,15 @@ public interface StudentMapper {
   List<StudentDto> fromStudentListToStudentDtoList(List<Student> list);
 
   @Mapping(source = "account", target = "profileAccountDto", qualifiedByName = "fromAccountToProfileDto")
+  @Mapping(source = "preferences", target = "preferences", qualifiedByName = "fromEntityToStudentPreferencesDto")
   @BeanMapping(ignoreByDefault = true)
   @Named("fromStudentToProfileDto")
   ProfileStudentDto fromStudentToProfileDto(Student student);
+
+  @Named("fromEntityToStudentPreferencesDto")
+  default StudentPreferencesDto fromEntityToStudentPreferencesDto(String preferences){
+    return JsonUitls.convertJsonStringToClass(preferences, StudentPreferencesDto.class);
+  }
 
   @IterableMapping(elementTargetType = ProfileStudentDto.class,qualifiedByName = "fromStudentToProfileDto")
   @BeanMapping(ignoreByDefault = true)

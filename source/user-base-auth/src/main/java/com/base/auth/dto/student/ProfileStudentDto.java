@@ -9,4 +9,5 @@ public class ProfileStudentDto {
   private ProfileAccountDto profileAccountDto;
   private Date birthday;
   private Boolean isReviewed;
+  private StudentPreferencesDto preferences;
 }

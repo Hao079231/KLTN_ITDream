@@ -4,6 +4,7 @@ import com.base.auth.validation.Phone;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.Date;
+import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Past;
 import lombok.Data;
@@ -24,4 +25,7 @@ public class UpdateProfileStudentForm {
   private String phone;
   @ApiModelProperty(name = "avatarPath")
   private String avatarPath;
+  @Valid
+  @ApiModelProperty(name = "preferences")
+  private StudentPreferencesForm preferences;
 }
