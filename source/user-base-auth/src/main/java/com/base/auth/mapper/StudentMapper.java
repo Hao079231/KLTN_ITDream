@@ -35,7 +35,7 @@ public interface StudentMapper {
   ProfileStudentDto fromStudentToProfileDto(Student student);
 
   @Named("fromEntityToStudentPreferencesDto")
-  default StudentPreferencesDto fromEntityToStudentPreferencesDto(String preferences){
+  default List<StudentPreferencesDto> fromEntityToStudentPreferencesDto(String preferences){
     return JsonUitls.convertJsonStringToClass(preferences, StudentPreferencesDto.class);
   }
 
