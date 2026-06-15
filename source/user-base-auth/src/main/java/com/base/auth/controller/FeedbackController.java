@@ -81,9 +81,10 @@ public class FeedbackController extends ABasicController{
     feedback.setSimulation(simulation);
     feedbackRepository.save(feedback);
 
-    simulation.setTotalFeedback(simulation.getTotalFeedback() + 1);
-    simulation.setAvgStar((simulation.getAvgStar() * simulation.getTotalFeedback() + feedback.getStar()) / (
-        simulation.getTotalFeedback() + 1));
+    long currentTotal = simulation.getTotalFeedback();
+    Float newAvg = (simulation.getAvgStar() * currentTotal + feedback.getStar()) / (currentTotal + 1);
+    simulation.setAvgStar(newAvg);
+    simulation.setTotalFeedback(currentTotal + 1);
     simulationRepository.save(simulation);
     apiMessageDto.setMessage("Create feedback success");
     return apiMessageDto;
@@ -154,9 +155,10 @@ public class FeedbackController extends ABasicController{
       throw new UnauthorizationException("Feedback was not created by this student");
     }
     Simulation simulation = feedback.getSimulation();
-    simulation.setTotalFeedback(simulation.getTotalFeedback() - 1);
-    simulation.setAvgStar((simulation.getAvgStar() * simulation.getTotalFeedback() - feedback.getStar()) / (
-        simulation.getTotalFeedback() - 1));
+    long currentTotal = simulation.getTotalFeedback();
+    float newAvg = (simulation.getAvgStar() * currentTotal - feedback.getStar()) / (currentTotal - 1);
+    simulation.setAvgStar(newAvg);
+    simulation.setTotalFeedback(currentTotal - 1);
     feedbackRepository.delete(feedback);
     apiMessageDto.setMessage("Delete feedback success");
     return apiMessageDto;

@@ -1,5 +1,6 @@
 package com.base.auth.dto.simulation;
 
+import com.base.auth.dto.category.CategoryAutoCompleteDto;
 import com.base.auth.dto.educator.ProfileEducatorDto;
 import lombok.Data;
 
@@ -14,5 +15,6 @@ public class SimulationDisplayDto {
   private Float avgStar;
   private String notice;
   private int status;
+  private CategoryAutoCompleteDto category;
   private ProfileEducatorDto educator;
 }

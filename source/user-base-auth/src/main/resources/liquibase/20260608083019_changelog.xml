@@ -6,4 +6,9 @@
     <changeSet author="Authentication" id="1780997231754-7">
         <dropColumn columnName="type" tableName="db_it_dream_task"/>
     </changeSet>
+    <changeSet author="Authentication" id="1781536449625-1">
+        <addColumn tableName="db_it_dream_student">
+            <column name="preferences" type="TEXT"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

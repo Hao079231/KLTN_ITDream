@@ -30,6 +30,7 @@ import com.base.auth.repository.StudentRepository;
 import com.base.auth.repository.StudentTaskProgressRepository;
 import com.base.auth.repository.StudentSubmissionRepository;
 import com.base.auth.utils.AESUtils;
+import com.base.auth.utils.JsonUitls;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -308,6 +309,10 @@ public class StudentController extends ABasicController{
         userBaseApiService.deleteByFilePath(currentAccount.getAvatarPath());
         currentAccount.setAvatarPath(updateStudentForm.getAvatarPath());
       }
+    }
+
+    if (updateStudentForm.getPreferences() != null){
+      currentUser.setPreferences(JsonUitls.convertObjectToString(updateStudentForm.getPreferences()));
     }
 
     accountMapper.fromUpdateProfileStudentFormToEntity(updateStudentForm, currentAccount);

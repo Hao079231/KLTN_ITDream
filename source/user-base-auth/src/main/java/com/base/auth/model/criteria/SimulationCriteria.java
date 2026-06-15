@@ -1,6 +1,7 @@
 package com.base.auth.model.criteria;
 
 import com.base.auth.model.Category;
+import com.base.auth.model.Organization;
 import com.base.auth.model.Simulation;
 import com.base.auth.model.Educator;
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ public class SimulationCriteria {
   private String title;
   private Long categoryId;
   private Long educatorId;
+  private Long organizationId;
   private Integer level;
   private Integer status;
 
@@ -48,6 +50,12 @@ public class SimulationCriteria {
         if (getEducatorId() != null){
           Join<Simulation, Educator> educatorJoin = root.join("educator", JoinType.INNER);
           predicates.add(cb.equal(educatorJoin.get("id"), getEducatorId()));
+        }
+
+        if (getOrganizationId() != null){
+          Join<Simulation, Educator> educatorJoin = root.join("educator", JoinType.INNER);
+          Join<Educator, Organization> organizationJoin = educatorJoin.join("organization", JoinType.INNER);
+          predicates.add(cb.equal(organizationJoin.get("id"), getOrganizationId()));
         }
 
         if (getStatus() != null){

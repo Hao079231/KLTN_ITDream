@@ -57,6 +57,7 @@ public interface SimulationMapper {
   @Mapping(source = "avgStar", target = "avgStar")
   @Mapping(source = "notice", target = "notice")
   @Mapping(source = "status", target = "status")
+  @Mapping(source = "category", target = "category", qualifiedByName = "fromEntityToCategoryAutoCompleteDto")
   @Mapping(source = "educator", target = "educator", qualifiedByName = "fromEducatorToProfileDto")
   @BeanMapping(ignoreByDefault = true)
   @Named("fromEntityToSimulationDisplayDto")
