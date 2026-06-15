@@ -5,6 +5,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import java.util.Collections;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -29,12 +31,17 @@ public class JsonUitls {
     }
   }
 
-  public static <T> T convertJsonStringToClass(String value, Class<T> clazz){
+  public static <T> List<T> convertJsonStringToClass(String value, Class<T> clazz){
     try {
       if (StringUtils.isBlank(value)){
-        return null;
+        return Collections.emptyList();
       }
-      return getMapper().readValue(value, clazz);
+      return getMapper().readValue(
+          value,
+          getMapper()
+              .getTypeFactory()
+              .constructCollectionType(List.class, clazz)
+      );
     } catch (Exception ex) {
       log.error("====> Error convert string to object: {}", ex.getMessage());
       return null;
