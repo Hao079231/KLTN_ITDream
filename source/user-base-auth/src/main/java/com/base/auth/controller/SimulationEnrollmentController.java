@@ -77,7 +77,11 @@ public class SimulationEnrollmentController extends ABasicController{
     simulationEnrollment.setSimulation(simulation);
     simulationEnrollmentRepository.save(simulationEnrollment);
 
-    simulation.setTotalParticipant(simulation.getTotalParticipant() + 1);
+    if (simulation.getTotalParticipant() == null){
+      simulation.setTotalParticipant(1L);
+    } else {
+      simulation.setTotalParticipant(simulation.getTotalParticipant() + 1);
+    }
     simulationRepository.save(simulation);
     apiMessageDto.setMessage("Create simulation enrollment success");
     return apiMessageDto;
