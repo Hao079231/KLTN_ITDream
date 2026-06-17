@@ -11,4 +11,9 @@
             <column name="preferences" type="TEXT"/>
         </addColumn>
     </changeSet>
+    <changeSet author="Authentication" id="1781536449625-2">
+        <modifyDataType tableName="db_it_dream_organization"
+          columnName="logo_url"
+          newDataType="TEXT"/>
+    </changeSet>
 </databaseChangeLog>

@@ -28,7 +28,7 @@ public class Organization  extends Auditable<String>{
   private String name;
   @Column(name = "short_name")
   private String shortName;
-  @Column(name = "logo_url")
+  @Column(name = "logo_url", columnDefinition = "TEXT")
   private String logoUrl;
   private String hotline;
   private Integer type; // 1 - university. 2 - company
