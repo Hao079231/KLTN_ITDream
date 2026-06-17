@@ -17,15 +17,20 @@ import com.base.auth.mapper.AccountMapper;
 import com.base.auth.mapper.StudentMapper;
 import com.base.auth.model.Account;
 import com.base.auth.model.Achievement;
+import com.base.auth.model.Feedback;
 import com.base.auth.model.Group;
+import com.base.auth.model.Simulation;
 import com.base.auth.model.Student;
 import com.base.auth.model.criteria.StudentCriteria;
 import com.base.auth.repository.AccountRepository;
 import com.base.auth.repository.AchievementRepository;
+import com.base.auth.repository.CommentRepository;
+import com.base.auth.repository.FeedbackRepository;
 import com.base.auth.repository.SimulationEnrollmentRepository;
 import com.base.auth.repository.GroupRepository;
 import com.base.auth.repository.QuestionQuizHistoryRepository;
 import com.base.auth.repository.ReviewSubmissionRepository;
+import com.base.auth.repository.SimulationRepository;
 import com.base.auth.repository.StudentRepository;
 import com.base.auth.repository.StudentTaskProgressRepository;
 import com.base.auth.repository.StudentSubmissionRepository;
@@ -34,6 +39,7 @@ import com.base.auth.utils.JsonUitls;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -94,6 +100,15 @@ public class StudentController extends ABasicController{
 
   @Autowired
   ReviewSubmissionRepository reviewSubmissionRepository;
+
+  @Autowired
+  FeedbackRepository feedbackRepository;
+
+  @Autowired
+  SimulationRepository simulationRepository;
+
+  @Autowired
+  CommentRepository commentRepository;
 
   @PostMapping(value = "/signup", produces= MediaType.APPLICATION_JSON_VALUE)
   public ApiMessageDto<OtpDto> create(@Valid @RequestBody SignUpStudentForm signUpStudentForm, BindingResult bindingResult)
@@ -250,7 +265,28 @@ public class StudentController extends ABasicController{
         userBaseApiService.deleteByFilePath(achievement.getFilePath());
       }
     }
+    List<Feedback> feedbacks = feedbackRepository.findAllByStudentId(id);
+    for (Feedback feedback : feedbacks) {
+      Simulation simulation = feedback.getSimulation();
+      Long totalFeedback = simulation.getTotalFeedback();
+      Float avgStar = simulation.getAvgStar();
+
+      if (totalFeedback == null || totalFeedback <= 1) {
+        simulation.setTotalFeedback(0L);
+        simulation.setAvgStar(0F);
+      } else {
+        float totalStar = avgStar * totalFeedback;
+        totalStar -= feedback.getStar();
+        long newTotalFeedback = totalFeedback - 1;
+        simulation.setTotalFeedback(newTotalFeedback);
+        simulation.setAvgStar(totalStar / newTotalFeedback);
+      }
+      simulationRepository.save(simulation);
+    }
+
     achievementRepository.deleteAllByStudentId(id);
+    commentRepository.clearUser(id);
+    feedbackRepository.deleteAllByStudentId(id);
     reviewSubmissionRepository.deleteAllByStudentId(id);
     studentSubmissionRepository.deleteAllByStudentId(id);
     questionQuizHistoryRepository.deleteAllByStudentId(id);

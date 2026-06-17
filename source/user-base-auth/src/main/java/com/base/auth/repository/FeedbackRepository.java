@@ -14,4 +14,9 @@ public interface FeedbackRepository extends JpaRepository<Feedback, Long>, JpaSp
 
   @Transactional
   void deleteAllBySimulationId(Long simulationId);
+
+  @Transactional
+  void deleteAllByStudentId(Long id);
+
+  List<Feedback> findAllByStudentId(Long studentId);
 }
