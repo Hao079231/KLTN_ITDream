@@ -19,18 +19,11 @@ import com.base.auth.mapper.TaskMapper;
 import com.base.auth.model.Simulation;
 import com.base.auth.model.Task;
 import com.base.auth.model.criteria.TaskCriteria;
-import com.base.auth.repository.CommentRepository;
-import com.base.auth.repository.StudentSubmissionRepository;
 import com.base.auth.repository.SimulationRepository;
-import com.base.auth.repository.StudentTaskProgressRepository;
-import com.base.auth.repository.TaskQuestionRepository;
 import com.base.auth.repository.TaskRepository;
-import com.base.auth.repository.QuestionQuizHistoryRepository;
-import com.base.auth.repository.ReviewSubmissionRepository;
 import com.base.auth.service.TaskService;
 import com.base.auth.service.ProcessVideoService;
 import com.base.auth.service.UserBaseApiService;
-import java.io.File;
 import java.util.List;
 import java.util.Objects;
 import javax.validation.Valid;
@@ -62,24 +55,6 @@ public class TaskController extends ABasicController{
 
   @Autowired
   SimulationRepository simulationRepository;
-
-  @Autowired
-  TaskQuestionRepository taskQuestionRepository;
-
-  @Autowired
-  StudentTaskProgressRepository studentTaskProgressRepository;
-
-  @Autowired
-  QuestionQuizHistoryRepository questionQuizHistoryRepository;
-
-  @Autowired
-  StudentSubmissionRepository studentSubmissionRepository;
-
-  @Autowired
-  CommentRepository commentRepository;
-
-  @Autowired
-  ReviewSubmissionRepository reviewSubmissionRepository;
 
   @Autowired
   TaskMapper taskMapper;
@@ -129,7 +104,8 @@ public class TaskController extends ABasicController{
       task.setOrderInParent(order);
     }
 
-    if (StringUtils.isNotBlank(form.getVideoPath()) && !form.getVideoPath().matches(ITDreamConstant.FILE_PATH_PATTERN)){
+    if (StringUtils.isNotBlank(form.getVideoPath())
+        && !form.getVideoPath().matches(ITDreamConstant.FILE_PATH_PATTERN)){
       task.setVideoState(ITDreamConstant.STATE_TASK_PROCESSING);
     } else {
       task.setVideoState(ITDreamConstant.STATE_TASK_DONE);
@@ -139,7 +115,8 @@ public class TaskController extends ABasicController{
     simulation.setStatus(ITDreamConstant.SIMULATION_STATUS_WAITING_APPROVE);
     simulationRepository.save(simulation);
 
-    if (StringUtils.isNotBlank(task.getVideoPath()) && !task.getVideoPath().toLowerCase().matches(ITDreamConstant.FILE_PATH_PATTERN)){
+    if (StringUtils.isNotBlank(task.getVideoPath())
+        && !task.getVideoPath().toLowerCase().matches(ITDreamConstant.FILE_PATH_PATTERN)){
       RequestProcessVideoMessageForm data = new RequestProcessVideoMessageForm();
       data.setId(task.getId());
       data.setUrl(task.getVideoPath());
@@ -266,41 +243,36 @@ public class TaskController extends ABasicController{
       }
     }
 
-    if (StringUtils.isNotBlank(form.getImagePath())){
-      if (task.getImagePath() == null){
-        task.setImagePath(form.getImagePath());
-      } else if (!Objects.equals(task.getImagePath(), ITDreamConstant.FILE_PATH_PATTERN)
-          && !Objects.equals(form.getImagePath(), task.getImagePath())){
-        userBaseApiService.deleteByFilePath(task.getImagePath());
-        task.setImagePath(form.getImagePath());
-      }
+    if (StringUtils.isNotBlank(task.getImagePath())
+      && StringUtils.isNotBlank(form.getImagePath())
+      && !task.getImagePath().toLowerCase().matches(ITDreamConstant.FILE_PATH_PATTERN)
+      && !task.getImagePath().equals(form.getImagePath())){
+      userBaseApiService.deleteByFilePath(task.getImagePath());
     }
 
-    if (StringUtils.isNotBlank(form.getFilePath())){
-      if (task.getFilePath() == null){
-        task.setFilePath(form.getFilePath());
-      } else if (!Objects.equals(task.getFilePath(), ITDreamConstant.FILE_PATH_PATTERN)
-          && !Objects.equals(form.getFilePath(), task.getFilePath())){
-        userBaseApiService.deleteByFilePath(task.getFilePath());
-        task.setFilePath(form.getFilePath());
-      }
+    if (StringUtils.isNotBlank(task.getFilePath())
+        && StringUtils.isNotBlank(form.getFilePath())
+        && !task.getFilePath().toLowerCase().matches(ITDreamConstant.FILE_PATH_PATTERN)
+        && !task.getFilePath().equals(form.getFilePath())){
+      userBaseApiService.deleteByFilePath(task.getFilePath());
     }
 
-    if (StringUtils.isNotBlank(form.getVideoPath())){
-      if (task.getVideoPath() == null){
-        task.setVideoPath(form.getVideoPath());
-      } else if (!Objects.equals(task.getVideoPath(), ITDreamConstant.FILE_PATH_PATTERN)
-          && !Objects.equals(form.getVideoPath(), task.getVideoPath())){
-        userBaseApiService.deleteByFilePath(task.getVideoPath());
-        task.setVideoPath(form.getVideoPath());
-      }
+    if (StringUtils.isNotBlank(task.getVideoPath())
+        && StringUtils.isNotBlank(form.getVideoPath())
+        && !task.getVideoPath().toLowerCase().matches(ITDreamConstant.FILE_PATH_PATTERN)
+        && !task.getVideoPath().equals(form.getVideoPath())){
+      userBaseApiService.deleteByFilePath(task.getVideoPath());
+      task.setVideoState(ITDreamConstant.STATE_TASK_PROCESSING);
     }
 
     taskMapper.fromUpdateTaskFormToEntity(form, task);
+    if (StringUtils.isNotBlank(form.getVideoPath())
+      && form.getVideoPath().toLowerCase().matches(ITDreamConstant.FILE_PATH_PATTERN)){
+      task.setVideoState(ITDreamConstant.STATE_TASK_DONE);
+    }
     taskRepository.save(task);
 
-    if (StringUtils.isNotBlank(form.getVideoPath())
-        && task.getVideoPath() != null
+    if (StringUtils.isNotBlank(task.getVideoPath())
         && !task.getVideoPath().toLowerCase().matches(ITDreamConstant.FILE_PATH_PATTERN)){
       RequestProcessVideoMessageForm data = new RequestProcessVideoMessageForm();
       data.setId(task.getId());
