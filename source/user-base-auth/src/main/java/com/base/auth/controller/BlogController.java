@@ -67,15 +67,15 @@ public class BlogController extends ABasicController{
   @PreAuthorize("hasRole('BL_ED_C')")
   public ApiMessageDto<String> create(@Valid @RequestBody CreateBlogForm createBlogForm, BindingResult bindingResult){
     if (!isEducator()){
-      throw new UnauthorizationException("User is not an educator");
+      throw new UnauthorizationException("Người dùng không phải là tác giả");
     }
 
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Educator educator = educatorRepository.findById(getCurrentUser())
-        .orElseThrow(() -> new NotFoundException("Educator not found", ErrorCode.USER_ERROR_NOT_FOUND));
+        .orElseThrow(() -> new NotFoundException("Không tìm thấy tác giả", ErrorCode.USER_ERROR_NOT_FOUND));
 
     if (StringUtils.isEmpty(createBlogForm.getName()) && StringUtils.isEmpty(createBlogForm.getSubject())){
-      throw new BadRequestException("Blog name and subject cannot both be blank at the same time",
+      throw new BadRequestException("Tên blog và chủ đề không được cùng lúc để trống",
           ErrorCode.BLOG_ERROR_NAME_SUBJECT_NOT_NULL);
     }
 
@@ -83,43 +83,43 @@ public class BlogController extends ABasicController{
 
     if (createBlogForm.getCategoryId() != null){
       if (!nameBlogNotNull){
-        throw new BadRequestException("Cannot create blog if name is null", ErrorCode.BLOG_ERROR_NAME_NOT_NULL);
+        throw new BadRequestException("Không thể tạo blog nếu tên bị trống", ErrorCode.BLOG_ERROR_NAME_NOT_NULL);
       }
       if (StringUtils.isNotEmpty(createBlogForm.getSubject())){
-        throw new BadRequestException("Cannot create blog if both category and subject are exist", ErrorCode.BLOG_ERROR_NAME_SUBJECT_EXIST);
+        throw new BadRequestException("Không thể tạo blog nếu cả danh mục và chủ đề đều tồn tại", ErrorCode.BLOG_ERROR_NAME_SUBJECT_EXIST);
       }
       Boolean existBlog = blogRepository.existsByNameAndCategoryIdAndEducatorId(createBlogForm.getName(), createBlogForm.getCategoryId(), getCurrentUser());
       if (existBlog){
-        throw new BadRequestException("Blog already exist", ErrorCode.BLOG_ERROR_EXIST);
+        throw new BadRequestException("Blog đã tồn tại", ErrorCode.BLOG_ERROR_EXIST);
       }
     } else if (createBlogForm.getParentId() != null){
       if (nameBlogNotNull){
-        throw new BadRequestException("Cannot create blog if both parent and name are exist", ErrorCode.BLOG_ERROR_NAME_SUBJECT_EXIST);
+        throw new BadRequestException("Không thể tạo blog nếu cả blog cha và tên đều tồn tại", ErrorCode.BLOG_ERROR_NAME_SUBJECT_EXIST);
       }
       if (StringUtils.isEmpty(createBlogForm.getSubject())){
-        throw new BadRequestException("Cannot create blog if subject is null", ErrorCode.BLOG_ERROR_SUBJECT_NOT_NULL);
+        throw new BadRequestException("Không thể tạo blog nếu chủ đề bị trống", ErrorCode.BLOG_ERROR_SUBJECT_NOT_NULL);
       }
       Boolean existSubject = blogRepository.existsBySubjectAndParentId(createBlogForm.getSubject(), createBlogForm.getParentId());
       if (existSubject){
-        throw new BadRequestException("Subject already exist", ErrorCode.BLOG_ERROR_EXIST);
+        throw new BadRequestException("Chủ đề đã tồn tại", ErrorCode.BLOG_ERROR_EXIST);
       }
     } else if (createBlogForm.getCategoryId() == null && createBlogForm.getParentId() == null){
-      throw new BadRequestException("Cannot create the blog if both category and parent are null", ErrorCode.BLOG_ERROR_CATEGORY_PARENT_BOTH_NULL);
+      throw new BadRequestException("Không thể tạo blog nếu cả danh mục và blog cha đều bị trống", ErrorCode.BLOG_ERROR_CATEGORY_PARENT_BOTH_NULL);
     } else {
-      throw new BadRequestException("Cannot create the blog if both category and parent are not null", ErrorCode.BLOG_ERROR_CATEGORY_PARENT_BOTH_NOT_NULL);
+      throw new BadRequestException("Không thể tạo blog nếu cả danh mục và blog cha đều không bị trống", ErrorCode.BLOG_ERROR_CATEGORY_PARENT_BOTH_NOT_NULL);
     }
 
     Blog blog = blogMapper.fromCreateBlogFormToEntity(createBlogForm);
     blog.setEducator(educator);
     if (createBlogForm.getCategoryId() != null){
       Category category = categoryRepository.findById(createBlogForm.getCategoryId())
-          .orElseThrow(() -> new NotFoundException("Category not found", ErrorCode.CATEGORY_ERROR_NOT_FOUND));
+          .orElseThrow(() -> new NotFoundException("Không tìm thấy danh mục", ErrorCode.CATEGORY_ERROR_NOT_FOUND));
       blog.setCategory(category);
     }
 
     if (createBlogForm.getParentId() != null){
       Blog parent = blogRepository.findById(createBlogForm.getParentId())
-          .orElseThrow(() -> new NotFoundException("Parent not found", ErrorCode.BLOG_ERROR_NOT_FOUND));
+          .orElseThrow(() -> new NotFoundException("Không tìm thấy blog cha", ErrorCode.BLOG_ERROR_NOT_FOUND));
       blog.setParent(parent);
       parent.setStatus(ITDreamConstant.BLOG_STATUS_WAITING_APPROVE);
       blogRepository.save(parent);
@@ -127,7 +127,7 @@ public class BlogController extends ABasicController{
       blog.setStatus(ITDreamConstant.BLOG_STATUS_WAITING_APPROVE);
     }
     blogRepository.save(blog);
-    apiMessageDto.setMessage(nameBlogNotNull ? "Create blog success" : "Create subject blog success");
+    apiMessageDto.setMessage(nameBlogNotNull ? "Tạo blog thành công" : "Tạo chủ đề blog thành công");
     return apiMessageDto;
   }
 
@@ -142,7 +142,7 @@ public class BlogController extends ABasicController{
     responseListDto.setTotalElements(blogs.getTotalElements());
     responseListDto.setTotalPages(blogs.getTotalPages());
     apiMessageDto.setData(responseListDto);
-    apiMessageDto.setMessage("Get list blog success");
+    apiMessageDto.setMessage("Lấy danh sách blog thành công");
     return apiMessageDto;
   }
 
@@ -158,7 +158,7 @@ public class BlogController extends ABasicController{
     responseListDto.setTotalElements(blogs.getTotalElements());
     responseListDto.setTotalPages(blogs.getTotalPages());
     apiMessageDto.setData(responseListDto);
-    apiMessageDto.setMessage("Get list blog success");
+    apiMessageDto.setMessage("Lấy danh sách blog thành công");
     return apiMessageDto;
   }
 
@@ -173,7 +173,7 @@ public class BlogController extends ABasicController{
     responseListDto.setTotalElements(blogs.getTotalElements());
     responseListDto.setTotalPages(blogs.getTotalPages());
     apiMessageDto.setData(responseListDto);
-    apiMessageDto.setMessage("Get list blog success");
+    apiMessageDto.setMessage("Lấy danh sách blog thành công");
     return apiMessageDto;
   }
 
@@ -181,11 +181,11 @@ public class BlogController extends ABasicController{
   @PreAuthorize("hasRole('BL_V')")
   public ApiMessageDto<BlogDto> getByAdmin(@PathVariable Long id){
     if (!isAdmin()){
-      throw new UnauthorizationException("User is not an admin");
+      throw new UnauthorizationException("Người dùng không phải là quản trị viên");
     }
     ApiMessageDto<BlogDto> apiMessageDto = new ApiMessageDto<>();
     Blog blog = blogRepository.findById(id)
-        .orElseThrow(() -> new NotFoundException("Blog not found"));
+        .orElseThrow(() -> new NotFoundException("Không tìm thấy blog"));
     ResponseListDto<List<BlogDto>> responseListDto = new ResponseListDto<>();
     BlogCriteria blogCriteria = new BlogCriteria();
     blogCriteria.setParentId(blog.getId());
@@ -199,7 +199,7 @@ public class BlogController extends ABasicController{
     BlogDto blogDto = blogMapper.fromEntityToBlogDto(blog);
     blogDto.setSubjects(responseListDto);
     apiMessageDto.setData(blogDto);
-    apiMessageDto.setMessage("Get detail blog success");
+    apiMessageDto.setMessage("Lấy chi tiết blog thành công");
     return apiMessageDto;
   }
 
@@ -207,11 +207,11 @@ public class BlogController extends ABasicController{
   @PreAuthorize("hasRole('BL_ED_V')")
   public ApiMessageDto<BlogEducatorDto> getByEducator(@PathVariable Long id){
     if (!isEducator()){
-      throw new UnauthorizationException("User is not an educator");
+      throw new UnauthorizationException("Người dùng không phải là tác giả");
     }
     ApiMessageDto<BlogEducatorDto> apiMessageDto = new ApiMessageDto<>();
     Blog blog = blogRepository.findById(id)
-        .orElseThrow(() -> new NotFoundException("Blog not found"));
+        .orElseThrow(() -> new NotFoundException("Không tìm thấy blog"));
     ResponseListDto<List<BlogEducatorDto>> responseListDto = new ResponseListDto<>();
     BlogCriteria blogCriteria = new BlogCriteria();
     blogCriteria.setParentId(blog.getId());
@@ -225,7 +225,7 @@ public class BlogController extends ABasicController{
     BlogEducatorDto blogDto = blogMapper.fromEntityToBlogEducatorDto(blog);
     blogDto.setSubjects(responseListDto);
     apiMessageDto.setData(blogDto);
-    apiMessageDto.setMessage("Get detail blog success");
+    apiMessageDto.setMessage("Lấy chi tiết blog thành công");
     return apiMessageDto;
   }
 
@@ -233,7 +233,7 @@ public class BlogController extends ABasicController{
   public ApiMessageDto<BlogStudentDto> getByStudent(@PathVariable Long id){
     ApiMessageDto<BlogStudentDto> apiMessageDto = new ApiMessageDto<>();
     Blog blog = blogRepository.findById(id)
-        .orElseThrow(() -> new NotFoundException("Blog not found"));
+        .orElseThrow(() -> new NotFoundException("Không tìm thấy blog"));
     ResponseListDto<List<BlogStudentDto>> responseListDto = new ResponseListDto<>();
     BlogCriteria blogCriteria = new BlogCriteria();
     blogCriteria.setParentId(blog.getId());
@@ -247,7 +247,7 @@ public class BlogController extends ABasicController{
     BlogStudentDto blogDto = blogMapper.fromEntityToBlogStudentDto(blog);
     blogDto.setSubjects(responseListDto);
     apiMessageDto.setData(blogDto);
-    apiMessageDto.setMessage("Get detail blog success");
+    apiMessageDto.setMessage("Lấy chi tiết blog thành công");
     return apiMessageDto;
   }
 
@@ -255,57 +255,57 @@ public class BlogController extends ABasicController{
   @PreAuthorize("hasRole('BL_U')")
   public ApiMessageDto<String> udpate(@Valid @RequestBody UpdateBlogForm updateBlogForm, BindingResult bindingResult){
     if (!isEducator()){
-      throw new UnauthorizationException("User is not an educator");
+      throw new UnauthorizationException("Người dùng không phải là tác giả");
     }
 
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Blog blog = blogRepository.findById(updateBlogForm.getId())
-        .orElseThrow(() -> new NotFoundException("Blog not found", ErrorCode.BLOG_ERROR_NOT_FOUND));
+        .orElseThrow(() -> new NotFoundException("Không tìm thấy blog", ErrorCode.BLOG_ERROR_NOT_FOUND));
 
     if (StringUtils.isEmpty(updateBlogForm.getName()) && StringUtils.isEmpty(updateBlogForm.getSubject())){
-      throw new BadRequestException("Blog name and subject cannot both be blank at the same time", ErrorCode.BLOG_ERROR_NAME_SUBJECT_NOT_NULL);
+      throw new BadRequestException("Tên blog và chủ đề không được cùng lúc để trống", ErrorCode.BLOG_ERROR_NAME_SUBJECT_NOT_NULL);
     }
 
     boolean nameBlogNotNull = StringUtils.isNotEmpty(updateBlogForm.getName());
 
     if (updateBlogForm.getCategoryId() != null){
       if (!nameBlogNotNull){
-        throw new BadRequestException("Cannot update blog if name is null", ErrorCode.BLOG_ERROR_NAME_NOT_NULL);
+        throw new BadRequestException("Không thể cập nhật blog nếu tên bị trống", ErrorCode.BLOG_ERROR_NAME_NOT_NULL);
       }
       if (StringUtils.isNotEmpty(updateBlogForm.getSubject())){
-        throw new BadRequestException("Cannot update blog if both category and parent are exist", ErrorCode.BLOG_ERROR_NAME_SUBJECT_EXIST);
+        throw new BadRequestException("Không thể cập nhật blog nếu cả danh mục và chủ đề đều tồn tại", ErrorCode.BLOG_ERROR_NAME_SUBJECT_EXIST);
       }
       Boolean existBlog = blogRepository.existsByNameAndCategoryIdAndEducatorId(updateBlogForm.getName(), updateBlogForm.getCategoryId(), getCurrentUser());
       if (existBlog){
-        throw new BadRequestException("Blog already exist", ErrorCode.BLOG_ERROR_EXIST);
+        throw new BadRequestException("Blog đã tồn tại", ErrorCode.BLOG_ERROR_EXIST);
       }
     } else if (updateBlogForm.getParentId() != null){
       if (nameBlogNotNull){
-        throw new BadRequestException("Cannot update blog if both category and parent are exist", ErrorCode.BLOG_ERROR_NAME_SUBJECT_EXIST);
+        throw new BadRequestException("Không thể cập nhật blog nếu cả tên và blog cha đều tồn tại", ErrorCode.BLOG_ERROR_NAME_SUBJECT_EXIST);
       }
       if (StringUtils.isEmpty(updateBlogForm.getSubject())){
-        throw new BadRequestException("Cannot update blog if subject is null", ErrorCode.BLOG_ERROR_SUBJECT_NOT_NULL);
+        throw new BadRequestException("Không thể cập nhật blog nếu chủ đề bị trống", ErrorCode.BLOG_ERROR_SUBJECT_NOT_NULL);
       }
       Boolean existSubject = blogRepository.existsBySubjectAndParentId(updateBlogForm.getSubject(), updateBlogForm.getParentId());
       if (existSubject){
-        throw new BadRequestException("Subject already exist", ErrorCode.BLOG_ERROR_EXIST);
+        throw new BadRequestException("Chủ đề đã tồn tại", ErrorCode.BLOG_ERROR_EXIST);
       }
     } else if (updateBlogForm.getCategoryId() == null && updateBlogForm.getParentId() == null){
-      throw new BadRequestException("Cannot update the blog if both category and parent are null", ErrorCode.BLOG_ERROR_CATEGORY_PARENT_BOTH_NULL);
+      throw new BadRequestException("Không thể cập nhật blog nếu cả danh mục và blog cha đều bị trống", ErrorCode.BLOG_ERROR_CATEGORY_PARENT_BOTH_NULL);
     } else {
-      throw new BadRequestException("Cannot update the blog if both category and parent are not null", ErrorCode.BLOG_ERROR_CATEGORY_PARENT_BOTH_NOT_NULL);
+      throw new BadRequestException("Không thể cập nhật blog nếu cả danh mục và blog cha đều không bị trống", ErrorCode.BLOG_ERROR_CATEGORY_PARENT_BOTH_NOT_NULL);
     }
 
     blogMapper.fromUpdateBlogFormToEntity(updateBlogForm, blog);
     if (updateBlogForm.getCategoryId() != null){
       Category category = categoryRepository.findById(updateBlogForm.getCategoryId())
-          .orElseThrow(() -> new NotFoundException("Category not found", ErrorCode.CATEGORY_ERROR_NOT_FOUND));
+          .orElseThrow(() -> new NotFoundException("Không tìm thấy danh mục", ErrorCode.CATEGORY_ERROR_NOT_FOUND));
       blog.setCategory(category);
     }
 
     if (updateBlogForm.getParentId() != null){
       Blog parent = blogRepository.findById(updateBlogForm.getParentId())
-          .orElseThrow(() -> new NotFoundException("Parent not found", ErrorCode.BLOG_ERROR_NOT_FOUND));
+          .orElseThrow(() -> new NotFoundException("Không tìm thấy blog cha", ErrorCode.BLOG_ERROR_NOT_FOUND));
       blog.setParent(parent);
       parent.setStatus(ITDreamConstant.BLOG_STATUS_WAITING_APPROVE);
       blogRepository.save(parent);
@@ -313,7 +313,7 @@ public class BlogController extends ABasicController{
       blog.setStatus(ITDreamConstant.BLOG_STATUS_WAITING_APPROVE);
     }
     blogRepository.save(blog);
-    apiMessageDto.setMessage(nameBlogNotNull ? "Update blog success" : "Update subject blog success");
+    apiMessageDto.setMessage(nameBlogNotNull ? "Cập nhật blog thành công" : "Cập nhật chủ đề blog thành công");
     return apiMessageDto;
   }
 
@@ -321,11 +321,11 @@ public class BlogController extends ABasicController{
   @PreAuthorize("hasRole('BL_ED_D')")
   public ApiMessageDto<String> delete(@PathVariable("id") Long id){
     if (!isEducator()){
-      throw new UnauthorizationException("User is not an educator");
+      throw new UnauthorizationException("Người dùng không phải là tác giả");
     }
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Blog blog = blogRepository.findById(id)
-        .orElseThrow(() -> new NotFoundException("Blog not found"));
+        .orElseThrow(() -> new NotFoundException("Không tìm thấy blog"));
     if (!blog.getImage().toLowerCase().matches(ITDreamConstant.FILE_PATH_PATTERN)){
       userBaseApiService.deleteByFilePath(blog.getImage());
     }
@@ -337,23 +337,23 @@ public class BlogController extends ABasicController{
       blogRepository.delete(subject);
     }
     blogRepository.delete(blog);
-    apiMessageDto.setMessage("Delete blog success");
+    apiMessageDto.setMessage("Xóa blog thành công");
     return apiMessageDto;
   }
-  
+
   @PutMapping(value = "/approve", produces = MediaType.APPLICATION_JSON_VALUE)
   @PreAuthorize("hasRole('BL_AP')")
   public ApiMessageDto<String> approve(@Valid @RequestBody RequestBlogForm requestBlogForm, BindingResult bindingResult){
     if (!isAdmin()){
-      throw new UnauthorizationException("User is not an admin");
+      throw new UnauthorizationException("Người dùng không phải là quản trị viên");
     }
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Blog blog = blogRepository.findById(requestBlogForm.getId())
-        .orElseThrow(() -> new NotFoundException("Blog not found", ErrorCode.BLOG_ERROR_NOT_FOUND));
+        .orElseThrow(() -> new NotFoundException("Không tìm thấy blog", ErrorCode.BLOG_ERROR_NOT_FOUND));
     blog.setNotice(null);
     blog.setStatus(ITDreamConstant.BLOG_STATUS_ACTIVE);
     blogRepository.save(blog);
-    apiMessageDto.setMessage("Approve blog success");
+    apiMessageDto.setMessage("Duyệt blog thành công");
     return apiMessageDto;
   }
 
@@ -361,15 +361,15 @@ public class BlogController extends ABasicController{
   @PreAuthorize("hasRole('BL_AP')")
   public ApiMessageDto<String> reject(@Valid @RequestBody RequestBlogForm requestBlogForm, BindingResult bindingResult){
     if (!isAdmin()){
-      throw new UnauthorizationException("User is not an admin");
+      throw new UnauthorizationException("Người dùng không phải là quản trị viên");
     }
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Blog blog = blogRepository.findById(requestBlogForm.getId())
-        .orElseThrow(() -> new NotFoundException("Blog not found", ErrorCode.BLOG_ERROR_NOT_FOUND));
+        .orElseThrow(() -> new NotFoundException("Không tìm thấy blog", ErrorCode.BLOG_ERROR_NOT_FOUND));
     blog.setNotice(requestBlogForm.getNotice());
     blog.setStatus(ITDreamConstant.BLOG_STATUS_REJECT);
     blogRepository.save(blog);
-    apiMessageDto.setMessage("Reject blog success");
+    apiMessageDto.setMessage("Từ chối blog thành công");
     return apiMessageDto;
   }
 }

@@ -73,14 +73,14 @@ public class TaskQuestionController extends ABasicController{
   @PreAuthorize("hasRole('TQ_ED_C')")
   public ApiMessageDto<String> create(@Valid @RequestBody CreateTaskQuestionForm form, BindingResult bindingResult){
     if (!isEducator()){
-      throw new UnauthorizationException("User is not an educator");
+      throw new UnauthorizationException("Người dùng không phải là người hướng dẫn");
     }
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Task task = taskRepository.findById(form.getTaskId()).orElseThrow(()
-    -> new NotFoundException("Task not found", ErrorCode.TASK_ERROR_NOT_FOUND));
+        -> new NotFoundException("Không tìm thấy nhiệm vụ", ErrorCode.TASK_ERROR_NOT_FOUND));
     Boolean existQuestion = taskQuestionRepository.existsByQuestionAndOptionsAndTaskId(form.getQuestion(),form.getOptions(), form.getTaskId());
     if (existQuestion){
-      throw new BadRequestException("Question already exist", ErrorCode.TASK_QUESTION_ERROR_EXIST);
+      throw new BadRequestException("Câu hỏi đã tồn tại", ErrorCode.TASK_QUESTION_ERROR_EXIST);
     }
 
     TaskQuestion taskQuestion = taskQuestionMapper.fromCreateTaskQuestionFormToEntity(form);
@@ -97,7 +97,7 @@ public class TaskQuestionController extends ABasicController{
     Simulation simulation = task.getSimulation();
     simulation.setStatus(ITDreamConstant.SIMULATION_STATUS_WAITING_APPROVE);
     simulationRepository.save(simulation);
-    apiMessageDto.setMessage("Create task question success");
+    apiMessageDto.setMessage("Tạo câu hỏi nhiệm vụ thành công");
     return apiMessageDto;
   }
 
@@ -112,7 +112,7 @@ public class TaskQuestionController extends ABasicController{
     responseListDto.setTotalElements(lessonQuestions.getTotalElements());
     responseListDto.setTotalPages(lessonQuestions.getTotalPages());
     apiMessageDto.setData(responseListDto);
-    apiMessageDto.setMessage("Get list lesson question success");
+    apiMessageDto.setMessage("Lấy danh sách câu hỏi nhiệm vụ thành công");
     return apiMessageDto;
   }
 
@@ -127,7 +127,7 @@ public class TaskQuestionController extends ABasicController{
     responseListDto.setTotalElements(lessonQuestions.getTotalElements());
     responseListDto.setTotalPages(lessonQuestions.getTotalPages());
     apiMessageDto.setData(responseListDto);
-    apiMessageDto.setMessage("Get list lesson question success");
+    apiMessageDto.setMessage("Lấy danh sách câu hỏi nhiệm vụ thành công");
     return apiMessageDto;
   }
 
@@ -144,7 +144,7 @@ public class TaskQuestionController extends ABasicController{
     responseListDto.setTotalElements(lessonQuestions.getTotalElements());
     responseListDto.setTotalPages(lessonQuestions.getTotalPages());
     apiMessageDto.setData(responseListDto);
-    apiMessageDto.setMessage("Get list lesson question success");
+    apiMessageDto.setMessage("Lấy danh sách câu hỏi nhiệm vụ thành công");
     return apiMessageDto;
   }
 
@@ -152,16 +152,16 @@ public class TaskQuestionController extends ABasicController{
   @PreAuthorize("hasRole('TQ_ED_U')")
   public ApiMessageDto<String> update(@Valid @RequestBody UpdateTaskQuestionForm form, BindingResult bindingResult){
     if (!isEducator()){
-      throw new UnauthorizationException("User is not an educator");
+      throw new UnauthorizationException("Người dùng không phải là người hướng dẫn");
     }
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     TaskQuestion taskQuestion = taskQuestionRepository.findById(form.getId()).orElseThrow(()
-    -> new NotFoundException("Task question not found", ErrorCode.TASK_QUESTION_ERROR_NOT_FOUND));
+        -> new NotFoundException("Không tìm thấy câu hỏi nhiệm vụ", ErrorCode.TASK_QUESTION_ERROR_NOT_FOUND));
     if (!Objects.equals(taskQuestion.getQuestion(), form.getQuestion()) || !Objects.equals(taskQuestion.getOptions(), form.getOptions())){
       Boolean existQuestion = taskQuestionRepository.existsByQuestionAndOptionsAndTaskId(form.getQuestion(),
           form.getOptions(), taskQuestion.getTask().getId());
       if (existQuestion) {
-        throw new BadRequestException("Task question already exist", ErrorCode.TASK_QUESTION_ERROR_EXIST);
+        throw new BadRequestException("Câu hỏi nhiệm vụ đã tồn tại", ErrorCode.TASK_QUESTION_ERROR_EXIST);
       }
     }
 
@@ -170,7 +170,7 @@ public class TaskQuestionController extends ABasicController{
     Simulation simulation = taskQuestion.getTask().getSimulation();
     simulation.setStatus(ITDreamConstant.SIMULATION_STATUS_WAITING_APPROVE);
     simulationRepository.save(simulation);
-    apiMessageDto.setMessage("Update lesson question success");
+    apiMessageDto.setMessage("Cập nhật câu hỏi nhiệm vụ thành công");
     return apiMessageDto;
   }
 
@@ -178,11 +178,11 @@ public class TaskQuestionController extends ABasicController{
   @PreAuthorize("hasRole('TQ_ED_D')")
   public ApiMessageDto<String> delete(@PathVariable("id") Long id){
     if (!isEducator()){
-      throw new UnauthorizationException("User is not an educator");
+      throw new UnauthorizationException("Người dùng không phải là người hướng dẫn");
     }
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     TaskQuestion taskQuestion = taskQuestionRepository.findById(id).orElseThrow(()
-    -> new NotFoundException("Task question not found", ErrorCode.TASK_QUESTION_ERROR_NOT_FOUND));
+        -> new NotFoundException("Không tìm thấy câu hỏi nhiệm vụ", ErrorCode.TASK_QUESTION_ERROR_NOT_FOUND));
 
     reviewSubmissionRepository.deleteAllByTaskQuestionId(id);
     questionQuizHistoryRepository.deleteAllByTaskQuestionId(id);
@@ -196,7 +196,7 @@ public class TaskQuestionController extends ABasicController{
     simulation.setStatus(ITDreamConstant.SIMULATION_STATUS_WAITING_APPROVE);
     simulationRepository.save(simulation);
     taskQuestionRepository.delete(taskQuestion);
-    apiMessageDto.setMessage("Delete task question success");
+    apiMessageDto.setMessage("Xóa câu hỏi nhiệm vụ thành công");
     return apiMessageDto;
   }
 }

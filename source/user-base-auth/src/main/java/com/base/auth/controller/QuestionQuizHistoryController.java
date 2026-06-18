@@ -55,30 +55,30 @@ public class QuestionQuizHistoryController extends ABasicController{
   @PreAuthorize("hasRole('QQH_ST_C')")
   public ApiMessageDto<String> create(@Valid @RequestBody CreateQuestionQuizHistoryForm form,  BindingResult bindingResult){
     if (!isStudent()){
-      throw new UnauthorizationException("User is not a student");
+      throw new UnauthorizationException("Người dùng không phải là học viên");
     }
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Student student = studentRepository.findById(getCurrentUser())
-        .orElseThrow(() -> new NotFoundException("Student not found", ErrorCode.USER_ERROR_NOT_FOUND));
+        .orElseThrow(() -> new NotFoundException("Không tìm thấy học viên", ErrorCode.USER_ERROR_NOT_FOUND));
     StudentTaskProgress studentTaskProgress = studentTaskProgressRepository.findById(form.getStudentTaskProgressId())
-        .orElseThrow(() -> new NotFoundException("Task progress not found", ErrorCode.STUDENT_TASK_PROGRESS_ERROR_NOT_FOUND));
+        .orElseThrow(() -> new NotFoundException("Không tìm thấy tiến độ nhiệm vụ", ErrorCode.STUDENT_TASK_PROGRESS_ERROR_NOT_FOUND));
     Task task = studentTaskProgress.getTask();
     if (!Objects.equals(task.getTotalError(), ITDreamConstant.TASK_NO_ERROR) && task.getTotalError().equals(studentTaskProgress.getErrorCount())){
-      throw new BadRequestException("Please reset the task to try again", ErrorCode.STUDENT_TASK_PROGRESS_ERROR_FAIL);
+      throw new BadRequestException("Vui lòng đặt lại nhiệm vụ để thử lại", ErrorCode.STUDENT_TASK_PROGRESS_ERROR_FAIL);
     }
 
     TaskQuestion taskQuestion = null;
     if (form.getTaskQuestionId() != null){
       taskQuestion = taskQuestionRepository.findById(form.getTaskQuestionId())
-          .orElseThrow(() -> new NotFoundException("Task question not found", ErrorCode.TASK_QUESTION_ERROR_NOT_FOUND));
+          .orElseThrow(() -> new NotFoundException("Không tìm thấy câu hỏi nhiệm vụ", ErrorCode.TASK_QUESTION_ERROR_NOT_FOUND));
       if (!studentTaskProgress.getTask().getId().equals(taskQuestion.getTask().getId())){
-        throw new BadRequestException("The question is not in the task", ErrorCode.STUDENT_SUBMISSION_ERROR_NOT_CREATE);
+        throw new BadRequestException("Câu hỏi không nằm trong nhiệm vụ", ErrorCode.STUDENT_SUBMISSION_ERROR_NOT_CREATE);
       }
     }
 
     Boolean existSubmission = studentSubmissionRepository.existsByStudentTaskProgressIdAndAnswer(studentTaskProgress.getId(), form.getAnswer());
     if (existSubmission){
-      throw new BadRequestException("The question has been answered", ErrorCode.STUDENT_SUBMISSION_ERROR_NOT_CREATE);
+      throw new BadRequestException("Câu hỏi đã được trả lời", ErrorCode.STUDENT_SUBMISSION_ERROR_NOT_CREATE);
     }
 
     if (Boolean.TRUE.equals(form.getIsCorrect())){ // Nếu đã làm bằng text, file hoặc trả lời trắc nghiệm đúng
@@ -93,15 +93,15 @@ public class QuestionQuizHistoryController extends ABasicController{
       studentSubmission.setTaskQuestion(taskQuestion);
       studentSubmissionRepository.save(studentSubmission);
     } else if (taskQuestion != null){ // Nếu làm trắc nghiệm sai
-        QuestionQuizHistory questionQuizHistory = questionQuizHistoryMapper.fromCreateQuestionQuizHistoryFormToEntity(form);
-        questionQuizHistory.setStudentTaskProgress(studentTaskProgress);
-        questionQuizHistory.setTaskQuestion(taskQuestion);
-        questionQuizHistoryRepository.save(questionQuizHistory);
-        studentTaskProgress.setErrorCount(studentTaskProgress.getErrorCount() + 1);
-        studentTaskProgressRepository.save(studentTaskProgress);
+      QuestionQuizHistory questionQuizHistory = questionQuizHistoryMapper.fromCreateQuestionQuizHistoryFormToEntity(form);
+      questionQuizHistory.setStudentTaskProgress(studentTaskProgress);
+      questionQuizHistory.setTaskQuestion(taskQuestion);
+      questionQuizHistoryRepository.save(questionQuizHistory);
+      studentTaskProgress.setErrorCount(studentTaskProgress.getErrorCount() + 1);
+      studentTaskProgressRepository.save(studentTaskProgress);
     }
 
-    apiMessageDto.setMessage("Create question quiz history success");
+    apiMessageDto.setMessage("Tạo lịch sử câu hỏi trắc nghiệm thành công");
     return apiMessageDto;
   }
 }

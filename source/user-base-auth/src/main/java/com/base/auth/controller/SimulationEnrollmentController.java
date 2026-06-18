@@ -57,19 +57,19 @@ public class SimulationEnrollmentController extends ABasicController{
   @PreAuthorize("hasRole('SE_ST_C')")
   public ApiMessageDto<String> create(@Valid @RequestBody CreateSimulationEnrollmentForm form,  BindingResult bindingResult){
     if (!isStudent()){
-      throw new UnauthorizationException("User is not a student");
+      throw new UnauthorizationException("Người dùng không phải là học viên");
     }
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Boolean existSimulationEnrollment = simulationEnrollmentRepository.existsBySimulationIdAndStudentId(form.getSimulationId(), getCurrentUser());
     if (existSimulationEnrollment){
-      throw new BadRequestException("Simulation enrollment already exist", ErrorCode.SIMULATION_ENROLLMENT_ERROR_EXIST);
+      throw new BadRequestException("Đăng ký mô phỏng đã tồn tại", ErrorCode.SIMULATION_ENROLLMENT_ERROR_EXIST);
     }
     Student student = studentRepository.findById(getCurrentUser()).orElseThrow(()
-    -> new NotFoundException("Student not found", ErrorCode.USER_ERROR_NOT_FOUND));
+        -> new NotFoundException("Không tìm thấy học viên", ErrorCode.USER_ERROR_NOT_FOUND));
     Simulation simulation = simulationRepository.findById(form.getSimulationId()).orElseThrow(()
-    -> new NotFoundException("Simulation not found", ErrorCode.SIMULATION_ERROR_NOT_FOUND));
+        -> new NotFoundException("Không tìm thấy mô phỏng", ErrorCode.SIMULATION_ERROR_NOT_FOUND));
     if (!Objects.equals(simulation.getStatus(), ITDreamConstant.SIMULATION_STATUS_ACTIVE)){
-      throw new BadRequestException("Cannot create simulation enrollment", ErrorCode.SIMULATION_ENROLLMENT_ERROR_NOT_CREATE);
+      throw new BadRequestException("Không thể tạo đăng ký mô phỏng", ErrorCode.SIMULATION_ENROLLMENT_ERROR_NOT_CREATE);
     }
     SimulationEnrollment simulationEnrollment = new SimulationEnrollment();
     simulationEnrollment.setStatus(ITDreamConstant.SIMULATION_ENROLLMENT_IN_PROGRESS);
@@ -83,7 +83,7 @@ public class SimulationEnrollmentController extends ABasicController{
       simulation.setTotalParticipant(simulation.getTotalParticipant() + 1);
     }
     simulationRepository.save(simulation);
-    apiMessageDto.setMessage("Create simulation enrollment success");
+    apiMessageDto.setMessage("Tạo đăng ký mô phỏng thành công");
     return apiMessageDto;
   }
 
@@ -99,7 +99,7 @@ public class SimulationEnrollmentController extends ABasicController{
     responseListDto.setTotalElements(simulationEnrollments.getTotalElements());
     responseListDto.setTotalPages(simulationEnrollments.getTotalPages());
     apiMessageDto.setData(responseListDto);
-    apiMessageDto.setMessage("Get list simulation enrollment success");
+    apiMessageDto.setMessage("Lấy danh sách đăng ký mô phỏng thành công");
     return apiMessageDto;
   }
 
@@ -116,7 +116,7 @@ public class SimulationEnrollmentController extends ABasicController{
     responseListDto.setTotalElements(simulationEnrollments.getTotalElements());
     responseListDto.setTotalPages(simulationEnrollments.getTotalPages());
     apiMessageDto.setData(responseListDto);
-    apiMessageDto.setMessage("Get list simulation enrollment success");
+    apiMessageDto.setMessage("Lấy danh sách đăng ký mô phỏng thành công");
     return apiMessageDto;
   }
 
@@ -139,7 +139,7 @@ public class SimulationEnrollmentController extends ABasicController{
     responseListDto.setTotalElements(simulationEnrollments.getTotalElements());
     responseListDto.setTotalPages(simulationEnrollments.getTotalPages());
     apiMessageDto.setData(responseListDto);
-    apiMessageDto.setMessage("Get list student complete simulation success");
+    apiMessageDto.setMessage("Lấy danh sách học viên hoàn thành mô phỏng thành công");
     return apiMessageDto;
   }
 }

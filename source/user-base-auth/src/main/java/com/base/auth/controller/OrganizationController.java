@@ -64,16 +64,16 @@ public class OrganizationController extends ABasicController{
   @PreAuthorize("hasRole('O_C')")
   public ApiMessageDto<String> create(@Valid @RequestBody CreateOrganizationForm form, BindingResult bindingResult){
     if (!isAdmin()){
-      throw new UnauthorizationException("User is not an admin");
+      throw new UnauthorizationException("Người dùng không phải là quản trị viên");
     }
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Boolean existOrganization = organizationRepository.existsByNameAndShortName(form.getName(), form.getShortName());
     if (existOrganization){
-      throw new BadRequestException("Organization already exist", ErrorCode.ORGANIZATION_ERROR_EXIST);
+      throw new BadRequestException("Tổ chức đã tồn tại", ErrorCode.ORGANIZATION_ERROR_EXIST);
     }
     Organization organization = organizationMapper.fromCreateOrganizationFormToEntity(form);
     organizationRepository.save(organization);
-    apiMessageDto.setMessage("Create organization success");
+    apiMessageDto.setMessage("Tạo tổ chức thành công");
     return apiMessageDto;
   }
 
@@ -88,7 +88,7 @@ public class OrganizationController extends ABasicController{
     responseListDto.setTotalElements(organizations.getTotalElements());
     responseListDto.setTotalPages(organizations.getTotalPages());
     apiMessageDto.setData(responseListDto);
-    apiMessageDto.setMessage("Get list organization success");
+    apiMessageDto.setMessage("Lấy danh sách tổ chức thành công");
     return apiMessageDto;
   }
 
@@ -102,7 +102,7 @@ public class OrganizationController extends ABasicController{
     responseListDto.setTotalElements(organizations.getTotalElements());
     responseListDto.setTotalPages(organizations.getTotalPages());
     apiMessageDto.setData(responseListDto);
-    apiMessageDto.setMessage("Get list organization success");
+    apiMessageDto.setMessage("Lấy danh sách tổ chức thành công");
     return apiMessageDto;
   }
 
@@ -110,14 +110,14 @@ public class OrganizationController extends ABasicController{
   @PreAuthorize("hasRole('O_V')")
   public ApiMessageDto<OrganizationDto> get(@PathVariable("id") Long id){
     if (!isAdmin()){
-      throw new UnauthorizationException("User is not an admin");
+      throw new UnauthorizationException("Người dùng không phải là quản trị viên");
     }
     ApiMessageDto<OrganizationDto> apiMessageDto = new ApiMessageDto<>();
     Organization organization = organizationRepository.findById(id)
-        .orElseThrow(() -> new NotFoundException("Organization not found", ErrorCode.ORGANIZATION_ERROR_NOT_FOUND));
+        .orElseThrow(() -> new NotFoundException("Không tìm thấy tổ chức", ErrorCode.ORGANIZATION_ERROR_NOT_FOUND));
     OrganizationDto organizationDto = organizationMapper.fromEntityToOrganizationDto(organization);
     apiMessageDto.setData(organizationDto);
-    apiMessageDto.setMessage("Get detail organization success");
+    apiMessageDto.setMessage("Lấy chi tiết tổ chức thành công");
     return apiMessageDto;
   }
 
@@ -125,15 +125,15 @@ public class OrganizationController extends ABasicController{
   @PreAuthorize("hasRole('O_U')")
   public ApiMessageDto<String> update(@Valid @RequestBody UpdateOrganizationForm form, BindingResult bindingResult){
     if (!isAdmin()){
-      throw new UnauthorizationException("User is not an admin");
+      throw new UnauthorizationException("Người dùng không phải là quản trị viên");
     }
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Organization organization = organizationRepository.findById(form.getId())
-            .orElseThrow(() -> new NotFoundException("Organization not found", ErrorCode.ORGANIZATION_ERROR_NOT_FOUND));
+        .orElseThrow(() -> new NotFoundException("Không tìm thấy tổ chức", ErrorCode.ORGANIZATION_ERROR_NOT_FOUND));
     if (!organization.getName().equals(form.getName()) || !organization.getShortName().equals(form.getShortName())){
       Boolean existOrganization = organizationRepository.existsByNameAndShortName(form.getName(), form.getShortName());
       if (existOrganization){
-        throw new BadRequestException("Organization already exist", ErrorCode.ORGANIZATION_ERROR_EXIST);
+        throw new BadRequestException("Tổ chức đã tồn tại", ErrorCode.ORGANIZATION_ERROR_EXIST);
       }
     }
     organizationMapper.fromUpdateOrganizationFormToEntity(form, organization);
@@ -141,7 +141,7 @@ public class OrganizationController extends ABasicController{
       userBaseApiService.deleteByFilePath(organization.getLogoUrl());
     }
     organizationRepository.save(organization);
-    apiMessageDto.setMessage("Update organization success");
+    apiMessageDto.setMessage("Cập nhật tổ chức thành công");
     return apiMessageDto;
   }
 
@@ -149,11 +149,11 @@ public class OrganizationController extends ABasicController{
   @PreAuthorize("hasRole('O_D')")
   public ApiMessageDto<String> delete(@PathVariable("id") Long id){
     if (!isAdmin()){
-      throw new UnauthorizationException("User is not an admin");
+      throw new UnauthorizationException("Người dùng không phải là quản trị viên");
     }
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Organization organization = organizationRepository.findById(id)
-        .orElseThrow(() -> new NotFoundException("Organization not found", ErrorCode.ORGANIZATION_ERROR_NOT_FOUND));
+        .orElseThrow(() -> new NotFoundException("Không tìm thấy tổ chức", ErrorCode.ORGANIZATION_ERROR_NOT_FOUND));
     List<Educator> educators = educatorRepository.findAllByOrganizationId(id);
     for (Educator educator : educators){
       List<Simulation> simulations = simulationRepository.findAllByEducatorId(educator.getId());
@@ -164,7 +164,7 @@ public class OrganizationController extends ABasicController{
     }
     userBaseApiService.deleteByFilePath(organization.getLogoUrl());
     organizationRepository.delete(organization);
-    apiMessageDto.setMessage("Delete organization success");
+    apiMessageDto.setMessage("Xóa tổ chức thành công");
     return apiMessageDto;
   }
 }

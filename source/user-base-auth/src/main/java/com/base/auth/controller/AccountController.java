@@ -189,9 +189,9 @@ public class AccountController extends ABasicController{
         }
         ApiMessageDto<ProfileAccountDto> apiMessageDto = new ApiMessageDto<>();
         Account account = accountRepository.findById(getCurrentUser()).orElseThrow(()
-            -> new NotFoundException("Account not found", ErrorCode.ACCOUNT_ERROR_NOT_FOUND));
+            -> new NotFoundException("Tài khoản không tồn tại", ErrorCode.ACCOUNT_ERROR_NOT_FOUND));
         apiMessageDto.setData(accountMapper.fromAccountToProfileDto(account));
-        apiMessageDto.setMessage("Get account profile success");
+        apiMessageDto.setMessage("Lấy thông tin tài khoản thành công");
         return apiMessageDto;
     }
 
@@ -199,16 +199,16 @@ public class AccountController extends ABasicController{
     @PreAuthorize("hasRole('ACC_AD_U')")
     public ApiMessageDto<String> updateProfileAdmin(@Valid @RequestBody UpdateProfileAdminForm updateProfileAdminForm, BindingResult bindingResult) {
         if (!isAdmin()){
-            throw new BadRequestException("User is not an admin");
+            throw new BadRequestException("Người dùng không phải là admin");
         }
         ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
         Account account = accountRepository.findById(getCurrentUser()).orElseThrow(()
-            -> new NotFoundException("Account not found", ErrorCode.ACCOUNT_ERROR_NOT_FOUND));
+            -> new NotFoundException("Tài khoản không tồn tại", ErrorCode.ACCOUNT_ERROR_NOT_FOUND));
 
         if (!Objects.equals(account.getEmail(), updateProfileAdminForm.getEmail())){
             Boolean existEmail = accountRepository.existsByEmail(updateProfileAdminForm.getEmail());
             if (existEmail){
-                throw new BadRequestException("Email already exist", ErrorCode.ACCOUNT_ERROR_EMAIL_EXIST);
+                throw new BadRequestException("Email đã tồn tại", ErrorCode.ACCOUNT_ERROR_EMAIL_EXIST);
             }
             account.setEmail(updateProfileAdminForm.getEmail());
         }
@@ -216,13 +216,13 @@ public class AccountController extends ABasicController{
         if (!Objects.equals(account.getPhone(), updateProfileAdminForm.getPhone())){
             Boolean existPhone = accountRepository.existsByPhone(updateProfileAdminForm.getPhone());
             if (existPhone){
-                throw new BadRequestException("Phone already exist", ErrorCode.ACCOUNT_ERROR_PHONE_EXIST);
+                throw new BadRequestException("Số điện thoại đã tồn tại", ErrorCode.ACCOUNT_ERROR_PHONE_EXIST);
             }
             account.setPhone(updateProfileAdminForm.getPhone());
         }
 
         if(!passwordEncoder.matches(updateProfileAdminForm.getOldPassword(), account.getPassword())){
-            throw new BadRequestException("Password invalid", ErrorCode.ACCOUNT_ERROR_WRONG_PASSWORD);
+            throw new BadRequestException("Mật khẩu không hợp lệ", ErrorCode.ACCOUNT_ERROR_WRONG_PASSWORD);
         }
 
         if (StringUtils.isNoneBlank(updateProfileAdminForm.getPassword())) {
@@ -237,7 +237,7 @@ public class AccountController extends ABasicController{
         }
         accountMapper.fromUpdateProfileAdminFormToAccount(updateProfileAdminForm, account);
         accountRepository.save(account);
-        apiMessageDto.setMessage("Update profile admin success");
+        apiMessageDto.setMessage("Cập nhật thông tin tài khoản thành công");
         return apiMessageDto;
 
     }
@@ -247,11 +247,11 @@ public class AccountController extends ABasicController{
         ApiMessageDto<OtpDto> apiMessageDto = new ApiMessageDto<>();
         Account account = accountRepository.findAccountByEmail(emailForm.getEmail());
         if (account == null) {
-            throw new NotFoundException("Account not found", ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
+            throw new NotFoundException("Tài khoản không tồn tại", ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
         }
 
         if (!Objects.equals(account.getStatus(), ITDreamConstant.STATUS_ACTIVE) && !Objects.equals(account.getStatus(), ITDreamConstant.STATUS_FORGET_PASSWORD)){
-            throw new BadRequestException("Account cannot active", ErrorCode.ACCOUNT_ERROR_NOT_ACTIVE);
+            throw new BadRequestException("Tài khoản không hoạt động", ErrorCode.ACCOUNT_ERROR_NOT_ACTIVE);
         }
 
         String otp = userBaseApiService.getRequestOTP();
@@ -269,7 +269,7 @@ public class AccountController extends ABasicController{
         otpDto.setIdHash(hash);
 
         apiMessageDto.setData(otpDto);
-        apiMessageDto.setMessage("Request forget password success, please check email.");
+        apiMessageDto.setMessage("Gửi yêu cầu đặt lại mật khẩu thành công. Vui lòng kiểm tra email!");
         return apiMessageDto;
     }
 
@@ -279,20 +279,20 @@ public class AccountController extends ABasicController{
         String[] hash = AESUtils.decrypt(forgetForm.getIdHash(),true).split(";",2);
         Long id = ConvertUtils.convertStringToLong(hash[0]);
         if(id <= 0){
-            throw new BadRequestException("Wrong password hash", ErrorCode.ACCOUNT_ERROR_WRONG_HASH_RESET_PASS);
+            throw new BadRequestException("Băm tài khoản sai", ErrorCode.ACCOUNT_ERROR_WRONG_HASH_RESET_PASS);
         }
 
         Account account = accountRepository.findById(id).orElseThrow(()
-        -> new NotFoundException("Account not found", ErrorCode.ACCOUNT_ERROR_NOT_FOUND));
+        -> new NotFoundException("Tài khoản không tồn tại", ErrorCode.ACCOUNT_ERROR_NOT_FOUND));
 
         if (!ITDreamConstant.STATUS_FORGET_PASSWORD.equals(account.getStatus())){
-            throw new BadRequestException("Account not pending", ErrorCode.ACCOUNT_ERROR_NOT_PENDING);
+            throw new BadRequestException("Tài khoản không gửi yêu cầu đặt lại mật khẩu", ErrorCode.ACCOUNT_ERROR_NOT_PENDING);
         }
 
         if(account.getAttemptCode() >= ITDreamConstant.MAX_ATTEMPT_FORGET_PWD){
             account.setStatus(ITDreamConstant.STATUS_LOCK);
             accountRepository.save(account);
-            throw new BadRequestException("Account has been locked", ErrorCode.ACCOUNT_ERROR_LOCKED);
+            throw new BadRequestException("Tài khoản bị khóa", ErrorCode.ACCOUNT_ERROR_LOCKED);
         }
 
         if(!account.getResetPwdCode().equals(forgetForm.getOtp()) ||
@@ -301,7 +301,7 @@ public class AccountController extends ABasicController{
             //tang so lan
             account.setAttemptCode(account.getAttemptCode()+1);
             accountRepository.save(account);
-            throw new BadRequestException("OTP invalid", ErrorCode.ACCOUNT_ERROR_OPT_INVALID);
+            throw new BadRequestException("OTP không hợp lệ", ErrorCode.ACCOUNT_ERROR_OPT_INVALID);
         }
 
         account.setResetPwdTime(null);
@@ -310,7 +310,7 @@ public class AccountController extends ABasicController{
         account.setPassword(passwordEncoder.encode(forgetForm.getNewPassword()));
         account.setStatus(ITDreamConstant.STATUS_ACTIVE);
         accountRepository.save(account);
-        apiMessageDto.setMessage("Change password success.");
+        apiMessageDto.setMessage("Thay đổi mật khẩu thành công");
         return apiMessageDto;
     }
 
@@ -319,11 +319,11 @@ public class AccountController extends ABasicController{
         ApiMessageDto<OtpDto> apiMessageDto = new ApiMessageDto<>();
         Account account = accountRepository.findAccountByEmail(emailForm.getEmail());
         if (account == null) {
-            throw new NotFoundException("Account not found", ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
+            throw new NotFoundException("Tài khoản không tồn tại", ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
         }
 
         if (!Objects.equals(account.getStatus(), ITDreamConstant.STATUS_FORGET_PASSWORD) && !Objects.equals(account.getStatus(), ITDreamConstant.STATUS_VERIFY)){
-            throw new BadRequestException("Account is not pending", ErrorCode.ACCOUNT_ERROR_NOT_PENDING);
+            throw new BadRequestException("Tài khoản không gửi yêu cầu xác thực", ErrorCode.ACCOUNT_ERROR_NOT_PENDING);
         }
         String otp = userBaseApiService.getRequestOTP();
         account.setAttemptCode(0);
@@ -337,7 +337,7 @@ public class AccountController extends ABasicController{
         String hash = AESUtils.encrypt (account.getId()+";"+otp, true);
         otpDto.setIdHash(hash);
         apiMessageDto.setData(otpDto);
-        apiMessageDto.setMessage("Resend verify email success");
+        apiMessageDto.setMessage("Gửi xác thực lại thành công");
         return apiMessageDto;
     }
 
@@ -347,20 +347,20 @@ public class AccountController extends ABasicController{
         String[] hash = AESUtils.decrypt(verifyUserForm.getIdHash(),true).split(";",2);
         Long id = ConvertUtils.convertStringToLong(hash[0]);
         if(id <= 0){
-            throw new BadRequestException("Incorrect hash verification", ErrorCode.ACCOUNT_ERROR_INCORRECT_HASH_VERIFICATION);
+            throw new BadRequestException("Hàm băm không chính xác", ErrorCode.ACCOUNT_ERROR_INCORRECT_HASH_VERIFICATION);
         }
 
         Account account = accountRepository.findById(id).orElseThrow(()
-            -> new NotFoundException("Account not found", ErrorCode.ACCOUNT_ERROR_NOT_FOUND));
+            -> new NotFoundException("Tài khoản không tồn tại", ErrorCode.ACCOUNT_ERROR_NOT_FOUND));
 
         if (!Objects.equals(ITDreamConstant.STATUS_VERIFY, account.getStatus())){
-            throw new BadRequestException("Account cannot be verified", ErrorCode.USER_ERROR_VERIFY_FAILED);
+            throw new BadRequestException("Tài khoản không gửi yêu cầu xác thực", ErrorCode.USER_ERROR_VERIFY_FAILED);
         }
 
         if(account.getAttemptCode() >= ITDreamConstant.MAX_ATTEMPT_FORGET_PWD){
             account.setStatus(ITDreamConstant.STATUS_LOCK);
             accountRepository.save(account);
-            throw new BadRequestException("Account has been locked", ErrorCode.ACCOUNT_ERROR_LOCKED);
+            throw new BadRequestException("Tài khoản đã bị khóa", ErrorCode.ACCOUNT_ERROR_LOCKED);
         }
 
         if(!account.getResetPwdCode().equals(verifyUserForm.getOtp()) ||
@@ -369,7 +369,7 @@ public class AccountController extends ABasicController{
             //Tăng số lần thêm 1
             account.setAttemptCode(account.getAttemptCode() + 1);
             accountRepository.save(account);
-            throw new BadRequestException("OTP invalid", ErrorCode.ACCOUNT_ERROR_OPT_INVALID);
+            throw new BadRequestException("OTP không hợp lệ", ErrorCode.ACCOUNT_ERROR_OPT_INVALID);
         }
 
         account.setResetPwdTime(null);
@@ -378,18 +378,18 @@ public class AccountController extends ABasicController{
         if (ITDreamConstant.USER_KIND_STUDENT.equals(account.getKind())){
             account.setStatus(ITDreamConstant.STATUS_ACTIVE);
             accountRepository.save(account);
-            apiMessageDto.setMessage("Verify account success");
+            apiMessageDto.setMessage("Xác thực tài khoản thành công");
             return apiMessageDto;
         } else if (ITDreamConstant.USER_KIND_EDUCATOR.equals(account.getKind())){
             account.setStatus(ITDreamConstant.STATUS_WAITING_APPROVE);
             accountRepository.save(account);
-            apiMessageDto.setMessage("Verify account success. Please wait for approval");
+            apiMessageDto.setMessage("Xác thực tài khoản thành công. Vui lòng chờ phê duyệt!");
             return apiMessageDto;
         } else {
             account.setStatus(ITDreamConstant.STATUS_VERIFY);
         }
         accountRepository.save(account);
-        apiMessageDto.setMessage("Verify account success");
+        apiMessageDto.setMessage("Xác thực tài khoản thành công");
         return apiMessageDto;
     }
 

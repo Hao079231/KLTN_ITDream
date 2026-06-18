@@ -116,26 +116,26 @@ public class StudentController extends ABasicController{
     ApiMessageDto<OtpDto> apiMessageDto = new ApiMessageDto<>();
     Boolean existUsername = accountRepository.existsByUsername(signUpStudentForm.getUsername());
     if (existUsername){
-      throw new BadRequestException("Username already exists", ErrorCode.ACCOUNT_ERROR_USERNAME_EXIST);
+      throw new BadRequestException("Tên đăng nhập đã tồn tại", ErrorCode.ACCOUNT_ERROR_USERNAME_EXIST);
     }
 
     Boolean existEmail = accountRepository.existsByEmail(signUpStudentForm.getEmail());
     if (existEmail)
     {
-      throw new BadRequestException("Email already exists", ErrorCode.ACCOUNT_ERROR_EMAIL_EXIST);
+      throw new BadRequestException("Email đã tồn tại", ErrorCode.ACCOUNT_ERROR_EMAIL_EXIST);
     }
 
     Boolean existPhone = accountRepository.existsByPhone(signUpStudentForm.getPhone());
     if (existPhone)
     {
-      throw new BadRequestException("Phone already exists", ErrorCode.ACCOUNT_ERROR_PHONE_EXIST);
+      throw new BadRequestException("Số điện thoại đã tồn tại", ErrorCode.ACCOUNT_ERROR_PHONE_EXIST);
     }
     Account account = accountMapper.fromSignUpStudentToAccount(signUpStudentForm);
     account.setPassword(passwordEncoder.encode(signUpStudentForm.getPassword()));
     account.setKind(ITDreamConstant.USER_KIND_STUDENT);
     Group group = groupRepository.findFirstByKind(ITDreamConstant.USER_KIND_STUDENT);
     if (group == null){
-      throw new NotFoundException("Group not found", ErrorCode.GROUP_ERROR_NOT_FOUND);
+      throw new NotFoundException("Không tìm thấy nhóm", ErrorCode.GROUP_ERROR_NOT_FOUND);
     }
     account.setGroup(group);
     account.setStatus(ITDreamConstant.STATUS_VERIFY);
@@ -154,7 +154,7 @@ public class StudentController extends ABasicController{
     String hash = AESUtils.encrypt (account.getId()+";"+otp, true);
     otpDto.setIdHash(hash);
     apiMessageDto.setData(otpDto);
-    apiMessageDto.setMessage("Sign up success, please check email.");
+    apiMessageDto.setMessage("Đăng ký thành công, vui lòng kiểm tra email.");
     return apiMessageDto;
   }
 
@@ -169,7 +169,7 @@ public class StudentController extends ABasicController{
     responseListDto.setTotalElements(listStudent.getTotalElements());
     responseListDto.setTotalPages(listStudent.getTotalPages());
     apiMessageDto.setData(responseListDto);
-    apiMessageDto.setMessage("Get list student success");
+    apiMessageDto.setMessage("Lấy danh sách học viên thành công");
     return apiMessageDto;
   }
 
@@ -178,13 +178,13 @@ public class StudentController extends ABasicController{
   public ApiMessageDto<StudentDto> getStudent(@PathVariable("id") Long id)
   {
     if (!isAdmin()){
-      throw new UnauthorizationException("User is not an admin");
+      throw new UnauthorizationException("Người dùng không phải là quản trị viên");
     }
     ApiMessageDto<StudentDto> apiMessageDto = new ApiMessageDto<>();
     Student student = studentRepository.findById(id).orElseThrow(()
-    -> new NotFoundException("Student not found", ErrorCode.USER_ERROR_NOT_FOUND));
+        -> new NotFoundException("Không tìm thấy học viên", ErrorCode.USER_ERROR_NOT_FOUND));
     apiMessageDto.setData(studentMapper.fromEntityToStudentDto(student));
-    apiMessageDto.setMessage("Get student success");
+    apiMessageDto.setMessage("Lấy thông tin học viên thành công");
     return apiMessageDto;
   }
 
@@ -192,19 +192,19 @@ public class StudentController extends ABasicController{
   @PreAuthorize("hasRole('ST_U')")
   public ApiMessageDto<String> updateStudent(@Valid @RequestBody UpdateStudentForm updateStudentForm, BindingResult bindingResult) {
     if (!isAdmin()){
-      throw new UnauthorizationException("User is not an admin");
+      throw new UnauthorizationException("Người dùng không phải là quản trị viên");
     }
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Student student = studentRepository.findById(updateStudentForm.getId()).orElseThrow(()
-    -> new NotFoundException("Student not found", ErrorCode.USER_ERROR_NOT_FOUND));
+        -> new NotFoundException("Không tìm thấy học viên", ErrorCode.USER_ERROR_NOT_FOUND));
 
     Account account = accountRepository.findById(student.getAccount().getId()).orElseThrow(()
-    -> new NotFoundException("Account not found", ErrorCode.ACCOUNT_ERROR_NOT_FOUND));
+        -> new NotFoundException("Không tìm thấy tài khoản", ErrorCode.ACCOUNT_ERROR_NOT_FOUND));
 
     if (!Objects.equals(student.getAccount().getUsername(), updateStudentForm.getUsername())){
       Boolean existUsername = accountRepository.existsByUsername(updateStudentForm.getUsername());
       if (existUsername){
-        throw new BadRequestException("Username already exist", ErrorCode.ACCOUNT_ERROR_USERNAME_EXIST);
+        throw new BadRequestException("Tên đăng nhập đã tồn tại", ErrorCode.ACCOUNT_ERROR_USERNAME_EXIST);
       }
       account.setUsername(updateStudentForm.getUsername());
     }
@@ -213,7 +213,7 @@ public class StudentController extends ABasicController{
       Boolean existEmail = accountRepository.existsByEmail(updateStudentForm.getEmail());
       if (existEmail)
       {
-        throw new BadRequestException("Email already exists", ErrorCode.ACCOUNT_ERROR_EMAIL_EXIST);
+        throw new BadRequestException("Email đã tồn tại", ErrorCode.ACCOUNT_ERROR_EMAIL_EXIST);
       }
       account.setEmail(updateStudentForm.getEmail());
     }
@@ -221,7 +221,7 @@ public class StudentController extends ABasicController{
     if (!Objects.equals(student.getAccount().getPhone(), updateStudentForm.getPhone())){
       Boolean existPhone = accountRepository.existsByPhone(updateStudentForm.getPhone());
       if (existPhone){
-        throw new BadRequestException("Phone already exist", ErrorCode.ACCOUNT_ERROR_PHONE_EXIST);
+        throw new BadRequestException("Số điện thoại đã tồn tại", ErrorCode.ACCOUNT_ERROR_PHONE_EXIST);
       }
       account.setPhone(updateStudentForm.getPhone());
     }
@@ -238,7 +238,7 @@ public class StudentController extends ABasicController{
     }
     accountMapper.fromUpdateStudentFormToEntity(updateStudentForm, account);
     accountRepository.save(account);
-    apiMessageDto.setMessage("Update student success");
+    apiMessageDto.setMessage("Cập nhật học viên thành công");
     return apiMessageDto;
   }
 
@@ -247,17 +247,17 @@ public class StudentController extends ABasicController{
   public ApiMessageDto<String> deleteStudent(@PathVariable("id") Long id)
   {
     if (!isAdmin()){
-      throw new UnauthorizationException("User is not an admin");
+      throw new UnauthorizationException("Người dùng không phải là quản trị viên");
     }
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Student student = studentRepository.findById(id).orElseThrow(()
-    -> new NotFoundException("Student not found", ErrorCode.USER_ERROR_NOT_FOUND));
+        -> new NotFoundException("Không tìm thấy học viên", ErrorCode.USER_ERROR_NOT_FOUND));
 
     Account account = accountRepository.findById(student.getAccount().getId()).orElseThrow(()
-    -> new NotFoundException("Account not found", ErrorCode.ACCOUNT_ERROR_NOT_FOUND));
+        -> new NotFoundException("Không tìm thấy tài khoản", ErrorCode.ACCOUNT_ERROR_NOT_FOUND));
 
     if (Objects.equals(account.getKind(), ITDreamConstant.USER_KIND_ADMIN)){
-      throw new BadRequestException("Not allow delete admin", ErrorCode.ACCOUNT_ERROR_NOT_ALLOW_DELETE_ADMIN);
+      throw new BadRequestException("Không được phép xóa quản trị viên", ErrorCode.ACCOUNT_ERROR_NOT_ALLOW_DELETE_ADMIN);
     }
     List<Achievement> achievements = achievementRepository.findAllByStudentId(id);
     for (Achievement achievement : achievements){
@@ -297,7 +297,7 @@ public class StudentController extends ABasicController{
     }
     studentRepository.delete(student);
     accountRepository.delete(account);
-    apiMessageDto.setMessage("Delete student success");
+    apiMessageDto.setMessage("Xóa học viên thành công");
     return apiMessageDto;
   }
 
@@ -306,12 +306,12 @@ public class StudentController extends ABasicController{
   public ApiMessageDto<ProfileStudentDto> getProfileForStudent(){
     ApiMessageDto<ProfileStudentDto> apiMessageDto = new ApiMessageDto<>();
     Account account = accountRepository.findById(getCurrentUser()).orElseThrow(
-        () -> new NotFoundException("Account not found", ErrorCode.ACCOUNT_ERROR_NOT_FOUND));
+        () -> new NotFoundException("Không tìm thấy tài khoản", ErrorCode.ACCOUNT_ERROR_NOT_FOUND));
     Student student = studentRepository.findById(account.getId()).orElseThrow(
-        () -> new NotFoundException("Student not found", ErrorCode.USER_ERROR_NOT_FOUND));
+        () -> new NotFoundException("Không tìm thấy học viên", ErrorCode.USER_ERROR_NOT_FOUND));
     ProfileStudentDto studentDto = studentMapper.fromStudentToProfileDto(student);
     apiMessageDto.setData(studentDto);
-    apiMessageDto.setMessage("Get profile student success");
+    apiMessageDto.setMessage("Lấy hồ sơ học viên thành công");
     return apiMessageDto;
   }
 
@@ -320,14 +320,14 @@ public class StudentController extends ABasicController{
   public ApiMessageDto<String> updateProfileForStudent(@Valid @RequestBody UpdateProfileStudentForm updateStudentForm, BindingResult bindingResult) {
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Account currentAccount = accountRepository.findById(getCurrentUser()).orElseThrow(() ->
-        new NotFoundException("account not found", ErrorCode.ACCOUNT_ERROR_NOT_FOUND));
+        new NotFoundException("Không tìm thấy tài khoản", ErrorCode.ACCOUNT_ERROR_NOT_FOUND));
     Student currentUser = studentRepository.findById(currentAccount.getId()).orElseThrow(() ->
-        new NotFoundException("student not found", ErrorCode.USER_ERROR_NOT_FOUND));
+        new NotFoundException("Không tìm thấy học viên", ErrorCode.USER_ERROR_NOT_FOUND));
 
     if (!Objects.equals(currentAccount.getUsername(), updateStudentForm.getUsername())) {
       Boolean existUsername = accountRepository.existsByUsername(updateStudentForm.getUsername());
       if (existUsername){
-        throw new BadRequestException("Username already exists", ErrorCode.ACCOUNT_ERROR_USERNAME_EXIST);
+        throw new BadRequestException("Tên đăng nhập đã tồn tại", ErrorCode.ACCOUNT_ERROR_USERNAME_EXIST);
       }
       currentAccount.setUsername(updateStudentForm.getUsername());
     }
@@ -335,7 +335,7 @@ public class StudentController extends ABasicController{
     if (!Objects.equals(currentAccount.getPhone(), updateStudentForm.getPhone())){
       Boolean existPhone = accountRepository.existsByPhone(updateStudentForm.getPhone());
       if (existPhone){
-        throw new BadRequestException("Phone already exist", ErrorCode.ACCOUNT_ERROR_PHONE_EXIST);
+        throw new BadRequestException("Số điện thoại đã tồn tại", ErrorCode.ACCOUNT_ERROR_PHONE_EXIST);
       }
       currentAccount.setPhone(updateStudentForm.getPhone());
     }
@@ -355,7 +355,7 @@ public class StudentController extends ABasicController{
     currentUser.setAccount(currentAccount);
     accountRepository.save(currentAccount);
     studentRepository.save(currentUser);
-    apiMessageDto.setMessage("Update profile student success");
+    apiMessageDto.setMessage("Cập nhật hồ sơ học viên thành công");
     return apiMessageDto;
   }
 }

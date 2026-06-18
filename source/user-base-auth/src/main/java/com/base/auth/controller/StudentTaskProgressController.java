@@ -83,19 +83,19 @@ public class StudentTaskProgressController extends ABasicController{
   @PreAuthorize("hasRole('STP_ST_C')")
   public ApiMessageDto<String> create(@Valid @RequestBody CreateStudentTaskProgressForm form, BindingResult bindingResult){
     if (!isStudent()){
-      throw new UnauthorizationException("User is not a student");
+      throw new UnauthorizationException("Người dùng không phải là học viên");
     }
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Boolean existStudentTaskProgress = studentTaskProgressRepository.existsBySimulationEnrollmentIdAndTask_KindAndStatus(form.getSimulationEnrollmentId(), ITDreamConstant.TASK_KIND_SUBTASK, ITDreamConstant.STUDENT_TASK_PROGRESS_IN_PROGRESS);
     if (existStudentTaskProgress){
-      throw new BadRequestException("Please complete the previous task", ErrorCode.STUDENT_TASK_PROGRESS_ERROR_NOT_CREATE);
+      throw new BadRequestException("Vui lòng hoàn thành nhiệm vụ trước đó", ErrorCode.STUDENT_TASK_PROGRESS_ERROR_NOT_CREATE);
     }
     Task task = taskRepository.findById(form.getTaskId()).orElseThrow(()
-    -> new NotFoundException("Task not found", ErrorCode.TASK_ERROR_NOT_FOUND));
+        -> new NotFoundException("Không tìm thấy nhiệm vụ", ErrorCode.TASK_ERROR_NOT_FOUND));
     SimulationEnrollment simulationEnrollment = simulationEnrollmentRepository.findById(form.getSimulationEnrollmentId()).orElseThrow(()
-    -> new NotFoundException("Simulation enrollment not found", ErrorCode.SIMULATION_ENROLLMENT_ERROR_NOT_FOUND));
+        -> new NotFoundException("Không tìm thấy đăng ký mô phỏng", ErrorCode.SIMULATION_ENROLLMENT_ERROR_NOT_FOUND));
     if (!Objects.equals(task.getSimulation().getId(), simulationEnrollment.getSimulation().getId())){
-      throw new BadRequestException("Cannot create task progress", ErrorCode.STUDENT_TASK_PROGRESS_ERROR_NOT_CREATE);
+      throw new BadRequestException("Không thể tạo tiến độ nhiệm vụ", ErrorCode.STUDENT_TASK_PROGRESS_ERROR_NOT_CREATE);
     }
 
     StudentTaskProgress studentTaskProgress = new StudentTaskProgress();
@@ -103,7 +103,7 @@ public class StudentTaskProgressController extends ABasicController{
     studentTaskProgress.setTask(task);
     studentTaskProgress.setSimulationEnrollment(simulationEnrollment);
     studentTaskProgressRepository.save(studentTaskProgress);
-    apiMessageDto.setMessage("Create task progress success");
+    apiMessageDto.setMessage("Tạo tiến độ nhiệm vụ thành công");
     return apiMessageDto;
   }
 
@@ -119,7 +119,7 @@ public class StudentTaskProgressController extends ABasicController{
     responseListDto.setTotalElements(studentTaskProgresses.getTotalElements());
     responseListDto.setTotalPages(studentTaskProgresses.getTotalPages());
     apiMessageDto.setData(responseListDto);
-    apiMessageDto.setMessage("Get list task progress success");
+    apiMessageDto.setMessage("Lấy danh sách tiến độ nhiệm vụ thành công");
     return apiMessageDto;
   }
 
@@ -135,7 +135,7 @@ public class StudentTaskProgressController extends ABasicController{
     responseListDto.setTotalElements(studentTaskProgresses.getTotalElements());
     responseListDto.setTotalPages(studentTaskProgresses.getTotalPages());
     apiMessageDto.setData(responseListDto);
-    apiMessageDto.setMessage("Get list task progress success");
+    apiMessageDto.setMessage("Lấy danh sách tiến độ nhiệm vụ thành công");
     return apiMessageDto;
   }
 
@@ -152,7 +152,7 @@ public class StudentTaskProgressController extends ABasicController{
     responseListDto.setTotalElements(studentTaskProgresses.getTotalElements());
     responseListDto.setTotalPages(studentTaskProgresses.getTotalPages());
     apiMessageDto.setData(responseListDto);
-    apiMessageDto.setMessage("Get list task progress success");
+    apiMessageDto.setMessage("Lấy danh sách tiến độ nhiệm vụ thành công");
     return apiMessageDto;
   }
 
@@ -160,11 +160,11 @@ public class StudentTaskProgressController extends ABasicController{
   @PreAuthorize("hasRole('STP_V')")
   public ApiMessageDto<StudentTaskProgressDetailDto> get(@PathVariable("id") Long id){
     if (!isAdmin()){
-      throw new UnauthorizationException("User is not an admin");
+      throw new UnauthorizationException("Người dùng không phải là quản trị viên");
     }
     ApiMessageDto<StudentTaskProgressDetailDto> apiMessageDto = new ApiMessageDto<>();
     StudentTaskProgress studentTaskProgress = studentTaskProgressRepository.findById(id)
-        .orElseThrow(() -> new NotFoundException("Student task progress not found", ErrorCode.STUDENT_TASK_PROGRESS_ERROR_NOT_FOUND));
+        .orElseThrow(() -> new NotFoundException("Không tìm thấy tiến độ nhiệm vụ của học viên", ErrorCode.STUDENT_TASK_PROGRESS_ERROR_NOT_FOUND));
     StudentTaskProgressDetailDto studentTaskProgressDetailDto = studentTaskProgressMapper.fromEntityToStudentTaskProgressStudentDto(studentTaskProgress);
 
     ResponseListDto<List<StudentSubmissionDisplayDto>> responseListDto = new ResponseListDto<>();
@@ -178,7 +178,7 @@ public class StudentTaskProgressController extends ABasicController{
     responseListDto.setTotalPages(studentSubmissions.getTotalPages());
     studentTaskProgressDetailDto.setStudentSubmission(responseListDto);
     apiMessageDto.setData(studentTaskProgressDetailDto);
-    apiMessageDto.setMessage("Get student task progress success");
+    apiMessageDto.setMessage("Lấy tiến độ nhiệm vụ của học viên thành công");
     return apiMessageDto;
   }
 
@@ -186,11 +186,11 @@ public class StudentTaskProgressController extends ABasicController{
   @PreAuthorize("hasRole('STP_ST_V')")
   public ApiMessageDto<StudentTaskProgressDetailDto> getByStudent(@PathVariable("id") Long id){
     if (!isStudent()){
-      throw new UnauthorizationException("User is not a student");
+      throw new UnauthorizationException("Người dùng không phải là học viên");
     }
     ApiMessageDto<StudentTaskProgressDetailDto> apiMessageDto = new ApiMessageDto<>();
     StudentTaskProgress studentTaskProgress = studentTaskProgressRepository.findById(id)
-        .orElseThrow(() -> new NotFoundException("Student task progress not found", ErrorCode.STUDENT_TASK_PROGRESS_ERROR_NOT_FOUND));
+        .orElseThrow(() -> new NotFoundException("Không tìm thấy tiến độ nhiệm vụ của học viên", ErrorCode.STUDENT_TASK_PROGRESS_ERROR_NOT_FOUND));
     StudentTaskProgressDetailDto studentTaskProgressDetailDto = studentTaskProgressMapper.fromEntityToStudentTaskProgressStudentDto(studentTaskProgress);
 
     ResponseListDto<List<StudentSubmissionDisplayDto>> responseListDto = new ResponseListDto<>();
@@ -204,7 +204,7 @@ public class StudentTaskProgressController extends ABasicController{
     responseListDto.setTotalPages(studentSubmissions.getTotalPages());
     studentTaskProgressDetailDto.setStudentSubmission(responseListDto);
     apiMessageDto.setData(studentTaskProgressDetailDto);
-    apiMessageDto.setMessage("Get student task progress success");
+    apiMessageDto.setMessage("Lấy tiến độ nhiệm vụ của học viên thành công");
     return apiMessageDto;
   }
 
@@ -212,11 +212,11 @@ public class StudentTaskProgressController extends ABasicController{
   @PreAuthorize("hasRole('STP_ED_V')")
   public ApiMessageDto<StudentTaskProgressDetailDto> getByEducator(@PathVariable("id") Long id){
     if (!isEducator()){
-      throw new UnauthorizationException("User is not an educator");
+      throw new UnauthorizationException("Người dùng không phải là người hướng dẫn");
     }
     ApiMessageDto<StudentTaskProgressDetailDto> apiMessageDto = new ApiMessageDto<>();
     StudentTaskProgress studentTaskProgress = studentTaskProgressRepository.findById(id)
-        .orElseThrow(() -> new NotFoundException("Student task progress not found", ErrorCode.STUDENT_TASK_PROGRESS_ERROR_NOT_FOUND));
+        .orElseThrow(() -> new NotFoundException("Không tìm thấy tiến độ nhiệm vụ của học viên", ErrorCode.STUDENT_TASK_PROGRESS_ERROR_NOT_FOUND));
     StudentTaskProgressDetailDto studentTaskProgressDetailDto = studentTaskProgressMapper.fromEntityToStudentTaskProgressStudentDto(studentTaskProgress);
 
     ResponseListDto<List<StudentSubmissionDisplayDto>> responseListDto = new ResponseListDto<>();
@@ -230,7 +230,7 @@ public class StudentTaskProgressController extends ABasicController{
     responseListDto.setTotalPages(studentSubmissions.getTotalPages());
     studentTaskProgressDetailDto.setStudentSubmission(responseListDto);
     apiMessageDto.setData(studentTaskProgressDetailDto);
-    apiMessageDto.setMessage("Get student task progress success");
+    apiMessageDto.setMessage("Lấy tiến độ nhiệm vụ của học viên thành công");
     return apiMessageDto;
   }
 
@@ -238,13 +238,13 @@ public class StudentTaskProgressController extends ABasicController{
   @PreAuthorize("hasRole('STP_ST_CPL')")
   public ApiMessageDto<AchievementDisplayDto> complete(@Valid @RequestBody RequestTaskIdForm form, BindingResult bindingResult){
     if (!isStudent()){
-      throw new UnauthorizationException("User is not a student");
+      throw new UnauthorizationException("Người dùng không phải là học viên");
     }
     ApiMessageDto<AchievementDisplayDto> apiMessageDto = new ApiMessageDto<>();
     Task task = taskRepository.findById(form.getTaskId())
-        .orElseThrow(() -> new NotFoundException("Task not found", ErrorCode.TASK_ERROR_NOT_FOUND));
+        .orElseThrow(() -> new NotFoundException("Không tìm thấy nhiệm vụ", ErrorCode.TASK_ERROR_NOT_FOUND));
     StudentTaskProgress studentTaskProgress = studentTaskProgressRepository.findByTaskIdAndSimulationEnrollmentStudentId(task.getId(), getCurrentUser())
-        .orElseThrow(() -> new NotFoundException("Task progress not found", ErrorCode.STUDENT_TASK_PROGRESS_ERROR_NOT_FOUND));
+        .orElseThrow(() -> new NotFoundException("Không tìm thấy tiến độ nhiệm vụ", ErrorCode.STUDENT_TASK_PROGRESS_ERROR_NOT_FOUND));
 
     // Kiểm tra xem một subtask loại task truyền vào có kind là gì để kiểm tra khi kind là task hoặc subtask
     if (Objects.equals(task.getKind(), ITDreamConstant.TASK_KIND_SUBTASK)){
@@ -253,7 +253,7 @@ public class StudentTaskProgressController extends ABasicController{
         Integer totalQuestion = taskQuestionRepository.countByTaskId(task.getId());
         Integer totalSubmission = studentSubmissionRepository.countByStudentTaskProgressId(studentTaskProgress.getId());
         if (!Objects.equals(totalQuestion, totalSubmission)){
-          throw new BadRequestException("Not all questions are answered correctly", ErrorCode.STUDENT_TASK_PROGRESS_ERROR_NOT_COMPLETED);
+          throw new BadRequestException("Chưa trả lời đúng tất cả các câu hỏi", ErrorCode.STUDENT_TASK_PROGRESS_ERROR_NOT_COMPLETED);
         }
       }
       studentTaskProgress.setStatus(ITDreamConstant.STUDENT_TASK_PROGRESS_COMPLETED);
@@ -263,7 +263,7 @@ public class StudentTaskProgressController extends ABasicController{
       Integer totalSubtask = taskRepository.countByParentId(task.getId());
       Integer totalCompletedSubtask = studentTaskProgressRepository.countCompletedSubtaskInTask(task.getId(), ITDreamConstant.STUDENT_TASK_PROGRESS_COMPLETED, studentTaskProgress.getSimulationEnrollment().getId());
       if (!Objects.equals(totalCompletedSubtask, totalSubtask)){
-        throw new BadRequestException("Not all subtasks are completed", ErrorCode.STUDENT_TASK_PROGRESS_ERROR_NOT_COMPLETED);
+        throw new BadRequestException("Chưa hoàn thành tất cả các nhiệm vụ phụ", ErrorCode.STUDENT_TASK_PROGRESS_ERROR_NOT_COMPLETED);
       }
       studentTaskProgress.setStatus(ITDreamConstant.STUDENT_TASK_PROGRESS_COMPLETED);
       studentTaskProgress.setErrorCount(ITDreamConstant.RESTART_ERROR_COUNT);
@@ -284,7 +284,7 @@ public class StudentTaskProgressController extends ABasicController{
       // Cần kiểm tra xem student đã có thành tựu trong simulation này chưa, nếu có rồi thì báo thành công thôi, không có thì tạo mới
       Boolean existAchievement = achievementRepository.existsBySimulationIdAndStudentId(simulationEnrollment.getSimulation().getId(), simulationEnrollment.getStudent().getId());
       if (existAchievement){
-        apiMessageDto.setMessage("Complete simulation");
+        apiMessageDto.setMessage("Hoàn thành mô phỏng");
         return apiMessageDto;
       }
 
@@ -298,11 +298,11 @@ public class StudentTaskProgressController extends ABasicController{
       achievementDisplayDto.setUsername(simulationEnrollment.getStudent().getAccount().getUsername());
       achievementDisplayDto.setSimulationTitle(simulationEnrollment.getSimulation().getTitle());
       apiMessageDto.setData(achievementDisplayDto);
-      apiMessageDto.setMessage("Complete simulation");
+      apiMessageDto.setMessage("Hoàn thành mô phỏng");
       return apiMessageDto;
     }
     simulationEnrollmentRepository.save(simulationEnrollment);
-    apiMessageDto.setMessage("Complete task");
+    apiMessageDto.setMessage("Hoàn thành nhiệm vụ");
     return apiMessageDto;
   }
 
@@ -310,21 +310,21 @@ public class StudentTaskProgressController extends ABasicController{
   @PreAuthorize("hasRole('LSP_ST_RS')")
   public ApiMessageDto<String> reset(@Valid @RequestBody RequestTaskIdForm form, BindingResult bindingResult){
     if (!isStudent()){
-      throw new UnauthorizationException("User is not a student");
+      throw new UnauthorizationException("Người dùng không phải là học viên");
     }
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Task task = taskRepository.findById(form.getTaskId())
-        .orElseThrow(() -> new NotFoundException("Task not found", ErrorCode.TASK_ERROR_NOT_FOUND));
+        .orElseThrow(() -> new NotFoundException("Không tìm thấy nhiệm vụ", ErrorCode.TASK_ERROR_NOT_FOUND));
     if (Objects.equals(task.getKind(), ITDreamConstant.TASK_KIND_TASK)){
-      throw new BadRequestException("Cannot reset task", ErrorCode.STUDENT_TASK_PROGRESS_ERROR_NOT_RESET);
+      throw new BadRequestException("Không thể đặt lại nhiệm vụ", ErrorCode.STUDENT_TASK_PROGRESS_ERROR_NOT_RESET);
     }
     StudentTaskProgress studentTaskProgress = studentTaskProgressRepository.findByTaskIdAndSimulationEnrollmentStudentId(form.getTaskId(), getCurrentUser())
-        .orElseThrow(() -> new NotFoundException("Task progress not found", ErrorCode.STUDENT_TASK_PROGRESS_ERROR_NOT_FOUND));
+        .orElseThrow(() -> new NotFoundException("Không tìm thấy tiến độ nhiệm vụ", ErrorCode.STUDENT_TASK_PROGRESS_ERROR_NOT_FOUND));
     studentSubmissionRepository.deleteQuestionSubmissionsByProgressId(studentTaskProgress.getId());
     studentTaskProgress.setStatus(ITDreamConstant.STUDENT_TASK_PROGRESS_IN_PROGRESS);
     studentTaskProgress.setErrorCount(ITDreamConstant.RESTART_ERROR_COUNT);
     studentTaskProgressRepository.save(studentTaskProgress);
-    apiMessageDto.setMessage("Reset task progress success");
+    apiMessageDto.setMessage("Đặt lại tiến độ nhiệm vụ thành công");
     return apiMessageDto;
   }
 }
