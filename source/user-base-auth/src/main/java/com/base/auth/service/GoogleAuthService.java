@@ -123,7 +123,7 @@ public class GoogleAuthService {
 
         GoogleUserInfoForm googleUserInfo = new GoogleUserInfoForm();
         googleUserInfo.setEmail((String) userInfo.get("email"));
-        googleUserInfo.setUserName((String) userInfo.get("name"));
+        googleUserInfo.setUserName(ConvertUtils.generateUsername((String) userInfo.get("name")));
         googleUserInfo.setFullName((String) userInfo.get("name"));
         googleUserInfo.setAvatarPath((String) userInfo.get("picture"));
         return googleUserInfo;
