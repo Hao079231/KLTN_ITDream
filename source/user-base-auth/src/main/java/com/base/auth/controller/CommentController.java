@@ -58,17 +58,17 @@ public class CommentController extends ABasicController{
   public ApiMessageDto<String> create(@Valid @RequestBody CreateCommentForm form, BindingResult bindingResult){
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Account user = accountRepository.findById(getCurrentUser())
-        .orElseThrow(() -> new NotFoundException("User not found", ErrorCode.USER_ERROR_NOT_FOUND));
+        .orElseThrow(() -> new NotFoundException("Không tìm thấy người dùng", ErrorCode.USER_ERROR_NOT_FOUND));
     Task task = taskRepository.findById(form.getTaskId())
-        .orElseThrow(() -> new NotFoundException("Task not found", ErrorCode.TASK_ERROR_NOT_FOUND));
+        .orElseThrow(() -> new NotFoundException("Không tìm thấy nhiệm vụ", ErrorCode.TASK_ERROR_NOT_FOUND));
     Comment comment = commentMapper.fromCreateCommentFormToEntity(form);
     comment.setTask(task);
     comment.setUser(user);
     if (form.getParentId() != null){
       Comment parent = commentRepository.findById(form.getParentId())
-          .orElseThrow(() -> new NotFoundException("Comment not found", ErrorCode.COMMENT_ERROR_NOT_FOUND));
+          .orElseThrow(() -> new NotFoundException("Không tìm thấy bình luận", ErrorCode.COMMENT_ERROR_NOT_FOUND));
       if (!parent.getTask().getId().equals(task.getId())) {
-        throw new BadRequestException("Parent comment not in same task", ErrorCode.COMMENT_ERROR_INVALID_PARENT);
+        throw new BadRequestException("Bình luận cha không thuộc cùng một nhiệm vụ", ErrorCode.COMMENT_ERROR_INVALID_PARENT);
       }
       if (parent.getRoot() != null){
         comment.setRoot(parent.getRoot());
@@ -78,7 +78,7 @@ public class CommentController extends ABasicController{
       comment.setParent(parent);
     }
     commentRepository.save(comment);
-    apiMessageDto.setMessage("Create comment success");
+    apiMessageDto.setMessage("Tạo bình luận thành công");
     return apiMessageDto;
   }
 
@@ -105,7 +105,7 @@ public class CommentController extends ABasicController{
     responseListDto.setTotalElements(comments.getTotalElements());
     responseListDto.setTotalPages(comments.getTotalPages());
     apiMessageDto.setData(responseListDto);
-    apiMessageDto.setMessage("Get list success");
+    apiMessageDto.setMessage("Lấy danh sách thành công");
     return apiMessageDto;
   }
 
@@ -131,7 +131,7 @@ public class CommentController extends ABasicController{
     responseListDto.setTotalElements(comments.getTotalElements());
     responseListDto.setTotalPages(comments.getTotalPages());
     apiMessageDto.setData(responseListDto);
-    apiMessageDto.setMessage("Get list success");
+    apiMessageDto.setMessage("Lấy danh sách thành công");
     return apiMessageDto;
   }
 
@@ -140,13 +140,13 @@ public class CommentController extends ABasicController{
   public ApiMessageDto<String> update(@Valid @RequestBody UpdateCommentForm form, BindingResult bindingResult){
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Comment comment = commentRepository.findById(form.getId()).
-        orElseThrow(() -> new NotFoundException("Comment not found", ErrorCode.COMMENT_ERROR_NOT_FOUND));
+        orElseThrow(() -> new NotFoundException("Không tìm thấy bình luận", ErrorCode.COMMENT_ERROR_NOT_FOUND));
     if (!comment.getUser().getId().equals(getCurrentUser())){
-      throw new BadRequestException("Cannot update comment", ErrorCode.COMMENT_ERROR_NOT_UPDATE);
+      throw new BadRequestException("Không thể cập nhật bình luận", ErrorCode.COMMENT_ERROR_NOT_UPDATE);
     }
     commentMapper.fromUpdateCommentFormToEntity(form, comment);
     commentRepository.save(comment);
-    apiMessageDto.setMessage("Update comment success");
+    apiMessageDto.setMessage("Cập nhật bình luận thành công");
     return apiMessageDto;
   }
 
@@ -155,13 +155,13 @@ public class CommentController extends ABasicController{
   public ApiMessageDto<String> delete(@PathVariable("id") Long id){
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Comment comment = commentRepository.findById(id).
-        orElseThrow(() -> new NotFoundException("Comment not found", ErrorCode.COMMENT_ERROR_NOT_FOUND));
+        orElseThrow(() -> new NotFoundException("Không tìm thấy bình luận", ErrorCode.COMMENT_ERROR_NOT_FOUND));
     if (!comment.getUser().getId().equals(getCurrentUser())){
-      throw new BadRequestException("Cannot delete comment", ErrorCode.COMMENT_ERROR_NOT_DELETE);
+      throw new BadRequestException("Không thể xóa bình luận", ErrorCode.COMMENT_ERROR_NOT_DELETE);
     }
     commentRepository.deleteAllByParent(comment);
     commentRepository.delete(comment);
-    apiMessageDto.setMessage("Delete comment success");
+    apiMessageDto.setMessage("Xóa bình luận thành công");
     return apiMessageDto;
   }
 }

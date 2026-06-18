@@ -50,7 +50,7 @@ public class NotificationController extends ABasicController{
     responseListDto.setTotalElements(notifications.getTotalElements());
     responseListDto.setTotalPages(notifications.getTotalPages());
     apiMessageDto.setData(responseListDto);
-    apiMessageDto.setMessage("Get list notification success");
+    apiMessageDto.setMessage("Lấy danh sách thông báo thành công");
     return apiMessageDto;
   }
 
@@ -59,12 +59,12 @@ public class NotificationController extends ABasicController{
   public ApiMessageDto<NotificationDto> update(@Valid @RequestBody UpdateReadFlagNotificationForm form, BindingResult bindingResult){
     ApiMessageDto<NotificationDto> apiMessageDto = new ApiMessageDto<>();
     Notification notification = notificationRepository.findById(form.getId())
-        .orElseThrow(() -> new NotFoundException("Notification not found", ErrorCode.NOTIFICATION_ERROR_NOT_FOUND));
+        .orElseThrow(() -> new NotFoundException("Không tìm thấy thông báo", ErrorCode.NOTIFICATION_ERROR_NOT_FOUND));
     notification.setReadFlag(true);
     NotificationDto notificationDto = notificationMapper.fromEntityToNotificationDto(notification);
     notificationRepository.save(notification);
     apiMessageDto.setData(notificationDto);
-    apiMessageDto.setMessage("Update read flag success");
+    apiMessageDto.setMessage("Cập nhật trạng thái đọc thành công");
     return apiMessageDto;
   }
 
@@ -72,11 +72,11 @@ public class NotificationController extends ABasicController{
   @PreAuthorize("hasRole('NO_ST_CA')")
   public ApiMessageDto<String> clearAll(){
     if (!isStudent()){
-      throw new UnauthorizationException("User is not a student");
+      throw new UnauthorizationException("Người dùng không phải là học viên");
     }
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     notificationRepository.deleteAllByReceiverId(getCurrentUser());
-    apiMessageDto.setMessage("Clear all notification success");
+    apiMessageDto.setMessage("Xóa tất cả thông báo thành công");
     return apiMessageDto;
   }
 }

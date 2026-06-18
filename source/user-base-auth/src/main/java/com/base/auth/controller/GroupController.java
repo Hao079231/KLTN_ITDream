@@ -48,12 +48,12 @@ public class GroupController extends ABasicController{
     @PreAuthorize("hasRole('GR_C')")
     public ApiMessageDto<String> create(@Valid @RequestBody CreateGroupForm createGroupForm, BindingResult bindingResult) {
         if(!isSuperAdmin()){
-            throw new UnauthorizationException("Not allowed create.");
+            throw new UnauthorizationException("Không được phép tạo.");
         }
         ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
         Group group = groupRepository.findFirstByName(createGroupForm.getName());
         if(group != null){
-            throw new BadRequestException("Group name already exist", ErrorCode.GROUP_ERROR_EXIST);
+            throw new BadRequestException("Tên nhóm đã tồn tại", ErrorCode.GROUP_ERROR_EXIST);
         }
         group = new Group();
         group.setName(createGroupForm.getName());
@@ -68,7 +68,7 @@ public class GroupController extends ABasicController{
         }
         group.setPermissions(permissions);
         groupRepository.save(group);
-        apiMessageDto.setMessage("Create group success");
+        apiMessageDto.setMessage("Tạo nhóm thành công");
         return apiMessageDto;
     }
 
@@ -76,16 +76,16 @@ public class GroupController extends ABasicController{
     @PreAuthorize("hasRole('GR_U')")
     public ApiMessageDto<String> update(@Valid @RequestBody UpdateGroupForm updateGroupForm, BindingResult bindingResult) {
         if(!isSuperAdmin()){
-            throw new UnauthorizationException("Not allowed update.");
+            throw new UnauthorizationException("Không được phép cập nhật.");
         }
         ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
         Group group = groupRepository.findById(updateGroupForm.getId()).orElseThrow(()
-        -> new NotFoundException("Group not found", ErrorCode.GROUP_ERROR_NOT_FOUND));
+            -> new NotFoundException("Không tìm thấy nhóm", ErrorCode.GROUP_ERROR_NOT_FOUND));
         //check su ton tai cua group name khac khi dat ten.
         if (!Objects.equals(group.getName(), updateGroupForm.getName())){
             Boolean existName = groupRepository.existsByName(updateGroupForm.getName());
             if (existName){
-                throw new BadRequestException("Group name already exist", ErrorCode.GROUP_ERROR_EXIST);
+                throw new BadRequestException("Tên nhóm đã tồn tại", ErrorCode.GROUP_ERROR_EXIST);
             }
             group.setName(updateGroupForm.getName());
         }
@@ -99,7 +99,7 @@ public class GroupController extends ABasicController{
         }
         group.setPermissions(permissions);
         groupRepository.save(group);
-        apiMessageDto.setMessage("Update group success");
+        apiMessageDto.setMessage("Cập nhật nhóm thành công");
 
         return apiMessageDto;
     }
@@ -108,12 +108,12 @@ public class GroupController extends ABasicController{
     @PreAuthorize("hasRole('GR_V')")
     public ApiMessageDto<Group> get(@PathVariable("id")  Long id) {
         if(!isSuperAdmin()){
-            throw new UnauthorizationException("Not allowed to get.");
+            throw new UnauthorizationException("Không được phép xem.");
         }
         ApiMessageDto<Group> apiMessageDto = new ApiMessageDto<>();
         Group group =groupRepository.findById(id).orElse(null);
         apiMessageDto.setData(group);
-        apiMessageDto.setMessage("Get group success");
+        apiMessageDto.setMessage("Lấy thông tin nhóm thành công");
         return apiMessageDto;
     }
 
@@ -121,15 +121,15 @@ public class GroupController extends ABasicController{
     @PreAuthorize("hasRole('GR_L')")
     public ApiMessageDto<ResponseListDto<Group>> list(@RequestParam(required = true)  int kind, Pageable pageable) {
         if(!isSuperAdmin()){
-            throw new UnauthorizationException("Not allowed list group.");
+            throw new UnauthorizationException("Không được phép lấy danh sách nhóm.");
         }
 
         ApiMessageDto<ResponseListDto<Group>> apiMessageDto = new ApiMessageDto<>();
         Page<Group> groups = groupRepository
-                .findAllByKind(kind, PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(new Sort.Order(Sort.Direction.DESC, "createdDate"))));
+            .findAllByKind(kind, PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(new Sort.Order(Sort.Direction.DESC, "createdDate"))));
         ResponseListDto<Group> responseListDto = new ResponseListDto(groups.getContent() , groups.getTotalElements(), groups.getTotalPages());
         apiMessageDto.setData(responseListDto);
-        apiMessageDto.setMessage("Get list group success");
+        apiMessageDto.setMessage("Lấy danh sách nhóm thành công");
         return apiMessageDto;
     }
 
@@ -138,18 +138,18 @@ public class GroupController extends ABasicController{
     @PreAuthorize("hasRole('GR_D')")
     public ApiMessageDto<String> delete(@PathVariable("id") Long id){
         if (!isSuperAdmin()){
-            throw new UnauthorizationException("Not allow delete");
+            throw new UnauthorizationException("Không được phép xóa");
         }
         ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
         Group group = groupRepository.findById(id)
-            .orElseThrow(() -> new NotFoundException("Group not found", ErrorCode.GROUP_ERROR_NOT_FOUND));
+            .orElseThrow(() -> new NotFoundException("Không tìm thấy nhóm", ErrorCode.GROUP_ERROR_NOT_FOUND));
         Boolean usedGroup = accountRepository.existsByGroupId(id);
         if (usedGroup){
-            throw new BadRequestException("Cannot delete group", ErrorCode.GROUP_ERROR_DELETE);
+            throw new BadRequestException("Không thể xóa nhóm", ErrorCode.GROUP_ERROR_DELETE);
         }
         group.getPermissions().clear();
         groupRepository.delete(group);
-        apiMessageDto.setMessage("Delete group success");
+        apiMessageDto.setMessage("Xóa nhóm thành công");
         return apiMessageDto;
     }
 }

@@ -72,15 +72,15 @@ public class TaskController extends ABasicController{
   @PreAuthorize("hasRole('TA_ED_C')")
   public ApiMessageDto<String> create(@Valid @RequestBody CreateTaskForm form, BindingResult bindingResult){
     if(!isEducator()){
-      throw new UnauthorizationException("User is not an educator");
+      throw new UnauthorizationException("Người dùng không phải là người hướng dẫn");
     }
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Simulation simulation = simulationRepository.findById(form.getSimulationId())
-        .orElseThrow(() -> new NotFoundException("Simulation not found", ErrorCode.SIMULATION_ERROR_NOT_FOUND));
+        .orElseThrow(() -> new NotFoundException("Không tìm thấy mô phỏng", ErrorCode.SIMULATION_ERROR_NOT_FOUND));
     if (form.getKind().equals(ITDreamConstant.TASK_KIND_SUBTASK)){
       Boolean existSubtask = taskRepository.existsBySimulationIdAndNameAndTitle(form.getSimulationId(), form.getName(), form.getTitle());
       if (existSubtask){
-        throw new BadRequestException("Subtask title already exist", ErrorCode.TASK_ERROR_EXIST);
+        throw new BadRequestException("Tiêu đề nhiệm vụ phụ đã tồn tại", ErrorCode.TASK_ERROR_EXIST);
       }
     }
 
@@ -94,11 +94,11 @@ public class TaskController extends ABasicController{
 
     if (form.getKind().equals(ITDreamConstant.TASK_KIND_SUBTASK)) {
       if (form.getParentId() == null){
-        throw new NotFoundException("Task cannot be null", ErrorCode.TASK_ERROR_NOT_FOUND);
+        throw new NotFoundException("Nhiệm vụ không được để trống", ErrorCode.TASK_ERROR_NOT_FOUND);
       }
 
       Task parent = taskRepository.findById(form.getParentId())
-          .orElseThrow(() -> new NotFoundException("Parent not found", ErrorCode.TASK_ERROR_NOT_FOUND));
+          .orElseThrow(() -> new NotFoundException("Không tìm thấy nhiệm vụ cha", ErrorCode.TASK_ERROR_NOT_FOUND));
       task.setParent(parent);
       Integer order = taskService.generateOrderInParent(simulation.getId(), parent.getId(), form.getKind());
       task.setOrderInParent(order);
@@ -124,7 +124,7 @@ public class TaskController extends ABasicController{
       data.setTsSecond(tsSecond);
       processVideoService.sendProcessVideoMessage(data);
     }
-    apiMessageDto.setMessage("Create task success");
+    apiMessageDto.setMessage("Tạo nhiệm vụ thành công");
     return apiMessageDto;
   }
 
@@ -138,7 +138,7 @@ public class TaskController extends ABasicController{
     responseListDto.setTotalElements(tasks.getTotalElements());
     responseListDto.setTotalPages(tasks.getTotalPages());
     apiMessageDto.setData(responseListDto);
-    apiMessageDto.setMessage("Get list task success");
+    apiMessageDto.setMessage("Lấy danh sách nhiệm vụ thành công");
     return apiMessageDto;
   }
 
@@ -146,13 +146,13 @@ public class TaskController extends ABasicController{
   @PreAuthorize("hasRole('TA_V')")
   public ApiMessageDto<TaskDto> get(@PathVariable("id") Long id){
     if (!isAdmin()){
-      throw new UnauthorizationException("User is not an admin");
+      throw new UnauthorizationException("Người dùng không phải là quản trị viên");
     }
     ApiMessageDto<TaskDto> apiMessageDto = new ApiMessageDto<>();
     Task task = taskRepository.findById(id).orElseThrow(()
-    -> new NotFoundException("Task not found", ErrorCode.TASK_ERROR_NOT_FOUND));
+        -> new NotFoundException("Không tìm thấy nhiệm vụ", ErrorCode.TASK_ERROR_NOT_FOUND));
     apiMessageDto.setData(taskMapper.fromEntityToTaskDto(task));
-    apiMessageDto.setMessage("Get task success");
+    apiMessageDto.setMessage("Lấy nhiệm vụ thành công");
     return apiMessageDto;
   }
 
@@ -166,7 +166,7 @@ public class TaskController extends ABasicController{
     responseListDto.setTotalElements(tasks.getTotalElements());
     responseListDto.setTotalPages(tasks.getTotalPages());
     apiMessageDto.setData(responseListDto);
-    apiMessageDto.setMessage("Get list task success");
+    apiMessageDto.setMessage("Lấy danh sách nhiệm vụ thành công");
     return apiMessageDto;
   }
 
@@ -174,13 +174,13 @@ public class TaskController extends ABasicController{
   @PreAuthorize("hasRole('TA_ED_V')")
   public ApiMessageDto<TaskEducatorDto> getByEducator(@PathVariable("id") Long id){
     if (!isEducator()){
-      throw new UnauthorizationException("User is not an educator");
+      throw new UnauthorizationException("Người dùng không phải là người hướng dẫn");
     }
     ApiMessageDto<TaskEducatorDto> apiMessageDto = new ApiMessageDto<>();
     Task task = taskRepository.findById(id).orElseThrow(()
-        -> new NotFoundException("Task not found", ErrorCode.TASK_ERROR_NOT_FOUND));
+        -> new NotFoundException("Không tìm thấy nhiệm vụ", ErrorCode.TASK_ERROR_NOT_FOUND));
     apiMessageDto.setData(taskMapper.fromEntityToTaskEducatorDto(task));
-    apiMessageDto.setMessage("Get task success");
+    apiMessageDto.setMessage("Lấy nhiệm vụ thành công");
     return apiMessageDto;
   }
 
@@ -194,7 +194,7 @@ public class TaskController extends ABasicController{
     responseListDto.setTotalElements(tasks.getTotalElements());
     responseListDto.setTotalPages(tasks.getTotalPages());
     apiMessageDto.setData(responseListDto);
-    apiMessageDto.setMessage("Get list task success");
+    apiMessageDto.setMessage("Lấy danh sách nhiệm vụ thành công");
     return apiMessageDto;
   }
 
@@ -208,7 +208,7 @@ public class TaskController extends ABasicController{
     responseListDto.setTotalElements(tasks.getTotalElements());
     responseListDto.setTotalPages(tasks.getTotalPages());
     apiMessageDto.setData(responseListDto);
-    apiMessageDto.setMessage("Get list task success");
+    apiMessageDto.setMessage("Lấy danh sách nhiệm vụ thành công");
     return apiMessageDto;
   }
 
@@ -216,13 +216,13 @@ public class TaskController extends ABasicController{
   @PreAuthorize("hasRole('TA_ST_V')")
   public ApiMessageDto<TaskStudentDto> getByStudent(@PathVariable("id") Long id){
     if (!isStudent()){
-      throw new UnauthorizationException("User is not a student");
+      throw new UnauthorizationException("Người dùng không phải là học viên");
     }
     ApiMessageDto<TaskStudentDto> apiMessageDto = new ApiMessageDto<>();
     Task task = taskRepository.findById(id).orElseThrow(()
-        -> new NotFoundException("Task not found", ErrorCode.TASK_ERROR_NOT_FOUND));
+        -> new NotFoundException("Không tìm thấy nhiệm vụ", ErrorCode.TASK_ERROR_NOT_FOUND));
     apiMessageDto.setData(taskMapper.fromEntityToTaskStudentDto(task));
-    apiMessageDto.setMessage("Get task success");
+    apiMessageDto.setMessage("Lấy nhiệm vụ thành công");
     return apiMessageDto;
   }
 
@@ -230,23 +230,23 @@ public class TaskController extends ABasicController{
   @PreAuthorize("hasRole('TA_ED_U')")
   public ApiMessageDto<String> update(@Valid @RequestBody UpdateTaskForm form, BindingResult bindingResult){
     if (!isEducator()){
-      throw new UnauthorizationException("User is not an educator");
+      throw new UnauthorizationException("Người dùng không phải là người hướng dẫn");
     }
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Task task = taskRepository.findById(form.getId())
-        .orElseThrow(() -> new NotFoundException("Task not found", ErrorCode.TASK_ERROR_NOT_FOUND));
+        .orElseThrow(() -> new NotFoundException("Không tìm thấy nhiệm vụ", ErrorCode.TASK_ERROR_NOT_FOUND));
     if (task.getKind().equals(ITDreamConstant.TASK_KIND_SUBTASK) && !form.getTitle().equals(task.getTitle())){
       Boolean existSubtask = taskRepository.existsBySimulationIdAndNameAndTitle(task.getSimulation().getId(),
           form.getName(), form.getTitle());
       if (existSubtask){
-        throw new BadRequestException("Subtask title already exist", ErrorCode.TASK_ERROR_EXIST);
+        throw new BadRequestException("Tiêu đề nhiệm vụ phụ đã tồn tại", ErrorCode.TASK_ERROR_EXIST);
       }
     }
 
     if (StringUtils.isNotBlank(task.getImagePath())
-      && StringUtils.isNotBlank(form.getImagePath())
-      && !task.getImagePath().toLowerCase().matches(ITDreamConstant.FILE_PATH_PATTERN)
-      && !task.getImagePath().equals(form.getImagePath())){
+        && StringUtils.isNotBlank(form.getImagePath())
+        && !task.getImagePath().toLowerCase().matches(ITDreamConstant.FILE_PATH_PATTERN)
+        && !task.getImagePath().equals(form.getImagePath())){
       userBaseApiService.deleteByFilePath(task.getImagePath());
     }
 
@@ -267,7 +267,7 @@ public class TaskController extends ABasicController{
 
     taskMapper.fromUpdateTaskFormToEntity(form, task);
     if (StringUtils.isNotBlank(form.getVideoPath())
-      && form.getVideoPath().toLowerCase().matches(ITDreamConstant.FILE_PATH_PATTERN)){
+        && form.getVideoPath().toLowerCase().matches(ITDreamConstant.FILE_PATH_PATTERN)){
       task.setVideoState(ITDreamConstant.STATE_TASK_DONE);
     }
     taskRepository.save(task);
@@ -285,7 +285,7 @@ public class TaskController extends ABasicController{
     Simulation simulation = task.getSimulation();
     simulation.setStatus(ITDreamConstant.SIMULATION_STATUS_WAITING_APPROVE);
     simulationRepository.save(simulation);
-    apiMessageDto.setMessage("Update task success");
+    apiMessageDto.setMessage("Cập nhật nhiệm vụ thành công");
     return apiMessageDto;
   }
 
@@ -293,17 +293,17 @@ public class TaskController extends ABasicController{
   @PreAuthorize("hasRole('TA_ED_D')")
   public ApiMessageDto<String> delete(@PathVariable("id") Long id){
     if (!isEducator()){
-      throw new UnauthorizationException("User is not an educator");
+      throw new UnauthorizationException("Người dùng không phải là người hướng dẫn");
     }
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Task task = taskRepository.findById(id).orElseThrow(()
-    -> new NotFoundException("Task not found", ErrorCode.TASK_ERROR_NOT_FOUND));
+        -> new NotFoundException("Không tìm thấy nhiệm vụ", ErrorCode.TASK_ERROR_NOT_FOUND));
     taskService.deleteFileInTask(task);
     taskService.deleteAllTask(task);
     Simulation simulation = task.getSimulation();
     simulation.setStatus(ITDreamConstant.SIMULATION_STATUS_WAITING_APPROVE);
     simulationRepository.save(simulation);
-    apiMessageDto.setMessage("Delete task success");
+    apiMessageDto.setMessage("Xóa nhiệm vụ thành công");
     return apiMessageDto;
   }
 
@@ -312,13 +312,13 @@ public class TaskController extends ABasicController{
   public ApiMessageDto<String> updateOrder(@Valid @RequestBody UpdateTaskPositionForm form, BindingResult bindingResult){
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Task task = taskRepository.findById(form.getId())
-        .orElseThrow(() -> new NotFoundException("Task not found", ErrorCode.TASK_ERROR_NOT_FOUND));
+        .orElseThrow(() -> new NotFoundException("Không tìm thấy nhiệm vụ", ErrorCode.TASK_ERROR_NOT_FOUND));
     if (task.getKind().equals(ITDreamConstant.TASK_KIND_TASK)){
       taskService.updateTaskPosition(task, form);
     } else {
       taskService.updateSubtaskPosition(task, form);
     }
-    apiMessageDto.setMessage("Update order success");
+    apiMessageDto.setMessage("Cập nhật thứ tự thành công");
     return apiMessageDto;
   }
 }

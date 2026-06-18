@@ -95,30 +95,30 @@ public class EducatorController extends ABasicController{
     ApiMessageDto<OtpDto> apiMessageDto = new ApiMessageDto<>();
     Boolean existUsername = accountRepository.existsByUsername(signUpEducatorForm.getUsername());
     if (existUsername){
-      throw new BadRequestException("Username already exists", ErrorCode.ACCOUNT_ERROR_USERNAME_EXIST);
+      throw new BadRequestException("Tên đăng nhập đã tồn tại", ErrorCode.ACCOUNT_ERROR_USERNAME_EXIST);
     }
 
     Boolean existEmail = accountRepository.existsByEmail(signUpEducatorForm.getEmail());
     if (existEmail)
     {
-      throw new BadRequestException("Email already exists", ErrorCode.ACCOUNT_ERROR_EMAIL_EXIST);
+      throw new BadRequestException("Email đã tồn tại", ErrorCode.ACCOUNT_ERROR_EMAIL_EXIST);
     }
 
     Boolean existPhone = accountRepository.existsByPhone(signUpEducatorForm.getPhone());
     if (existPhone)
     {
-      throw new BadRequestException("Phone already exists", ErrorCode.ACCOUNT_ERROR_PHONE_EXIST);
+      throw new BadRequestException("Số điện thoại đã tồn tại", ErrorCode.ACCOUNT_ERROR_PHONE_EXIST);
     }
 
     Organization organization = organizationRepository.findById(signUpEducatorForm.getOrganizationId())
-        .orElseThrow(() -> new NotFoundException("Organization not found", ErrorCode.ORGANIZATION_ERROR_NOT_FOUND));
+        .orElseThrow(() -> new NotFoundException("Không tìm thấy tổ chức", ErrorCode.ORGANIZATION_ERROR_NOT_FOUND));
 
     Account account = accountMapper.fromSignUpEducatorToAccount(signUpEducatorForm);
     account.setPassword(passwordEncoder.encode(signUpEducatorForm.getPassword()));
     account.setKind(ITDreamConstant.USER_KIND_EDUCATOR);
     Group group = groupRepository.findFirstByKind(ITDreamConstant.USER_KIND_EDUCATOR);
     if (group == null){
-      throw new NotFoundException("Group not found", ErrorCode.GROUP_ERROR_NOT_FOUND);
+      throw new NotFoundException("Không tìm thấy nhóm", ErrorCode.GROUP_ERROR_NOT_FOUND);
     }
     account.setGroup(group);
     account.setStatus(ITDreamConstant.STATUS_VERIFY);
@@ -138,7 +138,7 @@ public class EducatorController extends ABasicController{
     String hash = AESUtils.encrypt (account.getId()+";"+otp, true);
     otpDto.setIdHash(hash);
     apiMessageDto.setData(otpDto);
-    apiMessageDto.setMessage("Sign up success, please check email.");
+    apiMessageDto.setMessage("Đăng ký thành công, vui lòng kiểm tra email.");
     return apiMessageDto;
   }
 
@@ -153,7 +153,7 @@ public class EducatorController extends ABasicController{
     responseListDto.setTotalElements(listEducator.getTotalElements());
     responseListDto.setTotalPages(listEducator.getTotalPages());
     apiMessageDto.setData(responseListDto);
-    apiMessageDto.setMessage("Get list educator success");
+    apiMessageDto.setMessage("Lấy danh sách tài khoản người hướng dẫn thành công");
     return apiMessageDto;
   }
 
@@ -162,13 +162,13 @@ public class EducatorController extends ABasicController{
   public ApiMessageDto<EducatorDto> getEducator(@PathVariable("id") Long id)
   {
     if (!isAdmin()){
-      throw new UnauthorizationException("User is not an admin");
+      throw new UnauthorizationException("Người dùng không phải là quản trị viên");
     }
     ApiMessageDto<EducatorDto> apiMessageDto = new ApiMessageDto<>();
     Educator educator = educatorRepository.findById(id).orElseThrow(()
-        -> new NotFoundException("Educator not found", ErrorCode.USER_ERROR_NOT_FOUND));
+        -> new NotFoundException("Không tìm thấy tài khoản người hướng dẫn", ErrorCode.USER_ERROR_NOT_FOUND));
     apiMessageDto.setData(educatorMapper.fromEntityToEducatorDto(educator));
-    apiMessageDto.setMessage("Get educator success");
+    apiMessageDto.setMessage("Lấy thông tin tài khoản người hướng dẫn thành công");
     return apiMessageDto;
   }
 
@@ -176,19 +176,19 @@ public class EducatorController extends ABasicController{
   @PreAuthorize("hasRole('ED_U')")
   public ApiMessageDto<String> updateEducator(@Valid @RequestBody UpdateEducatorForm updateEducatorForm, BindingResult bindingResult) {
     if (!isAdmin()){
-      throw new UnauthorizationException("User is not an admin");
+      throw new UnauthorizationException("Người dùng không phải là quản trị viên");
     }
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Educator educator = educatorRepository.findById(updateEducatorForm.getId()).orElseThrow(()
-    -> new NotFoundException("Educator not found", ErrorCode.USER_ERROR_NOT_FOUND));
+        -> new NotFoundException("Không tìm thấy tài khoản người hướng dẫn", ErrorCode.USER_ERROR_NOT_FOUND));
 
     Account account = accountRepository.findById(educator.getAccount().getId()).orElseThrow(()
-    -> new NotFoundException("Account not found", ErrorCode.ACCOUNT_ERROR_NOT_FOUND));
+        -> new NotFoundException("Không tìm thấy tài khoản", ErrorCode.ACCOUNT_ERROR_NOT_FOUND));
 
     if (!Objects.equals(educator.getAccount().getUsername(), updateEducatorForm.getUsername())){
       Boolean existUsername = accountRepository.existsByUsername(updateEducatorForm.getUsername());
       if (existUsername){
-        throw new BadRequestException("Username already exist", ErrorCode.ACCOUNT_ERROR_USERNAME_EXIST);
+        throw new BadRequestException("Tên đăng nhập đã tồn tại", ErrorCode.ACCOUNT_ERROR_USERNAME_EXIST);
       }
       account.setUsername(updateEducatorForm.getUsername());
     }
@@ -198,7 +198,7 @@ public class EducatorController extends ABasicController{
       Boolean existEmail = accountRepository.existsByEmail(updateEducatorForm.getEmail());
       if(existEmail)
       {
-        throw new BadRequestException("email already exist", ErrorCode.ACCOUNT_ERROR_EMAIL_EXIST);
+        throw new BadRequestException("Email đã tồn tại", ErrorCode.ACCOUNT_ERROR_EMAIL_EXIST);
       }
       account.setEmail(updateEducatorForm.getEmail());
     }
@@ -208,7 +208,7 @@ public class EducatorController extends ABasicController{
       Boolean existPhone = accountRepository.existsByPhone(updateEducatorForm.getPhone());
       if(existPhone)
       {
-        throw new BadRequestException("phone already exist", ErrorCode.ACCOUNT_ERROR_PHONE_EXIST);
+        throw new BadRequestException("Số điện thoại đã tồn tại", ErrorCode.ACCOUNT_ERROR_PHONE_EXIST);
       }
       account.setPhone(updateEducatorForm.getPhone());
     }
@@ -226,7 +226,7 @@ public class EducatorController extends ABasicController{
     }
     accountMapper.fromUpdateEducatorFormToEntity(updateEducatorForm, account);
     accountRepository.save(account);
-    apiMessageDto.setMessage("Update educator success");
+    apiMessageDto.setMessage("Cập nhật tài khoản người hướng dẫn thành công");
     return apiMessageDto;
   }
 
@@ -235,19 +235,19 @@ public class EducatorController extends ABasicController{
   public ApiMessageDto<String> deleteEducator(@PathVariable("id") Long id)
   {
     if (!isAdmin()){
-      throw new UnauthorizationException("User is not an admin");
+      throw new UnauthorizationException("Người dùng không phải là quản trị viên");
     }
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Educator educator = educatorRepository.findById(id).orElseThrow(()
-        -> new NotFoundException("Educator not found", ErrorCode.USER_ERROR_NOT_FOUND));
+        -> new NotFoundException("Không tìm thấy tài khoản người hướng dẫn", ErrorCode.USER_ERROR_NOT_FOUND));
 
     Account account = educator.getAccount();
     if (account == null){
-      throw new BadRequestException("Account not found", ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
+      throw new BadRequestException("Không tìm thấy tài khoản", ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
     }
 
     if (Objects.equals(account.getKind(), ITDreamConstant.USER_KIND_ADMIN)){
-      throw new BadRequestException("Not allow delete admin", ErrorCode.ACCOUNT_ERROR_NOT_ALLOW_DELETE_ADMIN);
+      throw new BadRequestException("Không được phép xóa quản trị viên", ErrorCode.ACCOUNT_ERROR_NOT_ALLOW_DELETE_ADMIN);
     }
 
     List<Simulation> simulations = simulationRepository.findAllByEducatorId(id);
@@ -276,7 +276,7 @@ public class EducatorController extends ABasicController{
     simulationRepository.deleteAllByEducatorId(id);
     educatorRepository.delete(educator);
     accountRepository.delete(account);
-    apiMessageDto.setMessage("Delete educator success");
+    apiMessageDto.setMessage("Xóa tài khoản người hướng dẫn thành công");
     return apiMessageDto;
   }
 
@@ -285,12 +285,12 @@ public class EducatorController extends ABasicController{
   public ApiMessageDto<ProfileEducatorDto> getProfileForEducator(){
     ApiMessageDto<ProfileEducatorDto> apiMessageDto = new ApiMessageDto<>();
     Account account = accountRepository.findById(getCurrentUser()).orElseThrow(
-        () -> new NotFoundException("Account not found", ErrorCode.ACCOUNT_ERROR_NOT_FOUND));
+        () -> new NotFoundException("Không tìm thấy tài khoản", ErrorCode.ACCOUNT_ERROR_NOT_FOUND));
     Educator educator = educatorRepository.findById(account.getId()).orElseThrow(
-        () -> new NotFoundException("Educator not found", ErrorCode.USER_ERROR_NOT_FOUND));
+        () -> new NotFoundException("Không tìm thấy tài khoản người hướng dẫn", ErrorCode.USER_ERROR_NOT_FOUND));
     ProfileEducatorDto educatorDto = educatorMapper.fromEducatorToProfileDto(educator);
     apiMessageDto.setData(educatorDto);
-    apiMessageDto.setMessage("Get profile educator success");
+    apiMessageDto.setMessage("Lấy hồ sơ tài khoản người hướng dẫn thành công");
     return apiMessageDto;
   }
 
@@ -299,14 +299,14 @@ public class EducatorController extends ABasicController{
   public ApiMessageDto<String> updateProfileForEducator(@Valid @RequestBody UpdateProfileEducatorForm updateEducatorForm, BindingResult bindingResult){
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Account currentAccount = accountRepository.findById(getCurrentUser()).orElseThrow(() ->
-        new NotFoundException("account not found", ErrorCode.ACCOUNT_ERROR_NOT_FOUND));
+        new NotFoundException("Không tìm thấy tài khoản", ErrorCode.ACCOUNT_ERROR_NOT_FOUND));
     Educator currentUser = educatorRepository.findById(currentAccount.getId()).orElseThrow(() ->
-        new NotFoundException("educator not found", ErrorCode.USER_ERROR_NOT_FOUND));
+        new NotFoundException("Không tìm thấy tài khoản người hướng dẫn", ErrorCode.USER_ERROR_NOT_FOUND));
 
     if (!Objects.equals(currentAccount.getUsername(), updateEducatorForm.getUsername())){
       Boolean existUsername = accountRepository.existsByUsername(updateEducatorForm.getUsername());
       if (existUsername){
-        throw new BadRequestException("Username already exist", ErrorCode.ACCOUNT_ERROR_USERNAME_EXIST);
+        throw new BadRequestException("Tên đăng nhập đã tồn tại", ErrorCode.ACCOUNT_ERROR_USERNAME_EXIST);
       }
       currentAccount.setUsername(updateEducatorForm.getUsername());
     }
@@ -314,7 +314,7 @@ public class EducatorController extends ABasicController{
     if (!Objects.equals(currentAccount.getPhone(), updateEducatorForm.getPhone())){
       Boolean existPhone = accountRepository.existsByPhone(updateEducatorForm.getPhone());
       if (existPhone){
-        throw new BadRequestException("Phone already exist", ErrorCode.ACCOUNT_ERROR_PHONE_EXIST);
+        throw new BadRequestException("Số điện thoại đã tồn tại", ErrorCode.ACCOUNT_ERROR_PHONE_EXIST);
       }
       currentAccount.setPhone(updateEducatorForm.getPhone());
     }
@@ -330,7 +330,7 @@ public class EducatorController extends ABasicController{
     currentUser.setAccount(currentAccount);
     accountRepository.save(currentAccount);
     educatorRepository.save(currentUser);
-    apiMessageDto.setMessage("Update profile educator success");
+    apiMessageDto.setMessage("Cập nhật hồ sơ tài khoản người hướng dẫn thành công");
     return apiMessageDto;
   }
 
@@ -338,21 +338,21 @@ public class EducatorController extends ABasicController{
   @PreAuthorize("hasRole('ED_AP')")
   public ApiMessageDto<String> approveAccountEducator(@Valid @RequestBody RequestEducatorIdForm requestEducatorIdForm, BindingResult bindingResult){
     if (!isAdmin()){
-      throw new UnauthorizationException("User is not an admin");
+      throw new UnauthorizationException("Người dùng không phải là quản trị viên");
     }
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Educator educator = educatorRepository.findById(requestEducatorIdForm.getId()).orElseThrow(()
-        -> new NotFoundException("Educator not found", ErrorCode.USER_ERROR_NOT_FOUND));
+        -> new NotFoundException("Không tìm thấy tài khoản người hướng dẫn", ErrorCode.USER_ERROR_NOT_FOUND));
 
     Account account = accountRepository.findById(educator.getAccount().getId()).orElseThrow(()
-        -> new NotFoundException("Account not found", ErrorCode.ACCOUNT_ERROR_NOT_FOUND));
+        -> new NotFoundException("Không tìm thấy tài khoản", ErrorCode.ACCOUNT_ERROR_NOT_FOUND));
 
     if (!Objects.equals(ITDreamConstant.STATUS_WAITING_APPROVE, account.getStatus())){
-      throw new BadRequestException("Educator cannot be approved", ErrorCode.USER_ERROR_NOT_APPROVE);
+      throw new BadRequestException("Không thể duyệt tài khoản người hướng dẫn", ErrorCode.USER_ERROR_NOT_APPROVE);
     }
     account.setStatus(ITDreamConstant.STATUS_ACTIVE);
     accountRepository.save(account);
-    apiMessageDto.setMessage("Approve educator success");
+    apiMessageDto.setMessage("Duyệt tài khoản người hướng dẫn thành công");
     return apiMessageDto;
   }
 
@@ -360,21 +360,21 @@ public class EducatorController extends ABasicController{
   @PreAuthorize("hasRole('ED_RJ')")
   public ApiMessageDto<String> rejectAccountEducator(@Valid @RequestBody RequestEducatorIdForm requestEducatorIdForm, BindingResult bindingResult){
     if (!isAdmin()){
-      throw new UnauthorizationException("User is not an admin");
+      throw new UnauthorizationException("Người dùng không phải là quản trị viên");
     }
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Educator educator = educatorRepository.findById(requestEducatorIdForm.getId()).orElseThrow(()
-        -> new NotFoundException("Educator not found", ErrorCode.USER_ERROR_NOT_FOUND));
+        -> new NotFoundException("Không tìm thấy tài khoản người hướng dẫn", ErrorCode.USER_ERROR_NOT_FOUND));
 
     Account account = accountRepository.findById(educator.getAccount().getId()).orElseThrow(()
-        -> new NotFoundException("Account not found", ErrorCode.ACCOUNT_ERROR_NOT_FOUND));
+        -> new NotFoundException("Không tìm thấy tài khoản", ErrorCode.ACCOUNT_ERROR_NOT_FOUND));
 
     if (!Objects.equals(ITDreamConstant.STATUS_WAITING_APPROVE, account.getStatus())){
-      throw new BadRequestException("Educator cannot be rejected", ErrorCode.USER_ERROR_NOT_REJECT);
+      throw new BadRequestException("Không thể từ chối tài khoản người hướng dẫn", ErrorCode.USER_ERROR_NOT_REJECT);
     }
     account.setStatus(ITDreamConstant.STATUS_REJECT);
     accountRepository.save(account);
-    apiMessageDto.setMessage("Reject educator success");
+    apiMessageDto.setMessage("Từ chối tài khoản người hướng dẫn thành công");
     return apiMessageDto;
   }
 }

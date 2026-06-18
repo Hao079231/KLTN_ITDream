@@ -4,12 +4,12 @@ import com.base.auth.dto.ApiMessageDto;
 import com.base.auth.dto.ErrorCode;
 import com.base.auth.exception.BadRequestException;
 import com.base.auth.exception.NotFoundException;
+import com.base.auth.exception.UnauthorizationException;
 import com.base.auth.form.permission.CreatePermissionForm;
 import com.base.auth.form.permission.UpdatePermissionForm;
 import com.base.auth.model.Permission;
 import com.base.auth.repository.GroupRepository;
 import com.base.auth.repository.PermissionRepository;
-import com.base.auth.exception.UnauthorizationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -39,12 +39,12 @@ public class PermissionController extends ABasicController{
     @PreAuthorize("hasRole('PER_C')")
     public ApiMessageDto<String> create(@Valid @RequestBody CreatePermissionForm createPermissionForm, BindingResult bindingResult) {
         if (!isSuperAdmin()){
-            throw new UnauthorizationException("Not allowed create");
+            throw new UnauthorizationException("Không được phép tạo");
         }
         ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
         Permission permission = permissionRepository.findFirstByName(createPermissionForm.getName());
         if(permission != null){
-            throw new BadRequestException("Permission name is exist", ErrorCode.PERMISSION_ERROR_EXIST);
+            throw new BadRequestException("Tên quyền đã tồn tại", ErrorCode.PERMISSION_ERROR_EXIST);
         }
         permission = new Permission();
         permission.setName(createPermissionForm.getName());
@@ -54,7 +54,7 @@ public class PermissionController extends ABasicController{
         permission.setNameGroup(createPermissionForm.getNameGroup());
         permission.setPCode(createPermissionForm.getPermissionCode());
         permissionRepository.save(permission);
-        apiMessageDto.setMessage("Create permission success");
+        apiMessageDto.setMessage("Tạo quyền thành công");
         return apiMessageDto;
     }
 
@@ -63,11 +63,11 @@ public class PermissionController extends ABasicController{
     public ApiMessageDto<List<Permission>> list() {
         ApiMessageDto<List<Permission>> apiMessageDto = new ApiMessageDto<>();
         if(!isSuperAdmin()){
-            throw new UnauthorizationException("Not allowed list.");
+            throw new UnauthorizationException("Không được phép lấy danh sách.");
         }
         Page<Permission> accounts = permissionRepository.findAll(PageRequest.of(0, 1000, Sort.by(new Sort.Order(Sort.Direction.DESC, "createdDate"))));
         apiMessageDto.setData(accounts.getContent());
-        apiMessageDto.setMessage("Get permissions list success");
+        apiMessageDto.setMessage("Lấy danh sách quyền thành công");
         return apiMessageDto;
     }
 
@@ -75,23 +75,23 @@ public class PermissionController extends ABasicController{
     @PreAuthorize("hasRole('PER_U')")
     public ApiMessageDto<String> update(@Valid @RequestBody UpdatePermissionForm updatePermissionForm, BindingResult bindingResult){
         if (!isSuperAdmin()){
-            throw new UnauthorizationException("Not allow update");
+            throw new UnauthorizationException("Không được phép cập nhật");
         }
         ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
         Permission permission = permissionRepository.findById(updatePermissionForm.getId())
-            .orElseThrow(() -> new NotFoundException("Permission not found", ErrorCode.PERMISSION_ERROR_NOT_FOUND));
+            .orElseThrow(() -> new NotFoundException("Không tìm thấy quyền", ErrorCode.PERMISSION_ERROR_NOT_FOUND));
 
         if (!updatePermissionForm.getName().equals(permission.getName())){
             Boolean existPermission = permissionRepository.existsByName(updatePermissionForm.getName());
             if (existPermission){
-                throw new BadRequestException("Permission name already exist", ErrorCode.PERMISSION_ERROR_EXIST);
+                throw new BadRequestException("Tên quyền đã tồn tại", ErrorCode.PERMISSION_ERROR_EXIST);
             }
         }
 
         if (!updatePermissionForm.getAction().equals(permission.getAction())){
             Boolean existPermission = permissionRepository.existsByAction(updatePermissionForm.getAction());
             if (existPermission){
-                throw new BadRequestException("Permission action already exist", ErrorCode.PERMISSION_ERROR_EXIST);
+                throw new BadRequestException("Hành động của quyền đã tồn tại", ErrorCode.PERMISSION_ERROR_EXIST);
             }
         }
 
@@ -102,7 +102,7 @@ public class PermissionController extends ABasicController{
         permission.setNameGroup(updatePermissionForm.getNameGroup());
         permission.setShowMenu(updatePermissionForm.getShowMenu());
         permissionRepository.save(permission);
-        apiMessageDto.setMessage("Update permission code");
+        apiMessageDto.setMessage("Cập nhật quyền thành công");
         return apiMessageDto;
     }
 
@@ -110,17 +110,17 @@ public class PermissionController extends ABasicController{
     @PreAuthorize("hasRole('PER_D')")
     public ApiMessageDto<String> delete(@PathVariable("id") Long id){
         if (!isSuperAdmin()){
-            throw new UnauthorizationException("Not allow delete");
+            throw new UnauthorizationException("Không được phép xóa");
         }
         ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
         Permission permission = permissionRepository.findById(id)
-            .orElseThrow(() -> new NotFoundException("Permission not found"));
+            .orElseThrow(() -> new NotFoundException("Không tìm thấy quyền"));
         Boolean usedPermission = groupRepository.existsByPermissionId(id);
         if (usedPermission){
-            throw new BadRequestException("Cannot delete permission", ErrorCode.PERMISSION_ERROR_DELETE);
+            throw new BadRequestException("Không thể xóa quyền", ErrorCode.PERMISSION_ERROR_DELETE);
         }
         permissionRepository.delete(permission);
-        apiMessageDto.setMessage("Delete permission success");
+        apiMessageDto.setMessage("Xóa quyền thành công");
         return apiMessageDto;
     }
 }

@@ -44,13 +44,13 @@ public class AchievementController extends ABasicController{
   public ApiMessageDto<String> updateFilePath(@Valid @RequestBody UpdateAchievementForm form, BindingResult bindingResult){
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Achievement achievement = achievementRepository.findById(form.getId())
-        .orElseThrow(() -> new NotFoundException("Achievement not found", ErrorCode.ACHIEVEMENT_ERROR_NOT_FOUND));
+        .orElseThrow(() -> new NotFoundException("Không tìm thấy thành tựu", ErrorCode.ACHIEVEMENT_ERROR_NOT_FOUND));
     if (!Objects.equals(achievement.getStudent().getId(), getCurrentUser())){
-      throw new BadRequestException("Student achievement cannot allowed update", ErrorCode.ACHIEVEMENT_ERROR_NOT_AUTHORIZE);
+      throw new BadRequestException("Không được phép cập nhật thành tựu của sinh viên", ErrorCode.ACHIEVEMENT_ERROR_NOT_AUTHORIZE);
     }
     achievement.setFilePath(form.getFilePath());
     achievementRepository.save(achievement);
-    apiMessageDto.setMessage("Update achievement success");
+    apiMessageDto.setMessage("Cập nhật thành tựu thành công");
     return apiMessageDto;
   }
 
@@ -64,7 +64,7 @@ public class AchievementController extends ABasicController{
     responseListDto.setTotalElements(achievements.getTotalElements());
     responseListDto.setTotalPages(achievements.getTotalPages());
     apiMessageDto.setData(responseListDto);
-    apiMessageDto.setMessage("Get list achievement success");
+    apiMessageDto.setMessage("Lấy danh sách thành tựu thành công");
     return apiMessageDto;
   }
 
@@ -79,7 +79,7 @@ public class AchievementController extends ABasicController{
     responseListDto.setTotalElements(achievements.getTotalElements());
     responseListDto.setTotalPages(achievements.getTotalPages());
     apiMessageDto.setData(responseListDto);
-    apiMessageDto.setMessage("Get list achievement success");
+    apiMessageDto.setMessage("Lấy danh sách thành tựu thành công");
     return apiMessageDto;
   }
 }

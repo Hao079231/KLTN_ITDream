@@ -59,11 +59,11 @@ public class CategoryController extends ABasicController{
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Boolean existCategory = categoryRepository.existsByName(createCategoryForm.getName());
     if (existCategory){
-      throw new BadRequestException("Category already exist", ErrorCode.CATEGORY_ERROR_EXIST);
+      throw new BadRequestException("Danh mục đã tồn tại", ErrorCode.CATEGORY_ERROR_EXIST);
     }
     Category category = categoryMapper.fromCreateCategoryFormToEntity(createCategoryForm);
     categoryRepository.save(category);
-    apiMessageDto.setMessage("Create category success");
+    apiMessageDto.setMessage("Tạo danh mục thành công");
     return apiMessageDto;
   }
 
@@ -78,7 +78,7 @@ public class CategoryController extends ABasicController{
     responseListDto.setTotalElements(categories.getTotalElements());
     responseListDto.setTotalPages(categories.getTotalPages());
     apiMessageDto.setData(responseListDto);
-    apiMessageDto.setMessage("Get list category success");
+    apiMessageDto.setMessage("Lấy danh sách danh mục thành công");
     return apiMessageDto;
   }
 
@@ -92,7 +92,7 @@ public class CategoryController extends ABasicController{
     responseListDto.setTotalElements(categories.getTotalElements());
     responseListDto.setTotalPages(categories.getTotalPages());
     apiMessageDto.setData(responseListDto);
-    apiMessageDto.setMessage("Get list category success");
+    apiMessageDto.setMessage("Lấy danh sách danh mục thành công");
     return apiMessageDto;
   }
 
@@ -100,14 +100,14 @@ public class CategoryController extends ABasicController{
   @PreAuthorize("hasRole('CA_V')")
   public ApiMessageDto<CategoryDto> get(@PathVariable("id") Long id){
     if (!isAdmin()){
-      throw new UnauthorizationException("User is not an admin");
+      throw new UnauthorizationException("Người dùng không phải là quản trị viên");
     }
     ApiMessageDto<CategoryDto> apiMessageDto = new ApiMessageDto<>();
     Category category = categoryRepository.findById(id)
-        .orElseThrow(() -> new NotFoundException("Category not found", ErrorCode.CATEGORY_ERROR_NOT_FOUND));
+        .orElseThrow(() -> new NotFoundException("Không tìm thấy danh mục", ErrorCode.CATEGORY_ERROR_NOT_FOUND));
     CategoryDto categoryDto = categoryMapper.fromEntityToCategoryDto(category);
     apiMessageDto.setData(categoryDto);
-    apiMessageDto.setMessage("Get detail category success");
+    apiMessageDto.setMessage("Lấy chi tiết danh mục thành công");
     return apiMessageDto;
   }
 
@@ -116,16 +116,16 @@ public class CategoryController extends ABasicController{
   public ApiMessageDto<String> update(@Valid @RequestBody UpdateCategoryForm updateCategoryForm, BindingResult bindingResult){
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Category category = categoryRepository.findById(updateCategoryForm.getId()).orElseThrow(()
-    -> new NotFoundException("Category not found"));
+        -> new NotFoundException("Không tìm thấy danh mục"));
     if (!Objects.equals(updateCategoryForm.getName(), category.getName())){
       Boolean existCategory = categoryRepository.existsByName(updateCategoryForm.getName());
       if (existCategory){
-        throw new BadRequestException("Category already exist", ErrorCode.CATEGORY_ERROR_EXIST);
+        throw new BadRequestException("Danh mục đã tồn tại", ErrorCode.CATEGORY_ERROR_EXIST);
       }
     }
     categoryMapper.fromUpdateCategoryFormToEntity(updateCategoryForm, category);
     categoryRepository.save(category);
-    apiMessageDto.setMessage("Update category success");
+    apiMessageDto.setMessage("Cập nhật danh mục thành công");
     return apiMessageDto;
   }
 
@@ -134,18 +134,18 @@ public class CategoryController extends ABasicController{
   public ApiMessageDto<String> delete(@PathVariable("id") Long id){
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Category category = categoryRepository.findById(id).orElseThrow(()
-    -> new NotFoundException("Category not found", ErrorCode.CATEGORY_ERROR_NOT_FOUND));
+        -> new NotFoundException("Không tìm thấy danh mục", ErrorCode.CATEGORY_ERROR_NOT_FOUND));
     Boolean existCourse = simulationRepository.existsByCategoryId(id);
     if (existCourse){
-      throw new BadRequestException("Category cannot be deleted", ErrorCode.CATEGORY_ERROR_DELETE);
+      throw new BadRequestException("Không thể xóa danh mục", ErrorCode.CATEGORY_ERROR_DELETE);
     }
 
     Boolean existBlog = blogRepository.existsByCategoryId(id);
     if (existBlog){
-      throw new BadRequestException("Category cannot be deleted", ErrorCode.CATEGORY_ERROR_DELETE);
+      throw new BadRequestException("Không thể xóa danh mục", ErrorCode.CATEGORY_ERROR_DELETE);
     }
     categoryRepository.delete(category);
-    apiMessageDto.setMessage("Delete category success");
+    apiMessageDto.setMessage("Xóa danh mục thành công");
     return apiMessageDto;
   }
 }

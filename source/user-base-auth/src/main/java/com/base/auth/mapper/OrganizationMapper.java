@@ -53,6 +53,7 @@ public interface OrganizationMapper {
   @Mapping(source = "id", target = "id")
   @Mapping(source = "name", target = "name")
   @Mapping(source = "shortName", target = "shortName")
+  @Mapping(source = "logoUrl", target = "logoUrl")
   @BeanMapping(ignoreByDefault = true)
   @Named("fromEntityToOrganizationDisplayDto")
   OrganizationDisplayDto fromEntityToOrganizationDisplayDto(Organization organization);

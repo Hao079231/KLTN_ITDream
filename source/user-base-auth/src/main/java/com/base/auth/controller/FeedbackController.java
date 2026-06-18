@@ -60,21 +60,21 @@ public class FeedbackController extends ABasicController{
   @PreAuthorize("hasRole('FB_ST_C')")
   public ApiMessageDto<String> create(@Valid @RequestBody CreateFeedbackForm form, BindingResult bindingResult){
     if (!isStudent()){
-      throw new UnauthorizationException("User is not a student");
+      throw new UnauthorizationException("Người dùng không phải là học viên");
     }
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Student student = studentRepository.findById(getCurrentUser())
-        .orElseThrow(() -> new NotFoundException("Student not found", ErrorCode.USER_ERROR_NOT_FOUND));
+        .orElseThrow(() -> new NotFoundException("Không tìm thấy học viên", ErrorCode.USER_ERROR_NOT_FOUND));
     Simulation simulation = simulationRepository.findById(form.getSimulationId())
-        .orElseThrow(() -> new NotFoundException("Simulation not found", ErrorCode.SIMULATION_ERROR_NOT_FOUND));
+        .orElseThrow(() -> new NotFoundException("Không tìm thấy mô phỏng", ErrorCode.SIMULATION_ERROR_NOT_FOUND));
     Boolean existFeedback = feedbackRepository.existsByStudentIdAndSimulationId(student.getId(), simulation.getId());
     if (existFeedback){
-      throw new BadRequestException("Feedback already exist", ErrorCode.FEEDBACK_ERROR_EXIST);
+      throw new BadRequestException("Đánh giá đã tồn tại", ErrorCode.FEEDBACK_ERROR_EXIST);
     }
     SimulationEnrollment simulationEnrollment = simulationEnrollmentRepository.findByStudentIdAndSimulationId(student.getId(), simulation.getId())
-        .orElseThrow(() -> new NotFoundException("Simulation enrollment not found", ErrorCode.SIMULATION_ENROLLMENT_ERROR_NOT_FOUND));
+        .orElseThrow(() -> new NotFoundException("Không tìm thấy đăng ký mô phỏng", ErrorCode.SIMULATION_ENROLLMENT_ERROR_NOT_FOUND));
     if (!ITDreamConstant.SIMULATION_ENROLLMENT_COMPLETED.equals(simulationEnrollment.getStatus())){
-      throw new BadRequestException("Student has not completed this simulation", ErrorCode.SIMULATION_ENROLLMENT_ERROR_NOT_CREATE);
+      throw new BadRequestException("học viên chưa hoàn thành mô phỏng này", ErrorCode.SIMULATION_ENROLLMENT_ERROR_NOT_CREATE);
     }
     Feedback feedback = feedbackMapper.fromCreateFeedbackFormToEntity(form);
     feedback.setStudent(student);
@@ -86,7 +86,7 @@ public class FeedbackController extends ABasicController{
     simulation.setAvgStar(newAvg);
     simulation.setTotalFeedback(currentTotal + 1);
     simulationRepository.save(simulation);
-    apiMessageDto.setMessage("Create feedback success");
+    apiMessageDto.setMessage("Tạo đánh giá thành công");
     return apiMessageDto;
   }
 
@@ -101,7 +101,7 @@ public class FeedbackController extends ABasicController{
     responseListDto.setTotalElements(feedbacks.getTotalElements());
     responseListDto.setTotalPages(feedbacks.getTotalPages());
     apiMessageDto.setData(responseListDto);
-    apiMessageDto.setMessage("Get list success");
+    apiMessageDto.setMessage("Lấy danh sách thành công");
     return apiMessageDto;
   }
 
@@ -115,7 +115,7 @@ public class FeedbackController extends ABasicController{
     responseListDto.setTotalElements(feedbacks.getTotalElements());
     responseListDto.setTotalPages(feedbacks.getTotalPages());
     apiMessageDto.setData(responseListDto);
-    apiMessageDto.setMessage("Get list success");
+    apiMessageDto.setMessage("Lấy danh sách thành công");
     return apiMessageDto;
   }
 
@@ -123,13 +123,13 @@ public class FeedbackController extends ABasicController{
   @PreAuthorize("hasRole('FB_ST_U')")
   public ApiMessageDto<String> update(@Valid @RequestBody UpdateFeedbackForm form, BindingResult bindingResult){
     if (!isStudent()){
-      throw new UnauthorizationException("User is not a student");
+      throw new UnauthorizationException("Người dùng không phải là học viên");
     }
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Feedback feedback = feedbackRepository.findById(form.getId())
-            .orElseThrow(() -> new NotFoundException("Feedback not found", ErrorCode.FEEDBACK_ERROR_NOT_FOUND));
+        .orElseThrow(() -> new NotFoundException("Không tìm thấy đánh giá", ErrorCode.FEEDBACK_ERROR_NOT_FOUND));
     if (!feedback.getStudent().getId().equals(getCurrentUser())){
-      throw new UnauthorizationException("Feedback was not created by this student");
+      throw new UnauthorizationException("Đánh giá không được tạo bởi học viên này");
     }
 
     Simulation simulation = feedback.getSimulation();
@@ -138,7 +138,7 @@ public class FeedbackController extends ABasicController{
 
     feedbackMapper.fromUpdateFeedbackFormToEntity(form, feedback);
     feedbackRepository.save(feedback);
-    apiMessageDto.setMessage("Update feedback success");
+    apiMessageDto.setMessage("Cập nhật đánh giá thành công");
     return apiMessageDto;
   }
 
@@ -146,13 +146,13 @@ public class FeedbackController extends ABasicController{
   @PreAuthorize("hasRole('FB_ST_D')")
   public ApiMessageDto<String> delete(@PathVariable("id") Long id){
     if (!isStudent()){
-      throw new UnauthorizationException("User is not a student");
+      throw new UnauthorizationException("Người dùng không phải là học viên");
     }
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Feedback feedback = feedbackRepository.findById(id)
-        .orElseThrow(() -> new NotFoundException("Feedback not found", ErrorCode.FEEDBACK_ERROR_NOT_FOUND));
+        .orElseThrow(() -> new NotFoundException("Không tìm thấy đánh giá", ErrorCode.FEEDBACK_ERROR_NOT_FOUND));
     if (!feedback.getStudent().getId().equals(getCurrentUser())){
-      throw new UnauthorizationException("Feedback was not created by this student");
+      throw new UnauthorizationException("Đánh giá không được tạo bởi học viên này");
     }
     Simulation simulation = feedback.getSimulation();
     long currentTotal = simulation.getTotalFeedback();
@@ -160,7 +160,7 @@ public class FeedbackController extends ABasicController{
     simulation.setAvgStar(newAvg);
     simulation.setTotalFeedback(currentTotal - 1);
     feedbackRepository.delete(feedback);
-    apiMessageDto.setMessage("Delete feedback success");
+    apiMessageDto.setMessage("Xóa đánh giá thành công");
     return apiMessageDto;
   }
 }

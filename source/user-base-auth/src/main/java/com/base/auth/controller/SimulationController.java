@@ -78,15 +78,15 @@ public class SimulationController extends ABasicController{
   public ApiMessageDto<String> create(@Valid @RequestBody CreateSimulationForm form, BindingResult bindingResult){
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Educator educator = educatorRepository.findById(getCurrentUser()).orElseThrow(()
-        -> new NotFoundException("Educator not found"));
+        -> new NotFoundException("Không tìm thấy người hướng dẫn"));
     if (!isEducator()){
-      throw new BadRequestException("User is not an educator", ErrorCode.USER_ERROR_NOT_EDUCATOR);
+      throw new BadRequestException("Người dùng không phải là người hướng dẫn", ErrorCode.USER_ERROR_NOT_EDUCATOR);
     }
     Category category = categoryRepository.findById(form.getCategoryId()).orElseThrow(()
-    -> new NotFoundException("Category not found", ErrorCode.CATEGORY_ERROR_NOT_FOUND));
+        -> new NotFoundException("Không tìm thấy danh mục", ErrorCode.CATEGORY_ERROR_NOT_FOUND));
     boolean existSimulation = simulationRepository.existsByTitleAndEducatorId(form.getTitle(), getCurrentUser());
     if (existSimulation){
-      throw new BadRequestException("Simulation already exist", ErrorCode.SIMULATION_ERROR_EXIST);
+      throw new BadRequestException("Mô phỏng đã tồn tại", ErrorCode.SIMULATION_ERROR_EXIST);
     }
     Simulation simulation = simulationMapper.fromCreateSimulationFormToEntity(form);
     simulation.setStatus(ITDreamConstant.SIMULATION_STATUS_WAITING_APPROVE);
@@ -109,7 +109,7 @@ public class SimulationController extends ABasicController{
       data.setTsSecond(tsSecond);
       processVideoService.sendProcessVideoMessage(data);
     }
-    apiMessageDto.setMessage("Create simulation success. Please wait for approval");
+    apiMessageDto.setMessage("Tạo mô phỏng thành công. Vui lòng chờ phê duyệt");
     return apiMessageDto;
   }
 
@@ -124,7 +124,7 @@ public class SimulationController extends ABasicController{
     responseListDto.setTotalElements(simulations.getTotalElements());
     responseListDto.setTotalPages(simulations.getTotalPages());
     apiMessageDto.setData(responseListDto);
-    apiMessageDto.setMessage("Get list simulation success");
+    apiMessageDto.setMessage("Lấy danh sách mô phỏng thành công");
     return apiMessageDto;
   }
 
@@ -133,10 +133,10 @@ public class SimulationController extends ABasicController{
   public ApiMessageDto<SimulationDto> get(@PathVariable("id") Long id){
     ApiMessageDto<SimulationDto> apiMessageDto = new ApiMessageDto<>();
     Simulation simulation = simulationRepository.findById(id).orElseThrow(() ->
-        new NotFoundException("Simulation not found", ErrorCode.SIMULATION_ERROR_NOT_FOUND));
+        new NotFoundException("Không tìm thấy mô phỏng", ErrorCode.SIMULATION_ERROR_NOT_FOUND));
     SimulationDto simulationDto = simulationMapper.fromEntityToSimulationDto(simulation);
     apiMessageDto.setData(simulationDto);
-    apiMessageDto.setMessage("Get simulation success");
+    apiMessageDto.setMessage("Lấy mô phỏng thành công");
     return apiMessageDto;
   }
 
@@ -151,7 +151,7 @@ public class SimulationController extends ABasicController{
     responseListDto.setTotalElements(simulations.getTotalElements());
     responseListDto.setTotalPages(simulations.getTotalPages());
     apiMessageDto.setData(responseListDto);
-    apiMessageDto.setMessage("Get list simulation success");
+    apiMessageDto.setMessage("Lấy danh sách mô phỏng thành công");
     return apiMessageDto;
   }
 
@@ -167,7 +167,7 @@ public class SimulationController extends ABasicController{
     responseListDto.setTotalElements(simulations.getTotalElements());
     responseListDto.setTotalPages(simulations.getTotalPages());
     apiMessageDto.setData(responseListDto);
-    apiMessageDto.setMessage("Get list simulation success");
+    apiMessageDto.setMessage("Lấy danh sách mô phỏng thành công");
     return apiMessageDto;
   }
 
@@ -182,7 +182,7 @@ public class SimulationController extends ABasicController{
     responseListDto.setTotalElements(simulations.getTotalElements());
     responseListDto.setTotalPages(simulations.getTotalPages());
     apiMessageDto.setData(responseListDto);
-    apiMessageDto.setMessage("Get list simulation success");
+    apiMessageDto.setMessage("Lấy danh sách mô phỏng thành công");
     return apiMessageDto;
   }
 
@@ -190,10 +190,10 @@ public class SimulationController extends ABasicController{
   public ApiMessageDto<SimulationClientDto> getSimulationForClient(@PathVariable("id") Long id){
     ApiMessageDto<SimulationClientDto> apiMessageDto = new ApiMessageDto<>();
     Simulation simulation = simulationRepository.findById(id).orElseThrow(()
-        -> new NotFoundException("Simulation not found", ErrorCode.SIMULATION_ERROR_NOT_FOUND));
+        -> new NotFoundException("Không tìm thấy mô phỏng", ErrorCode.SIMULATION_ERROR_NOT_FOUND));
     SimulationClientDto simulationDto = simulationMapper.fromEntityToSimulationClientDto(simulation);
     apiMessageDto.setData(simulationDto);
-    apiMessageDto.setMessage("Get simulation success");
+    apiMessageDto.setMessage("Lấy mô phỏng thành công");
     return apiMessageDto;
   }
 
@@ -202,13 +202,13 @@ public class SimulationController extends ABasicController{
   public ApiMessageDto<SimulationClientDto> getSimulationForStudent(@PathVariable("id") Long id){
     ApiMessageDto<SimulationClientDto> apiMessageDto = new ApiMessageDto<>();
     if (!isStudent()){
-      throw new BadRequestException("User is not a student", ErrorCode.USER_ERROR_NOT_STUDENT);
+      throw new BadRequestException("Người dùng không phải là học viên", ErrorCode.USER_ERROR_NOT_STUDENT);
     }
     Simulation simulation = simulationRepository.findById(id).orElseThrow(()
-        -> new NotFoundException("Simulation not found", ErrorCode.SIMULATION_ERROR_NOT_FOUND));
+        -> new NotFoundException("Không tìm thấy mô phỏng", ErrorCode.SIMULATION_ERROR_NOT_FOUND));
     SimulationClientDto simulationDto = simulationMapper.fromEntityToSimulationClientDto(simulation);
     apiMessageDto.setData(simulationDto);
-    apiMessageDto.setMessage("Get simulation success");
+    apiMessageDto.setMessage("Lấy mô phỏng thành công");
     return apiMessageDto;
   }
 
@@ -217,16 +217,16 @@ public class SimulationController extends ABasicController{
   public ApiMessageDto<SimulationClientDto> getSimulationForEducator(@PathVariable("id") Long id){
     ApiMessageDto<SimulationClientDto> apiMessageDto = new ApiMessageDto<>();
     if (!isEducator()){
-      throw new BadRequestException("User is not an educator", ErrorCode.USER_ERROR_NOT_EDUCATOR);
+      throw new BadRequestException("Người dùng không phải là người hướng dẫn", ErrorCode.USER_ERROR_NOT_EDUCATOR);
     }
     Simulation simulation = simulationRepository.findById(id).orElseThrow(()
-    -> new NotFoundException("Simulation not found", ErrorCode.SIMULATION_ERROR_NOT_FOUND));
+        -> new NotFoundException("Không tìm thấy mô phỏng", ErrorCode.SIMULATION_ERROR_NOT_FOUND));
     if (!Objects.equals(simulation.getEducator().getId(), getCurrentUser())){
-      throw new BadRequestException("Simulation cannot be read", ErrorCode.SIMULATION_ERROR_NOT_AUTHORIZED);
+      throw new BadRequestException("Không được phép xem mô phỏng này", ErrorCode.SIMULATION_ERROR_NOT_AUTHORIZED);
     }
     SimulationClientDto simulationDto = simulationMapper.fromEntityToSimulationClientDto(simulation);
     apiMessageDto.setData(simulationDto);
-    apiMessageDto.setMessage("Get simulation success");
+    apiMessageDto.setMessage("Lấy mô phỏng thành công");
     return apiMessageDto;
   }
 
@@ -235,13 +235,13 @@ public class SimulationController extends ABasicController{
   public ApiMessageDto<String> update(@Valid @RequestBody UpdateSimulationForm form, BindingResult bindingResult){
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     if (!isEducator()){
-      throw new BadRequestException("User is not an educator");
+      throw new BadRequestException("Người dùng không phải là người hướng dẫn");
     }
     Simulation simulation = simulationRepository.findById(form.getId()).orElseThrow(()
-    -> new NotFoundException("Simulation not found", ErrorCode.SIMULATION_ERROR_NOT_FOUND));
+        -> new NotFoundException("Không tìm thấy mô phỏng", ErrorCode.SIMULATION_ERROR_NOT_FOUND));
     if (simulation.getEducator() != null){
       if (!Objects.equals(simulation.getEducator().getId(), getCurrentUser())){
-        throw new BadRequestException("Simulation cannot be updated", ErrorCode.SIMULATION_ERROR_NOT_AUTHORIZED);
+        throw new BadRequestException("Không được phép cập nhật mô phỏng này", ErrorCode.SIMULATION_ERROR_NOT_AUTHORIZED);
       }
     }
 
@@ -249,7 +249,7 @@ public class SimulationController extends ABasicController{
         && (simulation.getCategory() == null
         || !Objects.equals(simulation.getCategory().getId(), form.getCategoryId()))){
       Category category = categoryRepository.findById(form.getCategoryId()).orElseThrow(()
-          -> new NotFoundException("Category not found", ErrorCode.CATEGORY_ERROR_NOT_FOUND));
+          -> new NotFoundException("Không tìm thấy danh mục", ErrorCode.CATEGORY_ERROR_NOT_FOUND));
       simulation.setCategory(category);
     }
 
@@ -271,7 +271,7 @@ public class SimulationController extends ABasicController{
     simulationMapper.fromUpdateSimulationFormToEntity(form, simulation);
     simulation.setStatus(ITDreamConstant.SIMULATION_STATUS_WAITING_APPROVE);
     if (StringUtils.isNotBlank(form.getVideoPath())
-      && form.getVideoPath().toLowerCase().matches(ITDreamConstant.FILE_PATH_PATTERN)){
+        && form.getVideoPath().toLowerCase().matches(ITDreamConstant.FILE_PATH_PATTERN)){
       simulation.setVideoState(ITDreamConstant.STATE_SIMULATION_DONE);
     }
     simulationRepository.save(simulation);
@@ -286,7 +286,7 @@ public class SimulationController extends ABasicController{
       processVideoService.sendProcessVideoMessage(data);
     }
 
-    apiMessageDto.setMessage("Update success. Please wait for approval");
+    apiMessageDto.setMessage("Cập nhật thành công. Vui lòng chờ phê duyệt");
     return apiMessageDto;
   }
 
@@ -294,19 +294,19 @@ public class SimulationController extends ABasicController{
   @PreAuthorize("hasRole('SI_APD')")
   public ApiMessageDto<String> approveDelete(@PathVariable("id") Long id){
     if (!isAdmin()){
-      throw new UnauthorizationException("User is not an admin");
+      throw new UnauthorizationException("Người dùng không phải là quản trị viên");
     }
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Simulation simulation = simulationRepository.findById(id).orElseThrow(()
-        -> new NotFoundException("Simulation not found", ErrorCode.SIMULATION_ERROR_NOT_FOUND));
+        -> new NotFoundException("Không tìm thấy mô phỏng", ErrorCode.SIMULATION_ERROR_NOT_FOUND));
 
     if (!Objects.equals(ITDreamConstant.SIMULATION_STATUS_WAITING_APPROVE_DELETE, simulation.getStatus())) {
-      throw new BadRequestException("Simulation cannot be deleted", ErrorCode.SIMULATION_ERROR_NOT_DELETE);
+      throw new BadRequestException("Không thể xóa mô phỏng", ErrorCode.SIMULATION_ERROR_NOT_DELETE);
     }
 
     simulationService.deleteFileSimulation(simulation);
     simulationService.deleteAllBySimulation(simulation);
-    apiMessageDto.setMessage("Approve delete simulation success");
+    apiMessageDto.setMessage("Duyệt yêu cầu xóa mô phỏng thành công");
     return apiMessageDto;
   }
 
@@ -315,13 +315,13 @@ public class SimulationController extends ABasicController{
   public ApiMessageDto<String> rejectDelete(@PathVariable("id") Long id){
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Simulation simulation = simulationRepository.findById(id).orElseThrow(()
-        -> new NotFoundException("Simulation not found", ErrorCode.SIMULATION_ERROR_NOT_FOUND));
+        -> new NotFoundException("Không tìm thấy mô phỏng", ErrorCode.SIMULATION_ERROR_NOT_FOUND));
     if (!Objects.equals(ITDreamConstant.SIMULATION_STATUS_WAITING_APPROVE_DELETE, simulation.getStatus())){
-      throw new BadRequestException("Simulation cannot be deleted", ErrorCode.SIMULATION_ERROR_NOT_DELETE);
+      throw new BadRequestException("Không thể xóa mô phỏng", ErrorCode.SIMULATION_ERROR_NOT_DELETE);
     }
     simulation.setStatus(ITDreamConstant.STATUS_ACTIVE);
     simulationRepository.save(simulation);
-    apiMessageDto.setMessage("Reject delete simulation success");
+    apiMessageDto.setMessage("Từ chối yêu cầu xóa mô phỏng thành công");
     return apiMessageDto;
   }
 
@@ -330,16 +330,16 @@ public class SimulationController extends ABasicController{
   public ApiMessageDto<String> requestDelete(@PathVariable("id") Long id){
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     if (!isEducator()){
-      throw new BadRequestException("User is not an educator", ErrorCode.USER_ERROR_NOT_EDUCATOR);
+      throw new BadRequestException("Người dùng không phải là người hướng dẫn", ErrorCode.USER_ERROR_NOT_EDUCATOR);
     }
     Simulation simulation = simulationRepository.findById(id).orElseThrow(()
-        -> new NotFoundException("Simulation not found", ErrorCode.SIMULATION_ERROR_NOT_FOUND));
+        -> new NotFoundException("Không tìm thấy mô phỏng", ErrorCode.SIMULATION_ERROR_NOT_FOUND));
     if (!Objects.equals(ITDreamConstant.STATUS_ACTIVE, simulation.getStatus())){
-      throw new BadRequestException("Request for deletion is currently being approved", ErrorCode.SIMULATION_ERROR_APPROVE);
+      throw new BadRequestException("Yêu cầu xóa đang trong quá trình phê duyệt", ErrorCode.SIMULATION_ERROR_APPROVE);
     }
     simulation.setStatus(ITDreamConstant.SIMULATION_STATUS_WAITING_APPROVE_DELETE);
     simulationRepository.save(simulation);
-    apiMessageDto.setMessage("Request delete simulation success");
+    apiMessageDto.setMessage("Yêu cầu xóa mô phỏng thành công");
     return apiMessageDto;
   }
 
@@ -348,14 +348,14 @@ public class SimulationController extends ABasicController{
   public ApiMessageDto<String> approve(@Valid @RequestBody RequestSimulationIdForm requestSimulationIdForm, BindingResult bindingResult){
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Simulation simulation = simulationRepository.findById(requestSimulationIdForm.getId()).orElseThrow(()
-    -> new NotFoundException("Simulation not found", ErrorCode.SIMULATION_ERROR_NOT_FOUND));
+        -> new NotFoundException("Không tìm thấy mô phỏng", ErrorCode.SIMULATION_ERROR_NOT_FOUND));
     if (!Objects.equals(ITDreamConstant.SIMULATION_STATUS_WAITING_APPROVE, simulation.getStatus())){
-      throw new BadRequestException("Simulation cannot approve", ErrorCode.SIMULATION_ERROR_APPROVE);
+      throw new BadRequestException("Không thể duyệt mô phỏng", ErrorCode.SIMULATION_ERROR_APPROVE);
     }
     simulation.setStatus(ITDreamConstant.SIMULATION_STATUS_ACTIVE);
     simulation.setNotice(null);
     simulationRepository.save(simulation);
-    apiMessageDto.setMessage("Approve simulation success");
+    apiMessageDto.setMessage("Duyệt mô phỏng thành công");
     return apiMessageDto;
   }
 
@@ -364,14 +364,14 @@ public class SimulationController extends ABasicController{
   public ApiMessageDto<String> reject(@Valid @RequestBody RequestSimulationIdForm requestSimulationIdForm, BindingResult bindingResult){
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Simulation simulation = simulationRepository.findById(requestSimulationIdForm.getId()).orElseThrow(()
-        -> new NotFoundException("Simulation not found", ErrorCode.SIMULATION_ERROR_NOT_FOUND));
+        -> new NotFoundException("Không tìm thấy mô phỏng", ErrorCode.SIMULATION_ERROR_NOT_FOUND));
     if (!Objects.equals(ITDreamConstant.SIMULATION_STATUS_WAITING_APPROVE, simulation.getStatus())){
-      throw new BadRequestException("Simulation cannot approve", ErrorCode.SIMULATION_ERROR_APPROVE);
+      throw new BadRequestException("Không thể duyệt mô phỏng", ErrorCode.SIMULATION_ERROR_APPROVE);
     }
     simulation.setStatus(ITDreamConstant.SIMULATION_STATUS_REJECT);
     simulation.setNotice(requestSimulationIdForm.getNotice());
     simulationRepository.save(simulation);
-    apiMessageDto.setMessage("Reject simulation success");
+    apiMessageDto.setMessage("Từ chối mô phỏng thành công");
     return apiMessageDto;
   }
 
@@ -380,13 +380,13 @@ public class SimulationController extends ABasicController{
   public ApiMessageDto<String> deleteByEducator(@PathVariable("id") Long id){
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Simulation simulation = simulationRepository.findById(id).orElseThrow(()
-        -> new NotFoundException("Simulation not found", ErrorCode.SIMULATION_ERROR_NOT_FOUND));
+        -> new NotFoundException("Không tìm thấy mô phỏng", ErrorCode.SIMULATION_ERROR_NOT_FOUND));
     if (!Objects.equals(ITDreamConstant.SIMULATION_STATUS_WAITING_APPROVE, simulation.getStatus())){
-      throw new BadRequestException("Simulation cannot be deleted", ErrorCode.SIMULATION_ERROR_NOT_DELETE);
+      throw new BadRequestException("Không thể xóa mô phỏng", ErrorCode.SIMULATION_ERROR_NOT_DELETE);
     }
     simulationService.deleteFileSimulation(simulation);
     simulationService.deleteAllBySimulation(simulation);
-    apiMessageDto.setMessage("Delete simulation success");
+    apiMessageDto.setMessage("Xóa mô phỏng thành công");
     return apiMessageDto;
   }
 }
