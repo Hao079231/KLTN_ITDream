@@ -43,6 +43,7 @@ public interface SimulationEnrollmentMapper {
   @IterableMapping(elementTargetType = SimulationEnrollmentDisplayDto.class, qualifiedByName = "fromEntityToSimulationEnrollmentDisplayDto")
   List<SimulationEnrollmentDisplayDto> fromEntityToSimulationEnrollmentDisplayDtoList(List<SimulationEnrollment> simulationEnrollment);
 
+  @Mapping(source = "id", target = "id")
   @Mapping(source = "student", target = "student", qualifiedByName = "fromStudentToProfileDto")
   @BeanMapping(ignoreByDefault = true)
   @Named("fromEntityToStudentLessonViewsDto")

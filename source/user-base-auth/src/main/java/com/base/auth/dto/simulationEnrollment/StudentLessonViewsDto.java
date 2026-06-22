@@ -5,6 +5,7 @@ import lombok.Data;
 
 @Data
 public class StudentLessonViewsDto {
+  private Long id;
   private ProfileStudentDto student;
   private Boolean isReviewed;
 }
