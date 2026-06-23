@@ -221,7 +221,7 @@ public class StudentTaskProgressController extends ABasicController{
 
     ResponseListDto<List<StudentSubmissionDisplayDto>> responseListDto = new ResponseListDto<>();
     StudentSubmissionCriteria studentSubmissionCriteria = new StudentSubmissionCriteria();
-    studentSubmissionCriteria.setStudentId(studentTaskProgress.getId());
+    studentSubmissionCriteria.setStudentTaskProgressId(studentTaskProgress.getId());
     Pageable pageable = PageRequest.of(0, 100);
     Page<StudentSubmission> studentSubmissions = studentSubmissionRepository.findAll(studentSubmissionCriteria.getSpecification(), pageable);
     List<StudentSubmissionDisplayDto> studentSubmissionDisplayDtos = studentSubmissionMapper.fromEntityToStudentSubmissionDisplayDtoList(studentSubmissions.getContent());

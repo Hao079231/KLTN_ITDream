@@ -8,4 +8,6 @@ public class ReviewSubmissionDisplayDto {
   private Long id;
   private String content;
   private StudentSubmissionDisplayDto studentSubmission;
+  private Long studentTaskProgressId;
+  private Long simulationEnrollmentId;
 }

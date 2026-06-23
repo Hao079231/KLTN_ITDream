@@ -17,6 +17,7 @@ import org.springframework.data.jpa.domain.Specification;
 @Data
 public class ReviewSubmissionCriteria {
   private Long studentTaskProgressId;
+  private Long simulationEnrollmentId;
 
   public Specification<ReviewSubmission> getSpecification() {
     return new Specification<ReviewSubmission>() {
@@ -33,6 +34,10 @@ public class ReviewSubmissionCriteria {
 
         if (studentTaskProgressId != null) {
           predicates.add(cb.equal(studentTaskProgressJoin.get("id"), studentTaskProgressId));
+        }
+
+        if (simulationEnrollmentId != null) {
+          predicates.add(cb.equal(studentTaskProgressJoin.get("simulationEnrollment").get("id"), simulationEnrollmentId));
         }
 
         query.distinct(true);

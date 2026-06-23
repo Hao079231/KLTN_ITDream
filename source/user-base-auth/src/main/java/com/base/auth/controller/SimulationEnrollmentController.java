@@ -132,8 +132,20 @@ public class SimulationEnrollmentController extends ABasicController{
     List<StudentLessonViewsDto> courseEnrollmentDtos = simulationEnrollmentMapper.fromEntityToStudentLessonViewsDtoList(enrollmentList);
     for (int i = 0; i < enrollmentList.size(); i++) {
       SimulationEnrollment enrollment = enrollmentList.get(i);
-      boolean hasUnreviewedTask = studentTaskProgressRepository.existsUnreviewedTask(enrollment.getId(), ITDreamConstant.TASK_KIND_SUBTASK);
-      courseEnrollmentDtos.get(i).setIsReviewed(!hasUnreviewedTask);
+      // isReviewed = true nếu có ít nhất 1 subtask đã được nhận xét
+      boolean hasAnyReview = studentTaskProgressRepository.existsAnyReviewedTask(enrollment.getId(), ITDreamConstant.TASK_KIND_SUBTASK);
+      courseEnrollmentDtos.get(i).setIsReviewed(hasAnyReview);
+      // reviewStatus: ưu tiên giá trị đã lưu trong DB; nếu chưa có thì tính từ runtime
+      Integer dbReviewStatus = enrollment.getReviewStatus();
+      if (dbReviewStatus != null && dbReviewStatus.equals(ITDreamConstant.SIMULATION_ENROLLMENT_REVIEW_STATUS_REVIEWED)) {
+        courseEnrollmentDtos.get(i).setReviewStatus(ITDreamConstant.SIMULATION_ENROLLMENT_REVIEW_STATUS_REVIEWED);
+      } else {
+        courseEnrollmentDtos.get(i).setReviewStatus(
+            hasAnyReview
+                ? ITDreamConstant.SIMULATION_ENROLLMENT_REVIEW_STATUS_REVIEWED
+                : ITDreamConstant.SIMULATION_ENROLLMENT_REVIEW_STATUS_NOT_REVIEWED
+        );
+      }
     }
     responseListDto.setContent(courseEnrollmentDtos);
     responseListDto.setTotalElements(simulationEnrollments.getTotalElements());
