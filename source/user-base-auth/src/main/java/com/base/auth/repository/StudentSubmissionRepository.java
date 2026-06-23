@@ -44,5 +44,7 @@ public interface StudentSubmissionRepository extends JpaRepository<StudentSubmis
       nativeQuery = true)
   void deleteAllByStudentId(@Param("studentId") Long studentId);
 
-  Boolean existsByStudentTaskProgressIdAndAnswer(Long studentTaskProgressId, String answer);
+  Boolean existsByStudentTaskProgressIdAndTaskQuestionId(Long studentTaskProgressId, Long taskQuestionId);
+
+  Boolean existsByStudentTaskProgressId(Long id);
 }
