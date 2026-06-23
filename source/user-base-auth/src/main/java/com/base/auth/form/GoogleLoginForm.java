@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 @ApiModel
 public class GoogleLoginForm {
-  @NotBlank(message = "accessToken cannot be null")
+  @NotBlank(message = "Token truy cập không được để trống")
   @ApiModelProperty(name = "accessToken")
   private String accessToken;
   @ApiModelProperty(name = "userRole")

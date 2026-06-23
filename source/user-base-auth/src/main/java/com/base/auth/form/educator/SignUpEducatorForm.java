@@ -13,7 +13,7 @@ import lombok.Data;
 @Data
 public class SignUpEducatorForm {
   @ApiModelProperty(name = "username", required = true)
-  @NotEmpty(message = "username cannot be null")
+  @NotEmpty(message = "Tên đăng nhập không được để trống")
   private String username;
   @ApiModelProperty(name = "email", required = true)
   @Email
@@ -24,13 +24,13 @@ public class SignUpEducatorForm {
   @ApiModelProperty(name = "password", required = true)
   @Password
   private String password;
-  @NotEmpty(message = "fullName cannot be null")
+  @NotEmpty(message = "Họ và tên không được để trống")
   @ApiModelProperty(name = "fullName",example = "Hao Trinh", required = true)
   private String fullName;
   @ApiModelProperty(name = "birthday")
-  @Past(message = "birthday must be in the past")
+  @Past(message = "Ngày sinh phải ở trong quá khứ")
   private Date birthday;
-  @NotNull(message = "organizationId cannot be null")
+  @NotNull(message = "ID tổ chức không được để trống")
   @ApiModelProperty(name = "organizationId")
   private Long organizationId;
 }

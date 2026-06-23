@@ -68,7 +68,7 @@ public class ITDreamConstant {
 
     public static final Integer SIMULATION_ENROLLMENT_COMPLETED = 1;
     public static final Integer SIMULATION_ENROLLMENT_IN_PROGRESS = 2;
-    // reviewStatus: 0 = Chưa nhận xét, 1 = Đã nhận xét hoàn tất
+
     public static final Integer SIMULATION_ENROLLMENT_REVIEW_STATUS_NOT_REVIEWED = 0;
     public static final Integer SIMULATION_ENROLLMENT_REVIEW_STATUS_REVIEWED = 1;
 
@@ -91,7 +91,7 @@ public class ITDreamConstant {
     public static final String PASSWORD_PATTERN = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,15}$";
     public static final String EMAIL_PATTERN = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
     public static final String PHONE_PATTERN = "^0\\d{9}$";
-    public static final String FILE_PATH_PATTERN = "^(https?:\\/\\/)?([\\w\\-]+\\/?)+\\.[A-Za-z0-9]{2,6}$";
+    public static final String FILE_PATH_PATTERN = "^https?://.*$";
     public static final String VIETNAM_HOTLINE_PATTERN = "^(0(2[0-9]{9}|[3|5|7|8|9][0-9]{8})|(1[8|9]00[0-9]{4,6}))$";
 
 

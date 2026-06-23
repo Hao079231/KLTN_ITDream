@@ -9,12 +9,12 @@ import lombok.Data;
 @Data
 @ApiModel
 public class CreateTaskQuestionForm {
-  @NotEmpty(message = "question cannot be null")
+  @NotEmpty(message = "Câu hỏi không được để trống")
   @ApiModelProperty(name = "question")
   private String question;
   @ApiModelProperty(name = "options")
   private String options;
-  @NotNull(message = "taskId cannot be null")
+  @NotNull(message = "ID nhiệm vụ không được để trống")
   @ApiModelProperty(name = "taskId")
   private Long taskId;
 }

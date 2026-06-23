@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 @ApiModel
 public class RequestEducatorIdForm {
-  @NotNull(message = "Id cannot be null")
+  @NotNull(message = "Id không được để trống")
   @ApiModelProperty(name = "id")
   private Long id;
 }

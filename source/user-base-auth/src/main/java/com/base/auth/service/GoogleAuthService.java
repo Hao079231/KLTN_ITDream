@@ -50,7 +50,7 @@ public class GoogleAuthService {
   public Account authenticateWithGoogleStudent(String accessToken){
     GoogleUserInfoForm googleUserInfoForm = verifyGoogleToken(accessToken);
     if (googleUserInfoForm == null){
-      throw new BadRequestException("Invalid Google access token", ErrorCode.GOOGLE_ERROR_ACCESS_TOKEN_INVALID);
+      throw new BadRequestException("Token truy cập của google không hợp lệ", ErrorCode.GOOGLE_ERROR_ACCESS_TOKEN_INVALID);
     }
 
     Account account = accountRepository.findAccountByEmail(googleUserInfoForm.getEmail());
@@ -80,7 +80,7 @@ public class GoogleAuthService {
   public Account authenticateWithGoogleEducator(String accessToken, String organizationId){
     GoogleUserInfoForm googleUserInfoForm = verifyGoogleToken(accessToken);
     if (googleUserInfoForm == null){
-      throw new BadRequestException("Invalid Google access token", ErrorCode.GOOGLE_ERROR_ACCESS_TOKEN_INVALID);
+      throw new BadRequestException("Token truy cập của google không hợp lệ", ErrorCode.GOOGLE_ERROR_ACCESS_TOKEN_INVALID);
     }
 
     Account account = accountRepository.findAccountByEmail(googleUserInfoForm.getEmail());
@@ -103,7 +103,7 @@ public class GoogleAuthService {
       Long convertOrganizationId = ConvertUtils.convertStringToLong(organizationId);
       Organization organization = organizationRepository.findById(convertOrganizationId).orElse(null);
       if (organization == null){
-        throw new CustomOauthException("Invalid organization");
+        throw new CustomOauthException("Tổ chức không hợp lệ");
       }
       educator.setAccount(newAccount);
       educator.setOrganization(organization);

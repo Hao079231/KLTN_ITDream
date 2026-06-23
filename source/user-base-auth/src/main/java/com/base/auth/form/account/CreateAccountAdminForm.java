@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 @Data
 @ApiModel
 public class CreateAccountAdminForm {
-    @NotEmpty(message = "username cant not be null")
+    @NotEmpty(message = "Tên đăng nhập không được trống")
     @ApiModelProperty(name = "username", required = true)
     private String username;
     @ApiModelProperty(name = "email")
@@ -21,23 +21,23 @@ public class CreateAccountAdminForm {
     private String email;
     @ApiModelProperty(name = "phone")
     private String phone;
-    @NotEmpty(message = "password cant not be null")
+    @NotEmpty(message = "Mật khẩu không được trống")
     @ApiModelProperty(name = "password", required = true)
     private String password;
-    @NotNull(message = "kind cant not be null")
+    @NotNull(message = "Vai trò không được trống")
     @ApiModelProperty(name = "kind", required = true)
     private Integer kind;
-    @NotEmpty(message = "fullName cant not be null")
+    @NotEmpty(message = "Họ và tên không được trống")
     @ApiModelProperty(name = "fullName",example = "Trung Hao",required = true)
     private String fullName;
     @ApiModelProperty(name = "birthday")
-    @Past(message = "birthday must be in the past")
+    @Past(message = "Ngày sinh phải là ở quá khứ")
     private Date birthday;
     private String avatarPath;
-    @NotNull(message = "status cant not be null")
+    @NotNull(message = "Trạng thái không được trống")
     @ApiModelProperty(name = "status", required = true)
     private Integer status;
-    @NotNull(message = "groupId cant not be null")
+    @NotNull(message = "ID nhóm không được trống")
     @ApiModelProperty(name = "groupId", required = true)
     private Long groupId;
 

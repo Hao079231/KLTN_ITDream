@@ -10,10 +10,10 @@ import lombok.Data;
 @Data
 @ApiModel
 public class CreateTaskForm {
-  @NotEmpty(message = "name cannot be null")
+  @NotEmpty(message = "Tên nhiệm vụ không được để trống")
   @ApiModelProperty(name = "name")
   private String name;
-  @NotEmpty(message = "title cannot be null")
+  @NotEmpty(message = "Tiêu đề nhiệm vụ không được để trống")
   @ApiModelProperty(name = "title")
   private String title;
   @ApiModelProperty(name = "description")
@@ -31,7 +31,7 @@ public class CreateTaskForm {
   private String videoPath;
   @ApiModelProperty(name = "parentId")
   private Long parentId;
-  @NotNull(message = "simulationId cannot be null")
+  @NotNull(message = "ID mô phỏng không được để trống")
   @ApiModelProperty(name = "simulationId")
   private Long simulationId;
 }

@@ -9,31 +9,31 @@ import lombok.Data;
 @Data
 @ApiModel
 public class UpdatePermissionForm {
-  @NotEmpty(message = "id cannot be null")
+  @NotEmpty(message = "id không được để trống")
   @ApiModelProperty(name = "id", required = true)
   private Long id;
 
-  @NotEmpty(message = "name cannot be null")
+  @NotEmpty(message = "Tên quyền không được để trống")
   @ApiModelProperty(name = "name", required = true)
   private String name;
 
-  @NotEmpty(message = "action cannot be null")
+  @NotEmpty(message = "Hành động quyền không được để trống")
   @ApiModelProperty(name = "action", required = true)
   private String action;
 
-  @NotNull(message = "showMenu cannot be null")
+  @NotNull(message = "Hiển thị menu không được để trống")
   @ApiModelProperty(name = "showMenu", required = true)
   private Boolean showMenu;
 
-  @NotEmpty(message = "description cannot be null")
+  @NotEmpty(message = "Mô tả quyền không được để trống")
   @ApiModelProperty(name = "description", required = true)
   private String description;
 
-  @NotEmpty(message = "nameGroup cannot be null")
+  @NotEmpty(message = "Tên nhóm không được để trống")
   @ApiModelProperty(name = "nameGroup", required = true)
   private String nameGroup;
 
-  @NotEmpty(message = "permissionCode cannot be null")
+  @NotEmpty(message = "Mã quyền không được để trống")
   @ApiModelProperty(name = "permissionCode", required = true)
   private String permissionCode;
 }

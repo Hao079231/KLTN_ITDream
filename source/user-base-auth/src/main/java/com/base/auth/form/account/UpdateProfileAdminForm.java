@@ -20,17 +20,17 @@ public class UpdateProfileAdminForm {
     @Phone
     @ApiModelProperty(name = "phone")
     private String phone;
-//    @Password(allowNull = true)
+    //    @Password(allowNull = true)
     @ApiModelProperty(name = "password")
     private String password;
     @ApiModelProperty(name = "oldPassword")
-//    @NotEmpty(message = "oldPassword is required")
+//    @NotEmpty(message = "Mật khẩu cũ không được để trống")
     private String oldPassword;
-    @NotEmpty(message = "fullName is required")
+    @NotEmpty(message = "Họ và tên không được để trống")
     @ApiModelProperty(name = "fullName", required = true)
     private String fullName;
     @ApiModelProperty(name = "birthday")
-    @Past(message = "birthday must be in the past")
+    @Past(message = "Ngày sinh phải trong quá khứ")
     private Date birthday;
     @ApiModelProperty(name = "avatarPath")
     private String avatarPath;

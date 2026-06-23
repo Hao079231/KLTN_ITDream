@@ -16,7 +16,7 @@ import javax.validation.Payload;
 public @interface Star {
   boolean allowNull() default false;
 
-  String message() default "Star invalid";
+  String message() default "Số sao không hợp lệ";
 
   Class<?>[] groups() default {};
 
