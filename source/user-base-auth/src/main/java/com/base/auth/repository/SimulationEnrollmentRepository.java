@@ -20,4 +20,7 @@ public interface SimulationEnrollmentRepository extends JpaRepository<Simulation
   Optional<SimulationEnrollment> findByStudentIdAndSimulationId(Long studentId, Long simulationId);
 
   Boolean existsBySimulationIdAndStudentId(Long simulationId, long currentUser);
+
+  // Tìm enrollment theo simulationId và ID của Account của student (dùng cho completeReview)
+  Optional<SimulationEnrollment> findBySimulationIdAndStudentAccountId(Long simulationId, Long accountId);
 }

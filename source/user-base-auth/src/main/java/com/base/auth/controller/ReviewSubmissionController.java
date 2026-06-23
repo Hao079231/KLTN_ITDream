@@ -23,6 +23,7 @@ import com.base.auth.model.Student;
 import com.base.auth.model.StudentTaskProgress;
 import com.base.auth.model.criteria.ReviewSubmissionCriteria;
 import com.base.auth.repository.AccountRepository;
+import com.base.auth.repository.SimulationEnrollmentRepository;
 import com.base.auth.repository.StudentSubmissionRepository;
 import com.base.auth.repository.SimulationRepository;
 import com.base.auth.repository.NotificationRepository;
@@ -31,6 +32,7 @@ import com.base.auth.repository.StudentTaskProgressRepository;
 import com.base.auth.repository.TaskQuestionRepository;
 import java.util.List;
 import java.util.Objects;
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,6 +70,9 @@ public class ReviewSubmissionController extends ABasicController{
 
   @Autowired
   SimulationRepository simulationRepository;
+
+  @Autowired
+  SimulationEnrollmentRepository simulationEnrollmentRepository;
 
   @Autowired
   StudentTaskProgressRepository studentTaskProgressRepository;
@@ -194,6 +199,7 @@ public class ReviewSubmissionController extends ABasicController{
 
   @DeleteMapping(value = "/delete/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   @PreAuthorize("hasRole('RS_ED_D')")
+  @Transactional
   public ApiMessageDto<String> delete(@PathVariable("id") Long id){
     if (!isEducator()){
       throw new UnauthorizationException("Người dùng không phải là người hướng dẫn");
@@ -201,7 +207,21 @@ public class ReviewSubmissionController extends ABasicController{
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     ReviewSubmission reviewSubmission = reviewSubmissionRepository.findById(id)
         .orElseThrow(() -> new NotFoundException("Không tìm thấy đánh giá bài làm", ErrorCode.REVIEW_SUBMISSION_ERROR_NOT_FOUND));
+
+    // Lấy enrollment trước khi xóa để kiểm tra lại sau
+    SimulationEnrollment enrollment = reviewSubmission.getStudentSubmission()
+        .getStudentTaskProgress().getSimulationEnrollment();
+
     reviewSubmissionRepository.delete(reviewSubmission);
+
+    // Sau khi xóa: nếu enrollment không còn review nào → reset reviewStatus = 0
+    boolean stillHasAnyReview = studentTaskProgressRepository.existsAnyReviewedTask(
+        enrollment.getId(), ITDreamConstant.TASK_KIND_SUBTASK);
+    if (!stillHasAnyReview) {
+      enrollment.setReviewStatus(ITDreamConstant.SIMULATION_ENROLLMENT_REVIEW_STATUS_NOT_REVIEWED);
+      simulationEnrollmentRepository.save(enrollment);
+    }
+
     apiMessageDto.setMessage("Xóa đánh giá bài làm thành công");
     return apiMessageDto;
   }
@@ -234,6 +254,14 @@ public class ReviewSubmissionController extends ABasicController{
     notification.setReceiver(account);
     notification.setReadFlag(false);
     notificationRepository.save(notification);
+
+    // Cập nhật reviewStatus = 1 (Đã nhận xét hoàn tất) vào SimulationEnrollment
+    simulationEnrollmentRepository
+        .findBySimulationIdAndStudentAccountId(simulation.getId(), account.getId())
+        .ifPresent(enrollment -> {
+          enrollment.setReviewStatus(ITDreamConstant.SIMULATION_ENROLLMENT_REVIEW_STATUS_REVIEWED);
+          simulationEnrollmentRepository.save(enrollment);
+        });
 
     apiMessageDto.setMessage("Hoàn thành đánh giá bài làm");
     return apiMessageDto;

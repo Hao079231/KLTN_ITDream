@@ -48,16 +48,11 @@ public interface StudentTaskProgressRepository extends JpaRepository<StudentTask
           "FROM StudentTaskProgress stp " +
           "WHERE stp.simulationEnrollment.id = :enrollmentId " +
           "AND stp.task.kind = :taskKind " +
-          "AND NOT EXISTS (" +
-          "   SELECT tq.id " +
-          "   FROM TaskQuestion tq " +
-          "   WHERE tq.task.id = stp.task.id" +
-          ") " +
-          "AND NOT EXISTS (" +
+          "AND EXISTS (" +
           "   SELECT rs.id " +
           "   FROM ReviewSubmission rs " +
           "   WHERE rs.studentSubmission.studentTaskProgress.id = stp.id" +
           ")"
   )
-  boolean existsUnreviewedTask(@Param("enrollmentId") Long enrollmentId, @Param("taskKind") Integer taskKind);
+  boolean existsAnyReviewedTask(@Param("enrollmentId") Long enrollmentId, @Param("taskKind") Integer taskKind);
 }

@@ -18,6 +18,8 @@ public interface ReviewSubmissionMapper {
   @Mapping(source = "id", target = "id")
   @Mapping(source = "content", target = "content")
   @Mapping(source = "studentSubmission", target = "studentSubmission", qualifiedByName = "fromEntityToStudentSubmissionDisplayDto")
+  @Mapping(source = "studentSubmission.studentTaskProgress.id", target = "studentTaskProgressId")
+  @Mapping(source = "studentSubmission.studentTaskProgress.simulationEnrollment.id", target = "simulationEnrollmentId")
   @BeanMapping(ignoreByDefault = true)
   @Named("fromEntityToReviewSubmissionDisplayDto")
   ReviewSubmissionDisplayDto fromEntityToReviewSubmissionDisplayDto(ReviewSubmission reviewSubmission);

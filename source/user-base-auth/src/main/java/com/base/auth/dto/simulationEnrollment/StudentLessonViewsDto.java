@@ -7,5 +7,6 @@ import lombok.Data;
 public class StudentLessonViewsDto {
   private Long id;
   private ProfileStudentDto student;
-  private Boolean isReviewed;
+  private Boolean isReviewed;      // backward compat: true nếu tất cả subtask đã có review
+  private Integer reviewStatus;    // 0 = Chưa nhận xét, 1 = Đã nhận xét hoàn tất (từ DB)
 }

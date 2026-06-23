@@ -68,6 +68,9 @@ public class ITDreamConstant {
 
     public static final Integer SIMULATION_ENROLLMENT_COMPLETED = 1;
     public static final Integer SIMULATION_ENROLLMENT_IN_PROGRESS = 2;
+    // reviewStatus: 0 = Chưa nhận xét, 1 = Đã nhận xét hoàn tất
+    public static final Integer SIMULATION_ENROLLMENT_REVIEW_STATUS_NOT_REVIEWED = 0;
+    public static final Integer SIMULATION_ENROLLMENT_REVIEW_STATUS_REVIEWED = 1;
 
     public static final Integer STUDENT_TASK_PROGRESS_COMPLETED = 1;
     public static final Integer STUDENT_TASK_PROGRESS_IN_PROGRESS = 2;
