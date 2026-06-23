@@ -103,7 +103,7 @@ public class TaskQuestionController extends ABasicController{
 
   @GetMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
   @PreAuthorize("hasRole('TQ_L')")
-  public ApiMessageDto<ResponseListDto<List<TaskQuestionDto>>> list(TaskQuestionCriteria criteria, Pageable pageable){
+  public ApiMessageDto<ResponseListDto<List<TaskQuestionDto>>> list(@Valid TaskQuestionCriteria criteria, BindingResult bindingResult, Pageable pageable){
     ApiMessageDto<ResponseListDto<List<TaskQuestionDto>>> apiMessageDto = new ApiMessageDto<>();
     ResponseListDto<List<TaskQuestionDto>> responseListDto = new ResponseListDto<>();
     Page<TaskQuestion> lessonQuestions = taskQuestionRepository.findAll(criteria.getSpecification(), pageable);
@@ -118,7 +118,7 @@ public class TaskQuestionController extends ABasicController{
 
   @GetMapping(value = "/educator_list", produces = MediaType.APPLICATION_JSON_VALUE)
   @PreAuthorize("hasRole('TQ_ED_L')")
-  public ApiMessageDto<ResponseListDto<List<TaskQuestionEducatorDto>>> listByEducator(TaskQuestionCriteria criteria, Pageable pageable){
+  public ApiMessageDto<ResponseListDto<List<TaskQuestionEducatorDto>>> listByEducator(@Valid TaskQuestionCriteria criteria, BindingResult bindingResult, Pageable pageable){
     ApiMessageDto<ResponseListDto<List<TaskQuestionEducatorDto>>> apiMessageDto = new ApiMessageDto<>();
     ResponseListDto<List<TaskQuestionEducatorDto>> responseListDto = new ResponseListDto<>();
     Page<TaskQuestion> lessonQuestions = taskQuestionRepository.findAll(criteria.getSpecification(), pageable);
@@ -134,7 +134,7 @@ public class TaskQuestionController extends ABasicController{
   @GetMapping(value = "/student_list", produces = MediaType.APPLICATION_JSON_VALUE)
   @PreAuthorize("hasRole('TQ_ST_L')")
   public ApiMessageDto<ResponseListDto<List<TaskQuestionStudentDto>>> listByStudent(
-      TaskQuestionCriteria criteria, Pageable pageable){
+      @Valid TaskQuestionCriteria criteria, BindingResult bindingResult, Pageable pageable){
     ApiMessageDto<ResponseListDto<List<TaskQuestionStudentDto>>> apiMessageDto = new ApiMessageDto<>();
     ResponseListDto<List<TaskQuestionStudentDto>> responseListDto = new ResponseListDto<>();
     criteria.setStatus(ITDreamConstant.SIMULATION_STATUS_ACTIVE);

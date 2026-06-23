@@ -76,8 +76,10 @@ public class QuestionQuizHistoryController extends ABasicController{
       }
     }
 
-    Boolean existSubmission = studentSubmissionRepository.existsByStudentTaskProgressIdAndAnswer(studentTaskProgress.getId(), form.getAnswer());
-    if (existSubmission){
+    StudentSubmission studentSubmission = studentSubmissionRepository
+        .findByStudentTaskProgressIdAndTaskQuestionId(studentTaskProgress.getId(), form.getTaskQuestionId())
+        .orElse(null);
+    if (studentSubmission != null && Objects.equals(studentSubmission.getAnswer(), form.getAnswer())) {
       throw new BadRequestException("Câu hỏi đã được trả lời", ErrorCode.STUDENT_SUBMISSION_ERROR_NOT_CREATE);
     }
 
@@ -87,10 +89,12 @@ public class QuestionQuizHistoryController extends ABasicController{
       questionQuizHistory.setTaskQuestion(taskQuestion);
       questionQuizHistoryRepository.save(questionQuizHistory);
 
-      StudentSubmission studentSubmission = new StudentSubmission();
+      if (studentSubmission == null) {
+        studentSubmission = new StudentSubmission();
+        studentSubmission.setStudentTaskProgress(studentTaskProgress);
+        studentSubmission.setTaskQuestion(taskQuestion);
+      }
       studentSubmission.setAnswer(form.getAnswer());
-      studentSubmission.setStudentTaskProgress(studentTaskProgress);
-      studentSubmission.setTaskQuestion(taskQuestion);
       studentSubmissionRepository.save(studentSubmission);
     } else if (taskQuestion != null){ // Nếu làm trắc nghiệm sai
       QuestionQuizHistory questionQuizHistory = questionQuizHistoryMapper.fromCreateQuestionQuizHistoryFormToEntity(form);

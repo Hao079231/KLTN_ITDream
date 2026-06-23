@@ -1,6 +1,7 @@
 package com.base.auth.repository;
 
 import com.base.auth.model.StudentSubmission;
+import java.util.Optional;
 import javax.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -45,4 +46,10 @@ public interface StudentSubmissionRepository extends JpaRepository<StudentSubmis
   void deleteAllByStudentId(@Param("studentId") Long studentId);
 
   Boolean existsByStudentTaskProgressIdAndAnswer(Long studentTaskProgressId, String answer);
+
+  @Query("SELECT ssm FROM StudentSubmission ssm WHERE ssm.studentTaskProgress.id = :studentTaskProgressId AND " +
+      "((:taskQuestionId IS NULL AND ssm.taskQuestion IS NULL) OR (ssm.taskQuestion.id = :taskQuestionId))")
+  Optional<StudentSubmission> findByStudentTaskProgressIdAndTaskQuestionId(
+      @Param("studentTaskProgressId") Long studentTaskProgressId,
+      @Param("taskQuestionId") Long taskQuestionId);
 }
