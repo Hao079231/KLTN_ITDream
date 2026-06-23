@@ -8,11 +8,11 @@ import lombok.Data;
 @Data
 @ApiModel
 public class UpdateTaskPositionForm {
-  @NotNull(message = "id cannot be null")
+  @NotNull(message = "id không được để trống")
   @ApiModelProperty(name = "id")
   private Long id;
 
-  @NotNull(message = "newOrder cannot be null")
+  @NotNull(message = "Vị trí mới không được để trống")
   @ApiModelProperty(name = "newOrder")
   private Integer newOrder;
 

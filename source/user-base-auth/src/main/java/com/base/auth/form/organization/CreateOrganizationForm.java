@@ -10,13 +10,13 @@ import lombok.Data;
 @Data
 @ApiModel
 public class CreateOrganizationForm {
-  @NotEmpty(message = "name cannot be null")
+  @NotEmpty(message = "Tên tổ chức không được để trống")
   @ApiModelProperty(name = "name")
   private String name;
-  @NotEmpty(message = "shortName cannot be null")
+  @NotEmpty(message = "Tên viết tắt tổ chức không được để trống")
   @ApiModelProperty(name = "shortName")
   private String shortName;
-  @NotEmpty(message = "logoUrl cannot be null")
+  @NotEmpty(message = "Đường dẫn hình ảnh đại diện không được để trống")
   @ApiModelProperty(name = "logoUrl")
   private String logoUrl;
   @VietNamHotline

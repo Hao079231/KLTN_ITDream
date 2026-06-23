@@ -208,13 +208,8 @@ public class ReviewSubmissionController extends ABasicController{
     ReviewSubmission reviewSubmission = reviewSubmissionRepository.findById(id)
         .orElseThrow(() -> new NotFoundException("Không tìm thấy đánh giá bài làm", ErrorCode.REVIEW_SUBMISSION_ERROR_NOT_FOUND));
 
-    // Lấy enrollment trước khi xóa để kiểm tra lại sau
-    SimulationEnrollment enrollment = reviewSubmission.getStudentSubmission()
-        .getStudentTaskProgress().getSimulationEnrollment();
-
+    SimulationEnrollment enrollment = reviewSubmission.getStudentSubmission().getStudentTaskProgress().getSimulationEnrollment();
     reviewSubmissionRepository.delete(reviewSubmission);
-
-    // Sau khi xóa: nếu enrollment không còn review nào → reset reviewStatus = 0
     boolean stillHasAnyReview = studentTaskProgressRepository.existsAnyReviewedTask(
         enrollment.getId(), ITDreamConstant.TASK_KIND_SUBTASK);
     if (!stillHasAnyReview) {
@@ -255,7 +250,6 @@ public class ReviewSubmissionController extends ABasicController{
     notification.setReadFlag(false);
     notificationRepository.save(notification);
 
-    // Cập nhật reviewStatus = 1 (Đã nhận xét hoàn tất) vào SimulationEnrollment
     simulationEnrollmentRepository
         .findBySimulationIdAndStudentAccountId(simulation.getId(), account.getId())
         .ifPresent(enrollment -> {

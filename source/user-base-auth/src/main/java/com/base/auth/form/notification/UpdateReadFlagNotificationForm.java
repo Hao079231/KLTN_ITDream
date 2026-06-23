@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 @ApiModel
 public class UpdateReadFlagNotificationForm {
-  @NotNull(message = "id cannot be null")
+  @NotNull(message = "id không được để trống")
   @ApiModelProperty(name = "id")
   private Long id;
 }

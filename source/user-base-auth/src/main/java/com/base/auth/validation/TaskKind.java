@@ -16,7 +16,7 @@ import javax.validation.Payload;
 public @interface TaskKind {
   boolean allowNull() default false;
 
-  String message() default "Task kind invalid";
+  String message() default "Thể loại task không hợp lệ";
 
   Class<?>[] groups() default {};
 

@@ -60,12 +60,12 @@ public class UserServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String userId) {
         Account user = accountRepository.findAccountByUsername(userId);
         if (user == null) {
-            log.error("Invalid username or password.");
-            throw new UsernameNotFoundException("Invalid username or password.");
+            log.error("Tên đăng nhập hoặc mật khẩu không hợp lệ.");
+            throw new UsernameNotFoundException("Tên đăng nhập hoặc mật khẩu không hợp lệ.");
         }
         boolean enabled = true;
         if (user.getStatus() != 1) {
-            log.error("User had been locked");
+            log.error("Người dùng đã bị khóa");
             enabled = false;
         }
         Set<GrantedAuthority> grantedAuthorities = getAccountPermission(user);
@@ -109,26 +109,26 @@ public class UserServiceImpl implements UserDetailsService {
 
         Account user = accountRepository.findAccountByEmail(email);
         if(user == null){
-            log.error("Invalid email.");
-            throw new UsernameNotFoundException("Invalid email.");
+            log.error("Email không hợp lệ.");
+            throw new UsernameNotFoundException("Email không hợp lệ.");
         }
 
         if(!passwordEncoder.matches(password, user.getPassword())){
-            log.error("Invalid password.");
-            throw new UsernameNotFoundException("Invalid password.");
+            log.error("Mật khẩu không hợp lệ.");
+            throw new UsernameNotFoundException("Mật khẩu không hợp lệ.");
         }
 
         if (!Objects.equals(ITDreamConstant.STATUS_ACTIVE, user.getStatus())){
-            throw new BadRequestException("< ERROR-ACCOUNT-0015 > - User is not active");
+            throw new BadRequestException("Người dùng không hoạt động");
         }
 
         if(!Objects.equals(user.getKind(), ITDreamConstant.USER_KIND_STUDENT)){
-            throw new BadRequestException("< ERROR-ACCOUNT-0017 > - User is not a student");
+            throw new BadRequestException("Người dùng không phải là học viên");
         }
 
         boolean enabled = true;
         if (user.getStatus() != 1) {
-            log.error("User had been locked");
+            log.error("Người dùng đã bị khóa");
             enabled = false;
         }
 
@@ -159,26 +159,26 @@ public class UserServiceImpl implements UserDetailsService {
 
         Account user = accountRepository.findAccountByEmail(email);
         if(user == null){
-            log.error("Invalid email.");
-            throw new UsernameNotFoundException("Invalid email.");
+            log.error("Email không hợp lệ.");
+            throw new UsernameNotFoundException("Email không hợp lệ.");
         }
 
         if(!passwordEncoder.matches(password, user.getPassword())){
-            log.error("Invalid password.");
-            throw new UsernameNotFoundException("Invalid password.");
+            log.error("Mật khẩu không hợp lệ.");
+            throw new UsernameNotFoundException("Mật khẩu không hợp lệ.");
         }
 
         if (!Objects.equals(ITDreamConstant.STATUS_ACTIVE, user.getStatus())){
-            throw new BadRequestException("< ERROR-ACCOUNT-0015 > - User is not active");
+            throw new BadRequestException("Người dùng không hoạt động");
         }
 
         if(!Objects.equals(user.getKind(), ITDreamConstant.USER_KIND_EDUCATOR)){
-            throw new BadRequestException("< ERROR-ACCOUNT-0018 > - User is not a educator");
+            throw new BadRequestException("Người dùng không phải là khoa chuyên môn");
         }
 
         boolean enabled = true;
         if (user.getStatus() != 1) {
-            log.error("User had been locked");
+            log.error("Người dùng đã bị khóa");
             enabled = false;
         }
 
@@ -209,11 +209,11 @@ public class UserServiceImpl implements UserDetailsService {
 
         Account user = googleAuthService.authenticateWithGoogleStudent(accessToken);
         if (!Objects.equals(ITDreamConstant.STATUS_ACTIVE, user.getStatus())){
-            throw new CustomOauthException("User is not active", ErrorCode.ACCOUNT_ERROR_NOT_ACTIVE);
+            throw new CustomOauthException("Người dùng không hoạt động", ErrorCode.ACCOUNT_ERROR_NOT_ACTIVE);
         }
 
         if(!Objects.equals(user.getKind(), ITDreamConstant.USER_KIND_STUDENT)){
-            throw new CustomOauthException("User is not a student", ErrorCode.ACCOUNT_ERROR_NOT_ACTIVE);
+            throw new CustomOauthException("Người dùng không phải là học viên", ErrorCode.ACCOUNT_ERROR_NOT_ACTIVE);
         }
 
         requestParameters.put("email", user.getEmail());
@@ -243,15 +243,15 @@ public class UserServiceImpl implements UserDetailsService {
 
         Account user = googleAuthService.authenticateWithGoogleEducator(accessToken, organizationId);
         if (Objects.equals(ITDreamConstant.STATUS_WAITING_APPROVE, user.getStatus())){
-            throw new CustomOauthException("Please wait for approval");
+            throw new CustomOauthException("Vui lòng chờ phê duyệt");
         }
 
         if (!Objects.equals(ITDreamConstant.STATUS_ACTIVE, user.getStatus())){
-            throw new CustomOauthException("User is not active", ErrorCode.ACCOUNT_ERROR_NOT_ACTIVE);
+            throw new CustomOauthException("Người dùng không hoạt động", ErrorCode.ACCOUNT_ERROR_NOT_ACTIVE);
         }
 
         if(!Objects.equals(user.getKind(), ITDreamConstant.USER_KIND_EDUCATOR)){
-            throw new CustomOauthException("User is not an educator", ErrorCode.ACCOUNT_ERROR_NOT_ACTIVE);
+            throw new CustomOauthException("Người dùng không phải là khoa chuyên môn", ErrorCode.ACCOUNT_ERROR_NOT_ACTIVE);
         }
 
         requestParameters.put("email", user.getEmail());

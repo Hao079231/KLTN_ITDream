@@ -11,11 +11,11 @@ import javax.validation.constraints.Size;
 @Data
 @ApiModel
 public class ForgetPasswordForm {
-    @NotEmpty(message = "OPT can not be null.")
+    @NotEmpty(message = "OTP không được để trống.")
     @ApiModelProperty(name = "otp", required = true)
     private String otp;
 
-    @NotEmpty(message = "Email can not be null.")
+    @NotEmpty(message = "Email không được để trống.")
     @ApiModelProperty(name = "idHash", required = true)
     private String idHash;
 

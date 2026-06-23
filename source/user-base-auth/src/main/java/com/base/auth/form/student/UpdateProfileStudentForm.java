@@ -14,13 +14,13 @@ import lombok.Data;
 @ApiModel
 public class UpdateProfileStudentForm {
   @ApiModelProperty(name = "username")
-  @NotEmpty(message = "username cannot be null")
+  @NotEmpty(message = "Tên đăng nhập không được để trống")
   private String username;
   @ApiModelProperty(name = "fullname")
-  @NotEmpty(message = "username cannot be null")
+  @NotEmpty(message = "Họ và tên không được để trống")
   private String fullname;
   @ApiModelProperty(name = "birthday")
-  @Past(message = "birthday must be in the past")
+  @Past(message = "Ngày sinh phải ở trong quá khứ")
   private Date birthday;
   @Phone
   private String phone;

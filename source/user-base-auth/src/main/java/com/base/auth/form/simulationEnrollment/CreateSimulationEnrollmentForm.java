@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 @ApiModel
 public class CreateSimulationEnrollmentForm {
-  @NotNull(message = "simulationId cannot be null")
+  @NotNull(message = "ID mô phỏng không được để trống")
   @ApiModelProperty(name = "simulationId")
   private Long simulationId;
 }

@@ -8,10 +8,10 @@ import lombok.Data;
 @Data
 @ApiModel
 public class CreateStudentTaskProgressForm {
-  @NotNull(message = "taskId cannot be null")
+  @NotNull(message = "ID nhiệm vụ không được để trống")
   @ApiModelProperty(name = "taskId")
   private Long taskId;
-  @NotNull(message = "simulationEnrollmentId cannot be null")
+  @NotNull(message = "ID đăng ký mô phỏng không được để trống")
   @ApiModelProperty(name = "simulationEnrollmentId")
   private Long simulationEnrollmentId;
 }

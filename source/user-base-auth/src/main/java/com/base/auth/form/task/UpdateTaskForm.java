@@ -9,13 +9,13 @@ import lombok.Data;
 @Data
 @ApiModel
 public class UpdateTaskForm {
-  @NotNull(message = "id cannot be null")
+  @NotNull(message = "id không được để trống")
   @ApiModelProperty(name = "id")
   private Long id;
-  @NotEmpty(message = "name cannot be null")
+  @NotEmpty(message = "Tên nhiệm vụ không được để trống")
   @ApiModelProperty(name = "name")
   private String name;
-  @NotEmpty(message = "title cannot be null")
+  @NotEmpty(message = "Tiêu đề nhiệm vụ không được để trống")
   @ApiModelProperty(name = "title")
   private String title;
   @ApiModelProperty(name = "description")

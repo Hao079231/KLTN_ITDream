@@ -9,13 +9,13 @@ import lombok.Data;
 @Data
 @ApiModel
 public class CreateQuestionQuizHistoryForm {
-  @NotEmpty(message = "answer cannot be null")
+  @NotEmpty(message = "Câu trả lời không được để trống")
   @ApiModelProperty(name = "answer")
   private String answer;
-  @NotNull(message = "isCorrect cannot be null")
+  @NotNull(message = "Việc đúng sai không được để trống")
   @ApiModelProperty(name = "isCorrect")
   private Boolean isCorrect;
-  @NotNull(message = "studentTaskProgressId cannot be null")
+  @NotNull(message = "ID tiến trình nhiệm vụ của học viên không được để trống")
   @ApiModelProperty(name = "studentTaskProgressId")
   private Long studentTaskProgressId;
   @ApiModelProperty(name = "taskQuestionId")
