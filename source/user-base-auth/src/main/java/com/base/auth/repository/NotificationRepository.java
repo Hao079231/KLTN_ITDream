@@ -9,5 +9,5 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 public interface NotificationRepository extends JpaRepository<Notification, Long>,
     JpaSpecificationExecutor<Notification> {
   @Transactional
-  void deleteAllByReceiverId(Long receiverId);
+  void deleteAllByReceiverIdAndReadFlag(Long receiverId, Boolean readFlag);
 }

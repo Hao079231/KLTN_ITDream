@@ -239,9 +239,9 @@ public class ReviewSubmissionController extends ABasicController{
     Notification notification = new Notification();
     notification.setTitle("Bài làm của bạn đã được đánh giá.");
     notification.setMessage(
-        "📚 Bài mô phỏng: " + simulation.getTitle() + "\n" +
-            "👨‍🏫 Người đánh giá: " + educator.getAccount().getFullName() + "\n" +
-            "🏢 Tổ chức: " + educator.getOrganization().getName() + "\n\n" +
+            "Bài mô phỏng: " + simulation.getTitle() + "\n" +
+            "Người đánh giá: " + educator.getAccount().getFullName() + "\n" +
+            "Tổ chức: " + educator.getOrganization().getName() + "\n\n" +
             "Vui lòng truy cập vào mô phỏng để xem chi tiết."
     );
     notification.setRefType("SIMULATION_REVIEW_COMPLETED");
