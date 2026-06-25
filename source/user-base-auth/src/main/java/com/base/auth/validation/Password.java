@@ -19,7 +19,7 @@ public @interface Password {
 
   String pattern() default ITDreamConstant.PASSWORD_PATTERN;
 
-  String message() default "The password must be between 8 and 15 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character";
+  String message() default "Mật khẩu phải có từ 8 đến 15 ký tự, có ít nhất một ký tự hoa, ký tự thường, ký tự số, ký tự đặc biệt";
 
   Class<?>[] groups() default {};
 

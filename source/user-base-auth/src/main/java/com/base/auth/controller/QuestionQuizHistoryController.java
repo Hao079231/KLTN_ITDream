@@ -74,13 +74,16 @@ public class QuestionQuizHistoryController extends ABasicController{
       if (!studentTaskProgress.getTask().getId().equals(taskQuestion.getTask().getId())){
         throw new BadRequestException("Câu hỏi không nằm trong nhiệm vụ", ErrorCode.STUDENT_SUBMISSION_ERROR_NOT_CREATE);
       }
-    }
 
-    StudentSubmission studentSubmission = studentSubmissionRepository
-        .findByStudentTaskProgressIdAndTaskQuestionId(studentTaskProgress.getId(), form.getTaskQuestionId())
-        .orElse(null);
-    if (studentSubmission != null && Objects.equals(studentSubmission.getAnswer(), form.getAnswer())) {
-      throw new BadRequestException("Câu hỏi đã được trả lời", ErrorCode.STUDENT_SUBMISSION_ERROR_NOT_CREATE);
+      Boolean existSubmission = studentSubmissionRepository.existsByStudentTaskProgressIdAndTaskQuestionId(studentTaskProgress.getId(), form.getTaskQuestionId());
+      if (existSubmission){
+        throw new BadRequestException("Câu hỏi đã được trả lời", ErrorCode.STUDENT_SUBMISSION_ERROR_NOT_CREATE);
+      }
+    } else {
+      Boolean existSubmission = studentSubmissionRepository.existsByStudentTaskProgressId(studentTaskProgress.getId());
+      if (existSubmission){
+        throw new BadRequestException("Câu hỏi đã được trả lời", ErrorCode.STUDENT_SUBMISSION_ERROR_NOT_CREATE);
+      }
     }
 
     if (Boolean.TRUE.equals(form.getIsCorrect())){ // Nếu đã làm bằng text, file hoặc trả lời trắc nghiệm đúng

@@ -16,7 +16,7 @@ import javax.validation.Payload;
 public @interface OrganizationType {
   boolean allowNull() default false;
 
-  String message() default "Organization type invalid";
+  String message() default "Loại tổ chức không hợp lệ";
 
   Class<?>[] groups() default {};
 

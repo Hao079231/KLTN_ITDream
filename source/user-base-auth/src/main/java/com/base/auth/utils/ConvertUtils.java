@@ -38,7 +38,7 @@ public class ConvertUtils {
             username = Normalizer.normalize(username, Form.NFD);
             username = username.replaceAll("\\p{M}", "")
                                 .replaceAll("\\s+", "")
-                                .replaceAll("[^a-z0-9]", "");
+                                .replaceAll("[^A-Za-z0-9]", "");
             username = username.replace("đ", "d")
                 .replace("Đ", "D");
             username = username.toLowerCase(Locale.ROOT);

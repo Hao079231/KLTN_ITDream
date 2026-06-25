@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 @ApiModel
 public class RequestTaskIdForm {
-  @NotNull(message = "taskId cannot be null")
+  @NotNull(message = "ID nhiệm vụ không được để trống")
   @ApiModelProperty(name = "taskId")
   private Long taskId;
 }

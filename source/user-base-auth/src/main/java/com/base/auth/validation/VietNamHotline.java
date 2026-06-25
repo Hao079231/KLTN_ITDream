@@ -1,7 +1,6 @@
 package com.base.auth.validation;
 
 import com.base.auth.constant.ITDreamConstant;
-import com.base.auth.validation.impl.EmailValidation;
 import com.base.auth.validation.impl.VietNamHotlineValidation;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -20,7 +19,7 @@ public @interface VietNamHotline {
 
   String pattern() default ITDreamConstant.VIETNAM_HOTLINE_PATTERN;
 
-  String message() default "VietNam hotline invalid";
+  String message() default "Số hotline ở Việt Nam không hợp lệ";
 
   Class<?>[] groups() default {};
 

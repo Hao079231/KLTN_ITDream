@@ -9,10 +9,10 @@ import lombok.Data;
 @Data
 @ApiModel
 public class UpdateReviewSubmissionForm {
-  @NotNull(message = "id cannot be null")
+  @NotNull(message = "id không được để trống")
   @ApiModelProperty(name = "id")
   private Long id;
-  @NotEmpty(message = "review content cannot be null")
+  @NotEmpty(message = "Nội dung đánh giá không được để trống")
   @ApiModelProperty(name = "content")
   private String content;
 }

@@ -16,7 +16,7 @@ import javax.validation.Payload;
 public @interface SimulationLevel {
   boolean allowNull() default false;
 
-  String message() default "Level invalid";
+  String message() default "Cấp độ không hợp lệ";
 
   Class<?>[] groups() default {};
 

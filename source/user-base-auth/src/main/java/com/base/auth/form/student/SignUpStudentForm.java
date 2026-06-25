@@ -14,7 +14,7 @@ import lombok.Data;
 @ApiModel
 public class SignUpStudentForm {
   @ApiModelProperty(name = "username", required = true)
-  @NotEmpty(message = "username cannot be null")
+  @NotEmpty(message = "Tên đăng nhập không được để trống")
   private String username;
   @ApiModelProperty(name = "email", required = true)
   @Email
@@ -25,10 +25,10 @@ public class SignUpStudentForm {
   @ApiModelProperty(name = "password", required = true)
   @Password
   private String password;
-  @NotEmpty(message = "fullName cannot be null")
+  @NotEmpty(message = "Họ và tên không được để trống")
   @ApiModelProperty(name = "fullName",example = "Hao Trinh",required = true)
   private String fullName;
   @ApiModelProperty(name = "birthday")
-  @Past(message = "birthday must be in the past")
+  @Past(message = "Ngày sinh phải ở trong quá khứ")
   private Date birthday;
 }

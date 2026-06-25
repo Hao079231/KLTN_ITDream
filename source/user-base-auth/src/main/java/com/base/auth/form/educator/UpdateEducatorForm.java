@@ -12,14 +12,14 @@ import lombok.Data;
 
 @Data
 public class UpdateEducatorForm {
-  @NotNull(message = "id cant not be null")
+  @NotNull(message = "id không được để trống")
   @ApiModelProperty(name = "id", required = true)
   private Long id;
   @ApiModelProperty(name = "username")
-  @NotEmpty(message = "username cannot be null")
+  @NotEmpty(message = "Tên đăng nhập không được để trống")
   private String username;
   @ApiModelProperty(name = "fulName")
-  @NotEmpty(message = "fullName cannot be null")
+  @NotEmpty(message = "Họ và tên không được để trống")
   private String fullName;
   @Phone
   @ApiModelProperty(name = "phone")
@@ -31,7 +31,7 @@ public class UpdateEducatorForm {
   @ApiModelProperty(name = "password")
   private String password;
   @ApiModelProperty(name = "birthday")
-  @Past(message = "birthday must be in the past")
+  @Past(message = "Ngày sinh phải ở trong quá khứ")
   private Date birthday;
   @ApiModelProperty(name = "avatarPath")
   private String avatarPath;

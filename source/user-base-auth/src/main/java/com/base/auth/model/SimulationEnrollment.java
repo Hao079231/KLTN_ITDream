@@ -30,7 +30,6 @@ public class SimulationEnrollment extends Auditable<String>{
   @ManyToOne
   @JoinColumn(name = "student_id")
   private Student student;
-  // 0 = Chưa nhận xét, 1 = Đã nhận xét hoàn tất
   @Column(name = "review_status")
   private Integer reviewStatus = 0;
 }

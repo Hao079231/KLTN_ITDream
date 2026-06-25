@@ -9,10 +9,10 @@ import lombok.Data;
 @Data
 @ApiModel
 public class CreateCompleteReviewSubmissionForm {
-  @NotNull(message = "simulationId cannot be null")
+  @NotNull(message = "ID mô phỏng không được để trống")
   @ApiModelProperty(name = "simulationId")
   private Long simulationId;
-  @NotEmpty(message = "studentUsername cannot be null")
+  @NotEmpty(message = "Tên đăng nhập học viên không được để trống")
   @ApiModelProperty(name = "studentUsername")
   private String studentUsername;
 }

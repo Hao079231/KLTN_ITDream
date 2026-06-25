@@ -10,16 +10,16 @@ import lombok.Data;
 @Data
 public class UpdateProfileEducatorForm {
   @ApiModelProperty(name = "username")
-  @NotEmpty(message = "username cannot be null")
+  @NotEmpty(message = "Tên đăng nhập không được để trống")
   private String username;
   @ApiModelProperty(name = "fullname")
-  @NotEmpty(message = "username cannot be null")
+  @NotEmpty(message = "Họ và tên không được để trống")
   private String fullname;
   @ApiModelProperty(name = "phone")
   @Phone
   private String phone;
   @ApiModelProperty(name = "birthday")
-  @Past(message = "birthday must be in the past")
+  @Past(message = "Ngày sinh phải ở trong quá khứ")
   private Date birthday;
   @ApiModelProperty(name = "avatarPath")
   private String avatarPath;

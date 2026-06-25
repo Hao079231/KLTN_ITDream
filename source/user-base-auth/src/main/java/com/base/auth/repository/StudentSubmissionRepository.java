@@ -45,11 +45,7 @@ public interface StudentSubmissionRepository extends JpaRepository<StudentSubmis
       nativeQuery = true)
   void deleteAllByStudentId(@Param("studentId") Long studentId);
 
-  Boolean existsByStudentTaskProgressIdAndAnswer(Long studentTaskProgressId, String answer);
+  Boolean existsByStudentTaskProgressIdAndTaskQuestionId(Long studentTaskProgressId, Long taskQuestionId);
 
-  @Query("SELECT ssm FROM StudentSubmission ssm WHERE ssm.studentTaskProgress.id = :studentTaskProgressId AND " +
-      "((:taskQuestionId IS NULL AND ssm.taskQuestion IS NULL) OR (ssm.taskQuestion.id = :taskQuestionId))")
-  Optional<StudentSubmission> findByStudentTaskProgressIdAndTaskQuestionId(
-      @Param("studentTaskProgressId") Long studentTaskProgressId,
-      @Param("taskQuestionId") Long taskQuestionId);
+  Boolean existsByStudentTaskProgressId(Long id);
 }

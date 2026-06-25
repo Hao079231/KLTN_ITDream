@@ -19,7 +19,7 @@ public @interface Email {
 
   String pattern() default ITDreamConstant.EMAIL_PATTERN;
 
-  String message() default "Please enter a valid email address in the correct format, such as test@example.com";
+  String message() default "Vui lòng nhập email hợp lệ, ví dụ: test@example.com";
 
   Class<?>[] groups() default {};
 

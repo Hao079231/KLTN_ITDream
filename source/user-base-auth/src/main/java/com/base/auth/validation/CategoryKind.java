@@ -16,7 +16,7 @@ import javax.validation.Payload;
 public @interface CategoryKind {
   boolean allowNull() default false;
 
-  String message() default "Category kind invalid";
+  String message() default "Thể loại danh mục không hợp lệ";
 
   Class<?>[] groups() default {};
 

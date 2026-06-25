@@ -9,7 +9,7 @@ import lombok.Data;
 @Data
 @ApiModel
 public class CreateCategoryForm {
-  @NotEmpty(message = "name cannot be null")
+  @NotEmpty(message = "Tên dang mục không được để trống")
   @ApiModelProperty(name = "name")
   private String name;
 

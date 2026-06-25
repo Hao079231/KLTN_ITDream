@@ -9,13 +9,13 @@ import lombok.Data;
 @Data
 @ApiModel
 public class CreateReviewSubmissionForm {
-  @NotNull(message = "studentSubmissionId cannot be null")
+  @NotNull(message = "ID bài nộp của học viên không được để trống")
   @ApiModelProperty(name = "studentSubmissionId")
   private Long studentSubmissionId;
-  @NotNull(message = "studentTaskProgressId cannot be null")
+  @NotNull(message = "ID tiến trình của học viên không được để trống")
   @ApiModelProperty(name = "studentTaskProgressId")
   private Long studentTaskProgressId;
-  @NotEmpty(message = "review content cannot be null")
+  @NotEmpty(message = "Nội dung đánh giá không được để trống")
   @ApiModelProperty(name = "content")
   private String content;
 }

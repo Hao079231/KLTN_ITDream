@@ -19,7 +19,7 @@ public @interface Phone {
 
   String pattern() default ITDreamConstant.PHONE_PATTERN;
 
-  String message() default "The phone number should begin with 0 and have exactly 10 digits";
+  String message() default "Số điện thoại phải bắt đầu từ 0 và có đúng 10 chữ số";
 
   Class<?>[] groups() default {};
 
