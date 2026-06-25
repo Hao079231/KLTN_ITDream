@@ -295,7 +295,7 @@ public class StudentTaskProgressController extends ABasicController{
 
       AchievementDisplayDto achievementDisplayDto = new AchievementDisplayDto();
       achievementDisplayDto.setId(achievement.getId());
-      achievementDisplayDto.setUsername(simulationEnrollment.getStudent().getAccount().getUsername());
+      achievementDisplayDto.setFullName(simulationEnrollment.getStudent().getAccount().getFullName());
       achievementDisplayDto.setSimulationTitle(simulationEnrollment.getSimulation().getTitle());
       apiMessageDto.setData(achievementDisplayDto);
       apiMessageDto.setMessage("Hoàn thành mô phỏng");
