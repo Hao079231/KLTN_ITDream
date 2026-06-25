@@ -30,6 +30,7 @@ public interface NotificationMapper {
   @Mapping(source = "title", target = "title")
   @Mapping(source = "message", target = "message")
   @Mapping(source = "readFlag", target = "readFlag")
+  @Mapping(source = "refId", target = "refId")
   @Mapping(source = "createdDate", target = "createdDate")
   @BeanMapping(ignoreByDefault = true)
   @Named("fromEntityToNotificationDto")

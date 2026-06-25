@@ -79,6 +79,7 @@ public class ITDreamConstant {
     public static final Integer ORGANIZATION_TYPE_COMPANY = 2;
     public static final List<Integer> ORGANIZATION_TYPES = List.of(ORGANIZATION_TYPE_UNIVERSITY, ORGANIZATION_TYPE_COMPANY);
 
+    public static final Boolean READ = true;
 
     public static final String BACKEND_PROCESS_VIDEO_CMD = "BACKEND_PROCESS_VIDEO";
     public static final String MEDIA_COMPLETED_PROCESS_VIDEO_CMD = "MEDIA_COMPLETED_PROCESS_VIDEO";

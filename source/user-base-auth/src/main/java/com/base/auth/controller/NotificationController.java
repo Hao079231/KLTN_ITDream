@@ -1,5 +1,6 @@
 package com.base.auth.controller;
 
+import com.base.auth.constant.ITDreamConstant;
 import com.base.auth.dto.ApiMessageDto;
 import com.base.auth.dto.ErrorCode;
 import com.base.auth.dto.ResponseListDto;
@@ -75,8 +76,8 @@ public class NotificationController extends ABasicController{
       throw new UnauthorizationException("Người dùng không phải là học viên");
     }
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
-    notificationRepository.deleteAllByReceiverId(getCurrentUser());
-    apiMessageDto.setMessage("Xóa tất cả thông báo thành công");
+    notificationRepository.deleteAllByReceiverIdAndReadFlag(getCurrentUser(), ITDreamConstant.READ);
+    apiMessageDto.setMessage("Xóa tất cả thông báo đã đọc thành công");
     return apiMessageDto;
   }
 }
