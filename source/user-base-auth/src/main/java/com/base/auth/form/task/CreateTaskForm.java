@@ -10,9 +10,6 @@ import lombok.Data;
 @Data
 @ApiModel
 public class CreateTaskForm {
-  @NotEmpty(message = "Tên nhiệm vụ không được để trống")
-  @ApiModelProperty(name = "name")
-  private String name;
   @NotEmpty(message = "Tiêu đề nhiệm vụ không được để trống")
   @ApiModelProperty(name = "title")
   private String title;

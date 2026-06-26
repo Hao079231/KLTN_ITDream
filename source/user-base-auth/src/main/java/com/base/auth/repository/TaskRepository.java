@@ -10,9 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface TaskRepository extends JpaRepository<Task, Long>, JpaSpecificationExecutor<Task> {
-  Boolean existsBySimulationIdAndName(Long simulationId, String name);
-
-  Boolean existsBySimulationIdAndNameAndTitle(Long simulationId, String name, String title);
+  Boolean existsBySimulationIdAndTitle(Long simulationId, String title);
 
   List<Task> findAllBySimulationId(Long simulationId);
 

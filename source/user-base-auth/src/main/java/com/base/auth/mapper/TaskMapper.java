@@ -21,7 +21,6 @@ import org.mapstruct.ReportingPolicy;
     nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
     uses = {SimulationMapper.class})
 public interface TaskMapper {
-  @Mapping(source = "name", target = "name")
   @Mapping(source = "title", target = "title")
   @Mapping(source = "description", target = "description")
   @Mapping(source = "content", target = "content")
@@ -33,7 +32,6 @@ public interface TaskMapper {
   Task fromCreateTaskFormToEntity(CreateTaskForm createTaskForm);
 
   @Mapping(source = "id", target = "id")
-  @Mapping(source = "name", target = "name")
   @Mapping(source = "title", target = "title")
   @Mapping(source = "description", target = "description")
   @Mapping(source = "content", target = "content")
@@ -48,7 +46,6 @@ public interface TaskMapper {
   List<TaskDisplayDto> fromEntityToTaskDisplayDtoList(List<Task> task);
 
   @Mapping(source = "id", target = "id")
-  @Mapping(source = "name", target = "name")
   @Mapping(source = "title", target = "title")
   @Mapping(source = "description", target = "description")
   @Mapping(source = "content", target = "content")
@@ -64,7 +61,6 @@ public interface TaskMapper {
   TaskDto fromEntityToTaskDto(Task task);
 
   @Mapping(source = "id", target = "id")
-  @Mapping(source = "name", target = "name")
   @Mapping(source = "title", target = "title")
   @Mapping(source = "kind", target = "kind")
   @Mapping(source = "description", target = "description")
@@ -78,7 +74,6 @@ public interface TaskMapper {
   List<TaskDto> fromEntityToTaskDtoList(List<Task> task);
 
   @Mapping(source = "id", target = "id")
-  @Mapping(source = "name", target = "name")
   @Mapping(source = "title", target = "title")
   @Mapping(source = "description", target = "description")
   @Mapping(source = "content", target = "content")
@@ -93,7 +88,6 @@ public interface TaskMapper {
   TaskStudentDto fromEntityToTaskStudentDto(Task task);
 
   @Mapping(source = "id", target = "id")
-  @Mapping(source = "name", target = "name")
   @Mapping(source = "title", target = "title")
   @Mapping(source = "description", target = "description")
   @Mapping(source = "content", target = "content")
@@ -107,7 +101,6 @@ public interface TaskMapper {
   @Named("fromEntityToTaskEducatorDto")
   TaskEducatorDto fromEntityToTaskEducatorDto(Task task);
 
-  @Mapping(source = "name", target = "name")
   @Mapping(source = "title", target = "title")
   @Mapping(source = "description", target = "description")
   @Mapping(source = "content", target = "content")

@@ -70,15 +70,15 @@ public class TaskController extends ABasicController{
 
   @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
   @PreAuthorize("hasRole('TA_ED_C')")
-  public ApiMessageDto<String> create(@Valid @RequestBody CreateTaskForm form, BindingResult bindingResult){
+  public ApiMessageDto<Long> create(@Valid @RequestBody CreateTaskForm form, BindingResult bindingResult){
     if(!isEducator()){
       throw new UnauthorizationException("Người dùng không phải là người hướng dẫn");
     }
-    ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
+    ApiMessageDto<Long> apiMessageDto = new ApiMessageDto<>();
     Simulation simulation = simulationRepository.findById(form.getSimulationId())
         .orElseThrow(() -> new NotFoundException("Không tìm thấy mô phỏng", ErrorCode.SIMULATION_ERROR_NOT_FOUND));
     if (form.getKind().equals(ITDreamConstant.TASK_KIND_SUBTASK)){
-      Boolean existSubtask = taskRepository.existsBySimulationIdAndNameAndTitle(form.getSimulationId(), form.getName(), form.getTitle());
+      Boolean existSubtask = taskRepository.existsBySimulationIdAndTitle(form.getSimulationId(), form.getTitle());
       if (existSubtask){
         throw new BadRequestException("Tiêu đề nhiệm vụ phụ đã tồn tại", ErrorCode.TASK_ERROR_EXIST);
       }
@@ -124,6 +124,7 @@ public class TaskController extends ABasicController{
       data.setTsSecond(tsSecond);
       processVideoService.sendProcessVideoMessage(data);
     }
+    apiMessageDto.setData(task.getId());
     apiMessageDto.setMessage("Tạo nhiệm vụ thành công");
     return apiMessageDto;
   }
@@ -236,8 +237,7 @@ public class TaskController extends ABasicController{
     Task task = taskRepository.findById(form.getId())
         .orElseThrow(() -> new NotFoundException("Không tìm thấy nhiệm vụ", ErrorCode.TASK_ERROR_NOT_FOUND));
     if (task.getKind().equals(ITDreamConstant.TASK_KIND_SUBTASK) && !form.getTitle().equals(task.getTitle())){
-      Boolean existSubtask = taskRepository.existsBySimulationIdAndNameAndTitle(task.getSimulation().getId(),
-          form.getName(), form.getTitle());
+      Boolean existSubtask = taskRepository.existsBySimulationIdAndTitle(task.getSimulation().getId(), form.getTitle());
       if (existSubtask){
         throw new BadRequestException("Tiêu đề nhiệm vụ phụ đã tồn tại", ErrorCode.TASK_ERROR_EXIST);
       }

@@ -92,6 +92,7 @@ public class QuestionQuizHistoryController extends ABasicController{
       questionQuizHistory.setTaskQuestion(taskQuestion);
       questionQuizHistoryRepository.save(questionQuizHistory);
 
+      StudentSubmission studentSubmission = null;
       if (studentSubmission == null) {
         studentSubmission = new StudentSubmission();
         studentSubmission.setStudentTaskProgress(studentTaskProgress);

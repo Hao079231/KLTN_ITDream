@@ -12,9 +12,6 @@ public class UpdateTaskForm {
   @NotNull(message = "id không được để trống")
   @ApiModelProperty(name = "id")
   private Long id;
-  @NotEmpty(message = "Tên nhiệm vụ không được để trống")
-  @ApiModelProperty(name = "name")
-  private String name;
   @NotEmpty(message = "Tiêu đề nhiệm vụ không được để trống")
   @ApiModelProperty(name = "title")
   private String title;

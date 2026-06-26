@@ -25,7 +25,6 @@ public class Task {
   @GenericGenerator(name = "idGenerator", strategy = "com.base.auth.service.id.IdGenerator")
   @GeneratedValue(generator = "idGenerator")
   private Long id;
-  private String name;
   private String title;
   @Column(columnDefinition = "TEXT")
   private String description;
