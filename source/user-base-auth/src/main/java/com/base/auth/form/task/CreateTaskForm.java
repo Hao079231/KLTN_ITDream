@@ -26,6 +26,12 @@ public class CreateTaskForm {
   private String filePath;
   @ApiModelProperty(name = "videoPath")
   private String videoPath;
+  /**
+   * Submission requirement (subtask only).
+   * 0 = none, 1 = file only, 2 = text only, 3 = file + text.
+   */
+  @ApiModelProperty(name = "submissionType")
+  private Integer submissionType;
   @ApiModelProperty(name = "parentId")
   private Long parentId;
   @NotNull(message = "ID mô phỏng không được để trống")

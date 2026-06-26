@@ -38,6 +38,12 @@ public class Task {
   private Integer videoState;
   private Integer totalQuestion = 0;
   private Integer totalError = 0;
+  /**
+   * Submission requirement for subtask (kind = 2).
+   * 0 = none, 1 = file only, 2 = text only, 3 = file + text.
+   * Null is treated the same as 0 (no requirement).
+   */
+  private Integer submissionType;
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "parent_id")
   private Task parent;

@@ -14,5 +14,10 @@ public class TaskDto {
   private String videoPath;
   private Integer totalError;
   private Integer totalQuestion;
+  /**
+   * Submission requirement for subtask (kind = 2).
+   * 0 = none, 1 = file only, 2 = text only, 3 = file + text.
+   */
+  private Integer submissionType;
   private TaskDto parent;
 }

@@ -28,6 +28,7 @@ public interface TaskMapper {
   @Mapping(source = "imagePath", target = "imagePath")
   @Mapping(source = "filePath", target = "filePath")
   @Mapping(source = "videoPath", target = "videoPath")
+  @Mapping(source = "submissionType", target = "submissionType")
   @BeanMapping(ignoreByDefault = true)
   Task fromCreateTaskFormToEntity(CreateTaskForm createTaskForm);
 
@@ -55,6 +56,7 @@ public interface TaskMapper {
   @Mapping(source = "videoPath", target = "videoPath")
   @Mapping(source = "totalError", target = "totalError")
   @Mapping(source = "totalQuestion", target = "totalQuestion")
+  @Mapping(source = "submissionType", target = "submissionType")
   @Mapping(source = "parent", target = "parent", qualifiedByName = "fromEntityToTaskDto")
   @BeanMapping(ignoreByDefault = true)
   @Named("fromEntityToTaskDto")
@@ -65,6 +67,7 @@ public interface TaskMapper {
   @Mapping(source = "kind", target = "kind")
   @Mapping(source = "description", target = "description")
   @Mapping(source = "content", target = "content")
+  @Mapping(source = "submissionType", target = "submissionType")
   @Mapping(source = "parent", target = "parent", qualifiedByName = "fromEntityToTaskDisplayAdminDto")
   @BeanMapping(ignoreByDefault = true)
   @Named("fromEntityToTaskDisplayAdminDto")
@@ -83,6 +86,7 @@ public interface TaskMapper {
   @Mapping(source = "videoPath", target = "videoPath")
   @Mapping(source = "totalError", target = "totalError")
   @Mapping(source = "totalQuestion", target = "totalQuestion")
+  @Mapping(source = "submissionType", target = "submissionType")
   @BeanMapping(ignoreByDefault = true)
   @Named("fromEntityToTaskStudentDto")
   TaskStudentDto fromEntityToTaskStudentDto(Task task);
@@ -97,6 +101,7 @@ public interface TaskMapper {
   @Mapping(source = "videoPath", target = "videoPath")
   @Mapping(source = "totalError", target = "totalError")
   @Mapping(source = "totalQuestion", target = "totalQuestion")
+  @Mapping(source = "submissionType", target = "submissionType")
   @BeanMapping(ignoreByDefault = true)
   @Named("fromEntityToTaskEducatorDto")
   TaskEducatorDto fromEntityToTaskEducatorDto(Task task);
@@ -107,6 +112,7 @@ public interface TaskMapper {
   @Mapping(source = "imagePath", target = "imagePath")
   @Mapping(source = "filePath", target = "filePath")
   @Mapping(source = "videoPath", target = "videoPath")
+  @Mapping(source = "submissionType", target = "submissionType")
   @BeanMapping(ignoreByDefault = true)
   void fromUpdateTaskFormToEntity(UpdateTaskForm updateTaskForm, @MappingTarget Task task);
 }
