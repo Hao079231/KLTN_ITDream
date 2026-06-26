@@ -1,0 +1,20 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                   http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd
+                   http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- Thêm cột simulation_enrollment_id vào bảng comment để scope comment theo enrollment
+         Cho phép NULL vì comment cũ và comment không thuộc enrollment nào sẽ giữ null -->
+    <changeSet author="Authentication" id="20260626120000-1">
+        <addColumn tableName="db_it_dream_comment">
+            <column name="simulation_enrollment_id" type="BIGINT">
+                <constraints nullable="true" foreignKeyName="fk_comment_simulation_enrollment" references="db_it_dream_simulation_enrollment(id)"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

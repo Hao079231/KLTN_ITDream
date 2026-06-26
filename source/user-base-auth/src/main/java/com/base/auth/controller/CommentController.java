@@ -12,10 +12,12 @@ import com.base.auth.form.comment.UpdateCommentForm;
 import com.base.auth.mapper.CommentMapper;
 import com.base.auth.model.Account;
 import com.base.auth.model.Comment;
+import com.base.auth.model.SimulationEnrollment;
 import com.base.auth.model.Task;
 import com.base.auth.model.criteria.CommentCriteria;
 import com.base.auth.repository.AccountRepository;
 import com.base.auth.repository.CommentRepository;
+import com.base.auth.repository.SimulationEnrollmentRepository;
 import com.base.auth.repository.TaskRepository;
 import java.util.List;
 import javax.validation.Valid;
@@ -51,6 +53,9 @@ public class CommentController extends ABasicController{
   TaskRepository taskRepository;
 
   @Autowired
+  SimulationEnrollmentRepository simulationEnrollmentRepository;
+
+  @Autowired
   CommentMapper commentMapper;
 
   @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -64,6 +69,11 @@ public class CommentController extends ABasicController{
     Comment comment = commentMapper.fromCreateCommentFormToEntity(form);
     comment.setTask(task);
     comment.setUser(user);
+    if (form.getSimulationEnrollmentId() != null) {
+      SimulationEnrollment enrollment = simulationEnrollmentRepository.findById(form.getSimulationEnrollmentId())
+          .orElseThrow(() -> new NotFoundException("Không tìm thấy đăng ký mô phỏng", ErrorCode.SIMULATION_ENROLLMENT_ERROR_NOT_FOUND));
+      comment.setSimulationEnrollment(enrollment);
+    }
     if (form.getParentId() != null){
       Comment parent = commentRepository.findById(form.getParentId())
           .orElseThrow(() -> new NotFoundException("Không tìm thấy bình luận", ErrorCode.COMMENT_ERROR_NOT_FOUND));

@@ -17,4 +17,6 @@ public class CreateCommentForm {
   private Long taskId;
   @ApiModelProperty(name = "parentId")
   private Long parentId;
+  @ApiModelProperty(name = "simulationEnrollmentId")
+  private Long simulationEnrollmentId;
 }

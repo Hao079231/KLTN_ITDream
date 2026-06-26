@@ -32,6 +32,9 @@ public class Comment extends Auditable<String>{
   @JoinColumn(name = "user_id")
   private Account user;
   @ManyToOne
+  @JoinColumn(name = "simulation_enrollment_id")
+  private SimulationEnrollment simulationEnrollment;
+  @ManyToOne
   @JoinColumn(name = "parent_id")
   private Comment parent;
   @ManyToOne

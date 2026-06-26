@@ -2,6 +2,7 @@ package com.base.auth.model.criteria;
 
 import com.base.auth.model.Account;
 import com.base.auth.model.Comment;
+import com.base.auth.model.SimulationEnrollment;
 import com.base.auth.model.Task;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,7 @@ public class CommentCriteria {
   private Long userId;
   private String keyWord;
   private Boolean onlyRoot;
+  private Long simulationEnrollmentId;
 
   public Specification<Comment> getSpecification() {
     return (root, query, cb) -> {
@@ -43,6 +45,10 @@ public class CommentCriteria {
       }
       if (Boolean.TRUE.equals(getOnlyRoot())) {
         predicates.add(cb.isNull(root.get("parent")));
+      }
+      if (getSimulationEnrollmentId() != null) {
+        Join<Comment, SimulationEnrollment> enrollmentJoin = root.join("simulationEnrollment", JoinType.LEFT);
+        predicates.add(cb.equal(enrollmentJoin.get("id"), getSimulationEnrollmentId()));
       }
 
       // 3. Logic sắp xếp san phẳng (Flattened Grouping)
