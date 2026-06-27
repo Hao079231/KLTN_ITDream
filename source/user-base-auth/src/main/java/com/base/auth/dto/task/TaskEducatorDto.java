@@ -10,6 +10,7 @@ public class TaskEducatorDto {
   private String description;
   private String content;
   private Integer kind;
+  private Integer submissionType;
   private String imagePath;
   private String filePath;
   private String videoPath;
