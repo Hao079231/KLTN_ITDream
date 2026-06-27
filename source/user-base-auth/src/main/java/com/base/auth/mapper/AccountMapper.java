@@ -82,6 +82,7 @@ public interface AccountMapper {
     @Mapping(source = "fullName", target = "fullName")
     @Mapping(source = "birthday", target = "birthday")
     @Mapping(source = "avatarPath", target = "avatar")
+    @Mapping(source = "kind", target = "kind")
     @BeanMapping(ignoreByDefault = true)
     @Named("fromAccountToProfileDto")
     ProfileAccountDto fromAccountToProfileDto(Account account);

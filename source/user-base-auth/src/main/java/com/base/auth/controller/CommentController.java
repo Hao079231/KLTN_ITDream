@@ -70,11 +70,8 @@ public class CommentController extends ABasicController{
       if (!parent.getTask().getId().equals(task.getId())) {
         throw new BadRequestException("Bình luận cha không thuộc cùng một nhiệm vụ", ErrorCode.COMMENT_ERROR_INVALID_PARENT);
       }
-      if (parent.getRoot() != null){
-        comment.setRoot(parent.getRoot());
-      } else {
-        comment.setRoot(parent);
-      }
+      Comment rootComment = parent.getRoot() == null ? parent : parent.getRoot();
+      comment.setRoot(rootComment);
       comment.setParent(parent);
     }
     commentRepository.save(comment);
