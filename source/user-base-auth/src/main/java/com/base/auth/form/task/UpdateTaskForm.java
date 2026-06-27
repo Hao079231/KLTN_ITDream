@@ -1,5 +1,6 @@
 package com.base.auth.form.task;
 
+import com.base.auth.validation.TaskSubmissionType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import javax.validation.constraints.NotEmpty;
@@ -28,4 +29,7 @@ public class UpdateTaskForm {
   private String filePath;
   @ApiModelProperty(name = "videoPath")
   private String videoPath;
+  @TaskSubmissionType
+  @ApiModelProperty(name = "submissionType")
+  private Integer submissionType;
 }

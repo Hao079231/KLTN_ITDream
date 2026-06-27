@@ -33,6 +33,8 @@ public class Task {
   private String content;
   private Integer kind; // 1 - task, 2 - subtask
   private Integer orderInParent;
+  @Column(name = "submission_type")
+  private Integer submissionType; // 0 - none, 1 - file only, 2 - text only, 3 - file + text
   private String videoPath;
   private String filePath;
   private String imagePath;
