@@ -281,6 +281,7 @@ public class StudentController extends ABasicController{
         simulation.setTotalFeedback(newTotalFeedback);
         simulation.setAvgStar(totalStar / newTotalFeedback);
       }
+      simulation.setTotalParticipant(simulation.getTotalParticipant() - 1);
       simulationRepository.save(simulation);
     }
 
