@@ -23,6 +23,8 @@ public class SimulationCriteria {
   private Long educatorId;
   private Long organizationId;
   private Integer level;
+  private Float avgStar;
+  private Integer totalParticipant;
   private Integer status;
 
   public Specification<Simulation> getSpecification() {
@@ -40,6 +42,14 @@ public class SimulationCriteria {
 
         if (getLevel() != null){
           predicates.add(cb.equal(root.get("level"), getLevel()));
+        }
+
+        if (getAvgStar() != null){
+          predicates.add(cb.equal(root.get("avgStar"), getAvgStar()));
+        }
+
+        if (getTotalParticipant() != null){
+          predicates.add(cb.equal(root.get("totalParticipant"), getTotalParticipant()));
         }
 
         if (getCategoryId() != null){
