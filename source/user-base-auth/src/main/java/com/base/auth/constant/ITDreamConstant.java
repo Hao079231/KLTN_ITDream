@@ -52,11 +52,11 @@ public class ITDreamConstant {
     public static final Integer SIMULATION_LEVEL_ADVANCED = 3;
     public static final List<Integer> SIMULATION_LEVELS = List.of(SIMULATION_LEVEL_BEGINNER, SIMULATION_LEVEL_INTERMEDIATE, SIMULATION_LEVEL_ADVANCED);
 
-    public static final Integer TASK_TYPE_OVERVIEW = 0;
-    public static final Integer TASK_TYPE_CONTENT = 1;
-    public static final Integer TASK_TYPE_QUESTION = 2;
-    public static final Integer TASK_TYPE_ANSWER = 3;
-    public static final List<Integer> TASK_TYPES = List.of(TASK_TYPE_OVERVIEW, TASK_TYPE_CONTENT, TASK_TYPE_QUESTION, TASK_TYPE_ANSWER);
+    public static final Integer TASK_TYPE_NONE = 0;
+    public static final Integer TASK_TYPE_FILE_ONLY = 1;
+    public static final Integer TASK_TYPE_TEXT_ONLY = 2;
+    public static final Integer TASK_TYPE_FILE_TEXT = 3;
+    public static final List<Integer> TASK_SUBMISSION_TYPES = List.of(TASK_TYPE_NONE, TASK_TYPE_FILE_ONLY, TASK_TYPE_TEXT_ONLY, TASK_TYPE_FILE_TEXT);
 
     public static final Integer TASK_NO_ERROR = 0;
 

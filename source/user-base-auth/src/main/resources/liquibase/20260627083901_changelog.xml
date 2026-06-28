@@ -1,0 +1,14 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet author="Authentication" id="1782549548554-3">
+        <addColumn tableName="db_it_dream_task">
+            <column name="submission_type" type="integer"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="Authentication" id="1782549548554-1">
+        <dropNotNullConstraint columnDataType="int" columnName="review_status" tableName="db_it_dream_simulation_enrollment"/>
+    </changeSet>
+    <changeSet author="Authentication" id="1782549548554-2">
+        <dropDefaultValue columnDataType="int" columnName="review_status" tableName="db_it_dream_simulation_enrollment"/>
+    </changeSet>
+</databaseChangeLog>

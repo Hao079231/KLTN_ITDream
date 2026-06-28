@@ -11,4 +11,5 @@ public class ProfileAccountDto {
   private String fullName;
   private Date birthday;
   private String avatar;
+  private Integer kind;
 }

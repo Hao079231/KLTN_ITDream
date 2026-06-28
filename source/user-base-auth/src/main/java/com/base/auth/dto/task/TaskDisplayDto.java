@@ -9,6 +9,7 @@ public class TaskDisplayDto {
   private String content;
   private String description;
   private Integer kind;
+  private Integer submissionType;
   private Integer orderInParent;
   private TaskDisplayDto parent;
 }
