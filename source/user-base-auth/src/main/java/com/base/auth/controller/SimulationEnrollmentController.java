@@ -111,8 +111,8 @@ public class SimulationEnrollmentController extends ABasicController{
     ResponseListDto<List<SimulationEnrollmentDisplayDto>> responseListDto = new ResponseListDto<>();
     criteria.setStudentId(getCurrentUser());
     Page<SimulationEnrollment> simulationEnrollments = simulationEnrollmentRepository.findAll(criteria.getSpecification(), pageable);
-    List<SimulationEnrollmentDisplayDto> courseEnrollmentDtos = simulationEnrollmentMapper.fromEntityToSimulationEnrollmentDisplayDtoList(simulationEnrollments.getContent());
-    responseListDto.setContent(courseEnrollmentDtos);
+    List<SimulationEnrollmentDisplayDto> simulationEnrollmentDtos = simulationEnrollmentMapper.fromEntityToSimulationEnrollmentDisplayDtoList(simulationEnrollments.getContent());
+    responseListDto.setContent(simulationEnrollmentDtos);
     responseListDto.setTotalElements(simulationEnrollments.getTotalElements());
     responseListDto.setTotalPages(simulationEnrollments.getTotalPages());
     apiMessageDto.setData(responseListDto);
@@ -122,32 +122,32 @@ public class SimulationEnrollmentController extends ABasicController{
 
   @GetMapping(value = "/student_complete_list", produces = MediaType.APPLICATION_JSON_VALUE)
   @PreAuthorize("hasRole('SE_ED_STCL')")
-  public ApiMessageDto<ResponseListDto<List<StudentLessonViewsDto>>> listStudentCompleteCourse(
+  public ApiMessageDto<ResponseListDto<List<StudentLessonViewsDto>>> listStudentCompleteSimulation(
       SimulationEnrollmentCriteria criteria, Pageable pageable){
     ApiMessageDto<ResponseListDto<List<StudentLessonViewsDto>>> apiMessageDto = new ApiMessageDto<>();
     ResponseListDto<List<StudentLessonViewsDto>> responseListDto = new ResponseListDto<>();
     criteria.setStatus(ITDreamConstant.SIMULATION_ENROLLMENT_COMPLETED);
     Page<SimulationEnrollment> simulationEnrollments = simulationEnrollmentRepository.findAll(criteria.getSpecification(), pageable);
     List<SimulationEnrollment> enrollmentList = simulationEnrollments.getContent();
-    List<StudentLessonViewsDto> courseEnrollmentDtos = simulationEnrollmentMapper.fromEntityToStudentLessonViewsDtoList(enrollmentList);
+    List<StudentLessonViewsDto> simulationEnrollmentDtos = simulationEnrollmentMapper.fromEntityToStudentLessonViewsDtoList(enrollmentList);
     for (int i = 0; i < enrollmentList.size(); i++) {
       SimulationEnrollment enrollment = enrollmentList.get(i);
       // isReviewed = true nếu có ít nhất 1 subtask đã được nhận xét
       boolean hasAnyReview = studentTaskProgressRepository.existsAnyReviewedTask(enrollment.getId(), ITDreamConstant.TASK_KIND_SUBTASK);
-      courseEnrollmentDtos.get(i).setIsReviewed(hasAnyReview);
+      simulationEnrollmentDtos.get(i).setIsReviewed(hasAnyReview);
       // reviewStatus: ưu tiên giá trị đã lưu trong DB; nếu chưa có thì tính từ runtime
       Integer dbReviewStatus = enrollment.getReviewStatus();
       if (dbReviewStatus != null && dbReviewStatus.equals(ITDreamConstant.SIMULATION_ENROLLMENT_REVIEW_STATUS_REVIEWED)) {
-        courseEnrollmentDtos.get(i).setReviewStatus(ITDreamConstant.SIMULATION_ENROLLMENT_REVIEW_STATUS_REVIEWED);
+        simulationEnrollmentDtos.get(i).setReviewStatus(ITDreamConstant.SIMULATION_ENROLLMENT_REVIEW_STATUS_REVIEWED);
       } else {
-        courseEnrollmentDtos.get(i).setReviewStatus(
+        simulationEnrollmentDtos.get(i).setReviewStatus(
             hasAnyReview
                 ? ITDreamConstant.SIMULATION_ENROLLMENT_REVIEW_STATUS_REVIEWED
                 : ITDreamConstant.SIMULATION_ENROLLMENT_REVIEW_STATUS_NOT_REVIEWED
         );
       }
     }
-    responseListDto.setContent(courseEnrollmentDtos);
+    responseListDto.setContent(simulationEnrollmentDtos);
     responseListDto.setTotalElements(simulationEnrollments.getTotalElements());
     responseListDto.setTotalPages(simulationEnrollments.getTotalPages());
     apiMessageDto.setData(responseListDto);
