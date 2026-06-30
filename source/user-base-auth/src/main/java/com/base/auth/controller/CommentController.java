@@ -17,7 +17,9 @@ import com.base.auth.model.criteria.CommentCriteria;
 import com.base.auth.repository.AccountRepository;
 import com.base.auth.repository.CommentRepository;
 import com.base.auth.repository.TaskRepository;
+import com.base.auth.service.CommentService;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +55,9 @@ public class CommentController extends ABasicController{
   @Autowired
   CommentMapper commentMapper;
 
+  @Autowired
+  CommentService commentService;
+
   @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
   @PreAuthorize("hasRole('CM_US_C')")
   public ApiMessageDto<String> create(@Valid @RequestBody CreateCommentForm form, BindingResult bindingResult){
@@ -70,7 +75,10 @@ public class CommentController extends ABasicController{
       if (!parent.getTask().getId().equals(task.getId())) {
         throw new BadRequestException("Bình luận cha không thuộc cùng một nhiệm vụ", ErrorCode.COMMENT_ERROR_INVALID_PARENT);
       }
-      Comment rootComment = parent.getRoot() == null ? parent : parent.getRoot();
+      Comment rootComment = parent;
+      while(rootComment.getRoot() != null){
+        rootComment = rootComment.getRoot();
+      }
       comment.setRoot(rootComment);
       comment.setParent(parent);
     }
@@ -149,15 +157,20 @@ public class CommentController extends ABasicController{
 
   @DeleteMapping(value = "/delete/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   @PreAuthorize("hasRole('CM_US_D')")
-  public ApiMessageDto<String> delete(@PathVariable("id") Long id){
+  public ApiMessageDto<String> delete(@PathVariable("id") Long id) {
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
-    Comment comment = commentRepository.findById(id).
-        orElseThrow(() -> new NotFoundException("Không tìm thấy bình luận", ErrorCode.COMMENT_ERROR_NOT_FOUND));
-    if (!comment.getUser().getId().equals(getCurrentUser())){
+    Comment comment = commentRepository.findById(id)
+        .orElseThrow(() -> new NotFoundException("Không tìm thấy bình luận", ErrorCode.COMMENT_ERROR_NOT_FOUND));
+
+    if (!comment.getUser().getId().equals(getCurrentUser())) {
       throw new BadRequestException("Không thể xóa bình luận", ErrorCode.COMMENT_ERROR_NOT_DELETE);
     }
-    commentRepository.deleteAllByParent(comment);
-    commentRepository.delete(comment);
+
+    if (comment.getParent() == null) {
+      commentService.deleteRootComment(comment);
+    } else {
+      commentService.deleteReplyComment(comment);
+    }
     apiMessageDto.setMessage("Xóa bình luận thành công");
     return apiMessageDto;
   }
