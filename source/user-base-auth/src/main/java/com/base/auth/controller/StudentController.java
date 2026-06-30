@@ -34,6 +34,7 @@ import com.base.auth.repository.SimulationRepository;
 import com.base.auth.repository.StudentRepository;
 import com.base.auth.repository.StudentTaskProgressRepository;
 import com.base.auth.repository.StudentSubmissionRepository;
+import com.base.auth.service.StudentService;
 import com.base.auth.utils.AESUtils;
 import com.base.auth.utils.JsonUitls;
 import java.util.Date;
@@ -84,31 +85,7 @@ public class StudentController extends ABasicController{
   GroupRepository groupRepository;
 
   @Autowired
-  StudentTaskProgressRepository studentTaskProgressRepository;
-
-  @Autowired
-  QuestionQuizHistoryRepository questionQuizHistoryRepository;
-
-  @Autowired
-  StudentSubmissionRepository studentSubmissionRepository;
-
-  @Autowired
-  SimulationEnrollmentRepository simulationEnrollmentRepository;
-
-  @Autowired
-  AchievementRepository achievementRepository;
-
-  @Autowired
-  ReviewSubmissionRepository reviewSubmissionRepository;
-
-  @Autowired
-  FeedbackRepository feedbackRepository;
-
-  @Autowired
-  SimulationRepository simulationRepository;
-
-  @Autowired
-  CommentRepository commentRepository;
+  StudentService studentService;
 
   @PostMapping(value = "/signup", produces= MediaType.APPLICATION_JSON_VALUE)
   public ApiMessageDto<OtpDto> create(@Valid @RequestBody SignUpStudentForm signUpStudentForm, BindingResult bindingResult)
@@ -259,43 +236,7 @@ public class StudentController extends ABasicController{
     if (Objects.equals(account.getKind(), ITDreamConstant.USER_KIND_ADMIN)){
       throw new BadRequestException("Không được phép xóa quản trị viên", ErrorCode.ACCOUNT_ERROR_NOT_ALLOW_DELETE_ADMIN);
     }
-    List<Achievement> achievements = achievementRepository.findAllByStudentId(id);
-    for (Achievement achievement : achievements){
-      if (StringUtils.isNotBlank(achievement.getFilePath())){
-        userBaseApiService.deleteByFilePath(achievement.getFilePath());
-      }
-    }
-    List<Feedback> feedbacks = feedbackRepository.findAllByStudentId(id);
-    for (Feedback feedback : feedbacks) {
-      Simulation simulation = feedback.getSimulation();
-      Long totalFeedback = simulation.getTotalFeedback();
-      Float avgStar = simulation.getAvgStar();
-
-      if (totalFeedback == null || totalFeedback <= 1) {
-        simulation.setTotalFeedback(0L);
-        simulation.setAvgStar(0F);
-      } else {
-        float totalStar = avgStar * totalFeedback;
-        totalStar -= feedback.getStar();
-        long newTotalFeedback = totalFeedback - 1;
-        simulation.setTotalFeedback(newTotalFeedback);
-        simulation.setAvgStar(totalStar / newTotalFeedback);
-      }
-      simulation.setTotalParticipant(simulation.getTotalParticipant() - 1);
-      simulationRepository.save(simulation);
-    }
-
-    achievementRepository.deleteAllByStudentId(id);
-    commentRepository.clearUser(id);
-    feedbackRepository.deleteAllByStudentId(id);
-    reviewSubmissionRepository.deleteAllByStudentId(id);
-    studentSubmissionRepository.deleteAllByStudentId(id);
-    questionQuizHistoryRepository.deleteAllByStudentId(id);
-    studentTaskProgressRepository.deleteAllByStudentId(id);
-    simulationEnrollmentRepository.deleteAllByStudentId(id);
-    if (StringUtils.isNotBlank(student.getAccount().getAvatarPath())){
-      userBaseApiService.deleteByFilePath(student.getAccount().getAvatarPath());
-    }
+    studentService.deleteByStudent(student);
     studentRepository.delete(student);
     accountRepository.delete(account);
     apiMessageDto.setMessage("Xóa học viên thành công");

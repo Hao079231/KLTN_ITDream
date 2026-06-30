@@ -81,11 +81,11 @@ public class StudentTaskProgressController extends ABasicController{
 
   @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
   @PreAuthorize("hasRole('STP_ST_C')")
-  public ApiMessageDto<String> create(@Valid @RequestBody CreateStudentTaskProgressForm form, BindingResult bindingResult){
+  public ApiMessageDto<Long> create(@Valid @RequestBody CreateStudentTaskProgressForm form, BindingResult bindingResult){
     if (!isStudent()){
       throw new UnauthorizationException("Người dùng không phải là học viên");
     }
-    ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
+    ApiMessageDto<Long> apiMessageDto = new ApiMessageDto<>();
     Boolean existStudentTaskProgress = studentTaskProgressRepository.existsBySimulationEnrollmentIdAndTask_KindAndStatus(form.getSimulationEnrollmentId(), ITDreamConstant.TASK_KIND_SUBTASK, ITDreamConstant.STUDENT_TASK_PROGRESS_IN_PROGRESS);
     if (existStudentTaskProgress){
       throw new BadRequestException("Vui lòng hoàn thành nhiệm vụ trước đó", ErrorCode.STUDENT_TASK_PROGRESS_ERROR_NOT_CREATE);
@@ -103,6 +103,7 @@ public class StudentTaskProgressController extends ABasicController{
     studentTaskProgress.setTask(task);
     studentTaskProgress.setSimulationEnrollment(simulationEnrollment);
     studentTaskProgressRepository.save(studentTaskProgress);
+    apiMessageDto.setData(studentTaskProgress.getId());
     apiMessageDto.setMessage("Tạo tiến độ nhiệm vụ thành công");
     return apiMessageDto;
   }
