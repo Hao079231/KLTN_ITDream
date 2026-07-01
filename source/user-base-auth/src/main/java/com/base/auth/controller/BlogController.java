@@ -253,7 +253,7 @@ public class BlogController extends ABasicController{
 
   @PutMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
   @PreAuthorize("hasRole('BL_U')")
-  public ApiMessageDto<String> udpate(@Valid @RequestBody UpdateBlogForm updateBlogForm, BindingResult bindingResult){
+  public ApiMessageDto<String> update(@Valid @RequestBody UpdateBlogForm updateBlogForm, BindingResult bindingResult){
     if (!isEducator()){
       throw new UnauthorizationException("Người dùng không phải là tác giả");
     }
@@ -275,9 +275,11 @@ public class BlogController extends ABasicController{
       if (StringUtils.isNotEmpty(updateBlogForm.getSubject())){
         throw new BadRequestException("Không thể cập nhật blog nếu cả danh mục và chủ đề đều tồn tại", ErrorCode.BLOG_ERROR_NAME_SUBJECT_EXIST);
       }
-      Boolean existBlog = blogRepository.existsByNameAndCategoryIdAndEducatorId(updateBlogForm.getName(), updateBlogForm.getCategoryId(), getCurrentUser());
-      if (existBlog){
-        throw new BadRequestException("Blog đã tồn tại", ErrorCode.BLOG_ERROR_EXIST);
+      if (!blog.getName().equals(updateBlogForm.getName())){
+        Boolean existBlog = blogRepository.existsByNameAndCategoryIdAndEducatorId(updateBlogForm.getName(), updateBlogForm.getCategoryId(), getCurrentUser());
+        if (existBlog){
+          throw new BadRequestException("Blog đã tồn tại", ErrorCode.BLOG_ERROR_EXIST);
+        }
       }
     } else if (updateBlogForm.getParentId() != null){
       if (nameBlogNotNull){
@@ -286,9 +288,11 @@ public class BlogController extends ABasicController{
       if (StringUtils.isEmpty(updateBlogForm.getSubject())){
         throw new BadRequestException("Không thể cập nhật blog nếu chủ đề bị trống", ErrorCode.BLOG_ERROR_SUBJECT_NOT_NULL);
       }
-      Boolean existSubject = blogRepository.existsBySubjectAndParentId(updateBlogForm.getSubject(), updateBlogForm.getParentId());
-      if (existSubject){
-        throw new BadRequestException("Chủ đề đã tồn tại", ErrorCode.BLOG_ERROR_EXIST);
+      if (blog.getSubject().equals(updateBlogForm.getSubject())){
+        Boolean existSubject = blogRepository.existsBySubjectAndParentId(updateBlogForm.getSubject(), updateBlogForm.getParentId());
+        if (existSubject){
+          throw new BadRequestException("Chủ đề đã tồn tại", ErrorCode.BLOG_ERROR_EXIST);
+        }
       }
     } else if (updateBlogForm.getCategoryId() == null && updateBlogForm.getParentId() == null){
       throw new BadRequestException("Không thể cập nhật blog nếu cả danh mục và blog cha đều bị trống", ErrorCode.BLOG_ERROR_CATEGORY_PARENT_BOTH_NULL);
