@@ -13,7 +13,7 @@ import org.mapstruct.ReportingPolicy;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE,
     nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
-    uses = {StudentMapper.class, TaskMapper.class})
+    uses = {StudentMapper.class, TaskMapper.class, StudentSubmissionMapper.class})
 public interface ReviewSubmissionMapper {
   @Mapping(source = "id", target = "id")
   @Mapping(source = "content", target = "content")
