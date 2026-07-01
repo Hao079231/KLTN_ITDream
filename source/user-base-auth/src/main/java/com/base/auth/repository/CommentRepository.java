@@ -16,6 +16,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long>, JpaSpec
 
   @Query("SELECT c FROM Comment c WHERE c.id = :rootId OR c.root.id = :rootId")
   List<Comment> findWholeThread(@Param("rootId") Long rootId);
-  
+
   List<Comment> findAllByUserId(Long userId);
 }
