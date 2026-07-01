@@ -46,6 +46,7 @@ public class NotificationController extends ABasicController{
   public ApiMessageDto<ResponseListDto<List<NotificationDisplayDto>>> listByStudent(NotificationCriteria criteria, Pageable pageable){
     ApiMessageDto<ResponseListDto<List<NotificationDisplayDto>>> apiMessageDto = new ApiMessageDto<>();
     ResponseListDto<List<NotificationDisplayDto>> responseListDto = new ResponseListDto<>();
+    criteria.setReceiverId(getCurrentUser());
     Page<Notification> notifications = notificationRepository.findAll(criteria.getSpecification(), pageable);
     responseListDto.setContent(notificationMapper.fromEntityToNotificationDisplayDtoList(notifications.getContent()));
     responseListDto.setTotalElements(notifications.getTotalElements());
