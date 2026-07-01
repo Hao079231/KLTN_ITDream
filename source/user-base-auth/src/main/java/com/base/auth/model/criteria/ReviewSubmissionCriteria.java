@@ -26,11 +26,8 @@ public class ReviewSubmissionCriteria {
       @Override
       public Predicate toPredicate(Root<ReviewSubmission> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
         List<Predicate> predicates = new ArrayList<>();
-        Join<ReviewSubmission, StudentSubmission> studentSubmissionJoin =
-            root.join("studentSubmission", JoinType.INNER);
-
-        Join<StudentSubmission, StudentTaskProgress> studentTaskProgressJoin =
-            studentSubmissionJoin.join("studentTaskProgress", JoinType.INNER);
+        Join<ReviewSubmission, StudentSubmission> studentSubmissionJoin = root.join("studentSubmission", JoinType.INNER);
+        Join<StudentSubmission, StudentTaskProgress> studentTaskProgressJoin = studentSubmissionJoin.join("studentTaskProgress", JoinType.INNER);
 
         if (studentTaskProgressId != null) {
           predicates.add(cb.equal(studentTaskProgressJoin.get("id"), studentTaskProgressId));

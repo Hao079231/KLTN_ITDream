@@ -61,6 +61,7 @@ public interface OrganizationMapper {
   @IterableMapping(elementTargetType = OrganizationDisplayDto.class, qualifiedByName = "fromEntityToOrganizationDisplayDto")
   List<OrganizationDisplayDto> fromEntityToOrganizationDisplayDtoList(List<Organization> organizations);
 
+  @Mapping(source = "id", target = "id")
   @Mapping(source = "name", target = "name")
   @Mapping(source = "shortName", target = "shortName")
   @Mapping(source = "logoUrl", target = "logoUrl")
