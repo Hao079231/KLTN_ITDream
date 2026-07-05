@@ -73,7 +73,7 @@ public class TaskQuestionController extends ABasicController{
   @PreAuthorize("hasRole('TQ_ED_C')")
   public ApiMessageDto<String> create(@Valid @RequestBody CreateTaskQuestionForm form, BindingResult bindingResult){
     if (!isEducator()){
-      throw new UnauthorizationException("Người dùng không phải là người hướng dẫn");
+      throw new UnauthorizationException("Người dùng không phải là giảng viên");
     }
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Task task = taskRepository.findById(form.getTaskId()).orElseThrow(()
@@ -152,7 +152,7 @@ public class TaskQuestionController extends ABasicController{
   @PreAuthorize("hasRole('TQ_ED_U')")
   public ApiMessageDto<String> update(@Valid @RequestBody UpdateTaskQuestionForm form, BindingResult bindingResult){
     if (!isEducator()){
-      throw new UnauthorizationException("Người dùng không phải là người hướng dẫn");
+      throw new UnauthorizationException("Người dùng không phải là giảng viên");
     }
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     TaskQuestion taskQuestion = taskQuestionRepository.findById(form.getId()).orElseThrow(()
@@ -178,7 +178,7 @@ public class TaskQuestionController extends ABasicController{
   @PreAuthorize("hasRole('TQ_ED_D')")
   public ApiMessageDto<String> delete(@PathVariable("id") Long id){
     if (!isEducator()){
-      throw new UnauthorizationException("Người dùng không phải là người hướng dẫn");
+      throw new UnauthorizationException("Người dùng không phải là giảng viên");
     }
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     TaskQuestion taskQuestion = taskQuestionRepository.findById(id).orElseThrow(()

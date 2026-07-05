@@ -16,31 +16,18 @@ import com.base.auth.form.student.UpdateStudentForm;
 import com.base.auth.mapper.AccountMapper;
 import com.base.auth.mapper.StudentMapper;
 import com.base.auth.model.Account;
-import com.base.auth.model.Achievement;
-import com.base.auth.model.Feedback;
 import com.base.auth.model.Group;
-import com.base.auth.model.Simulation;
 import com.base.auth.model.Student;
 import com.base.auth.model.criteria.StudentCriteria;
 import com.base.auth.repository.AccountRepository;
-import com.base.auth.repository.AchievementRepository;
-import com.base.auth.repository.CommentRepository;
-import com.base.auth.repository.FeedbackRepository;
-import com.base.auth.repository.SimulationEnrollmentRepository;
 import com.base.auth.repository.GroupRepository;
-import com.base.auth.repository.QuestionQuizHistoryRepository;
-import com.base.auth.repository.ReviewSubmissionRepository;
-import com.base.auth.repository.SimulationRepository;
 import com.base.auth.repository.StudentRepository;
-import com.base.auth.repository.StudentTaskProgressRepository;
-import com.base.auth.repository.StudentSubmissionRepository;
 import com.base.auth.service.StudentService;
 import com.base.auth.utils.AESUtils;
-import com.base.auth.utils.JsonUitls;
+import com.base.auth.utils.JsonUtils;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -290,7 +277,7 @@ public class StudentController extends ABasicController{
     }
 
     if (updateStudentForm.getPreferences() != null){
-      currentUser.setPreferences(JsonUitls.convertObjectToString(updateStudentForm.getPreferences()));
+      currentUser.setPreferences(JsonUtils.convertObjectToString(updateStudentForm.getPreferences()));
     }
 
     accountMapper.fromUpdateProfileStudentFormToEntity(updateStudentForm, currentAccount);

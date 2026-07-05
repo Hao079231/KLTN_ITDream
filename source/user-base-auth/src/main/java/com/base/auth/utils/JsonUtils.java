@@ -2,7 +2,6 @@ package com.base.auth.utils;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import java.util.Collections;
@@ -11,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 @Slf4j
-public class JsonUitls {
+public class JsonUtils {
   public static ObjectMapper getMapper() {
     ObjectMapper objectMapper = new ObjectMapper();
     objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
@@ -20,7 +19,7 @@ public class JsonUitls {
     return objectMapper;
   }
 
-  private JsonUitls(){}
+  private JsonUtils(){}
 
   public static String convertObjectToString(Object value){
     try{

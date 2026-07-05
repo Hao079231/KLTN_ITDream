@@ -78,9 +78,9 @@ public class SimulationController extends ABasicController{
   public ApiMessageDto<String> create(@Valid @RequestBody CreateSimulationForm form, BindingResult bindingResult){
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Educator educator = educatorRepository.findById(getCurrentUser()).orElseThrow(()
-        -> new NotFoundException("Không tìm thấy người hướng dẫn"));
+        -> new NotFoundException("Không tìm thấy giảng viên"));
     if (!isEducator()){
-      throw new BadRequestException("Người dùng không phải là người hướng dẫn", ErrorCode.USER_ERROR_NOT_EDUCATOR);
+      throw new BadRequestException("Người dùng không phải là giảng viên", ErrorCode.USER_ERROR_NOT_EDUCATOR);
     }
     Category category = categoryRepository.findById(form.getCategoryId()).orElseThrow(()
         -> new NotFoundException("Không tìm thấy danh mục", ErrorCode.CATEGORY_ERROR_NOT_FOUND));
@@ -217,7 +217,7 @@ public class SimulationController extends ABasicController{
   public ApiMessageDto<SimulationClientDto> getSimulationForEducator(@PathVariable("id") Long id){
     ApiMessageDto<SimulationClientDto> apiMessageDto = new ApiMessageDto<>();
     if (!isEducator()){
-      throw new BadRequestException("Người dùng không phải là người hướng dẫn", ErrorCode.USER_ERROR_NOT_EDUCATOR);
+      throw new BadRequestException("Người dùng không phải là giảng viên", ErrorCode.USER_ERROR_NOT_EDUCATOR);
     }
     Simulation simulation = simulationRepository.findById(id).orElseThrow(()
         -> new NotFoundException("Không tìm thấy mô phỏng", ErrorCode.SIMULATION_ERROR_NOT_FOUND));
@@ -235,7 +235,7 @@ public class SimulationController extends ABasicController{
   public ApiMessageDto<String> update(@Valid @RequestBody UpdateSimulationForm form, BindingResult bindingResult){
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     if (!isEducator()){
-      throw new BadRequestException("Người dùng không phải là người hướng dẫn");
+      throw new BadRequestException("Người dùng không phải là giảng viên");
     }
     Simulation simulation = simulationRepository.findById(form.getId()).orElseThrow(()
         -> new NotFoundException("Không tìm thấy mô phỏng", ErrorCode.SIMULATION_ERROR_NOT_FOUND));
@@ -330,7 +330,7 @@ public class SimulationController extends ABasicController{
   public ApiMessageDto<String> requestDelete(@PathVariable("id") Long id){
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     if (!isEducator()){
-      throw new BadRequestException("Người dùng không phải là người hướng dẫn", ErrorCode.USER_ERROR_NOT_EDUCATOR);
+      throw new BadRequestException("Người dùng không phải là giảng viên", ErrorCode.USER_ERROR_NOT_EDUCATOR);
     }
     Simulation simulation = simulationRepository.findById(id).orElseThrow(()
         -> new NotFoundException("Không tìm thấy mô phỏng", ErrorCode.SIMULATION_ERROR_NOT_FOUND));

@@ -72,7 +72,7 @@ public class TaskController extends ABasicController{
   @PreAuthorize("hasRole('TA_ED_C')")
   public ApiMessageDto<Long> create(@Valid @RequestBody CreateTaskForm form, BindingResult bindingResult){
     if(!isEducator()){
-      throw new UnauthorizationException("Người dùng không phải là người hướng dẫn");
+      throw new UnauthorizationException("Người dùng không phải là giảng viên");
     }
     ApiMessageDto<Long> apiMessageDto = new ApiMessageDto<>();
     Simulation simulation = simulationRepository.findById(form.getSimulationId())
@@ -175,7 +175,7 @@ public class TaskController extends ABasicController{
   @PreAuthorize("hasRole('TA_ED_V')")
   public ApiMessageDto<TaskEducatorDto> getByEducator(@PathVariable("id") Long id){
     if (!isEducator()){
-      throw new UnauthorizationException("Người dùng không phải là người hướng dẫn");
+      throw new UnauthorizationException("Người dùng không phải là giảng viên");
     }
     ApiMessageDto<TaskEducatorDto> apiMessageDto = new ApiMessageDto<>();
     Task task = taskRepository.findById(id).orElseThrow(()
@@ -231,7 +231,7 @@ public class TaskController extends ABasicController{
   @PreAuthorize("hasRole('TA_ED_U')")
   public ApiMessageDto<String> update(@Valid @RequestBody UpdateTaskForm form, BindingResult bindingResult){
     if (!isEducator()){
-      throw new UnauthorizationException("Người dùng không phải là người hướng dẫn");
+      throw new UnauthorizationException("Người dùng không phải là giảng viên");
     }
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Task task = taskRepository.findById(form.getId())
@@ -294,7 +294,7 @@ public class TaskController extends ABasicController{
   @PreAuthorize("hasRole('TA_ED_D')")
   public ApiMessageDto<String> delete(@PathVariable("id") Long id){
     if (!isEducator()){
-      throw new UnauthorizationException("Người dùng không phải là người hướng dẫn");
+      throw new UnauthorizationException("Người dùng không phải là giảng viên");
     }
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Task task = taskRepository.findById(id).orElseThrow(()

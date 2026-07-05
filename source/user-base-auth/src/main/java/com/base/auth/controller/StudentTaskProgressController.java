@@ -213,7 +213,7 @@ public class StudentTaskProgressController extends ABasicController{
   @PreAuthorize("hasRole('STP_ED_V')")
   public ApiMessageDto<StudentTaskProgressDetailDto> getByEducator(@PathVariable("id") Long id){
     if (!isEducator()){
-      throw new UnauthorizationException("Người dùng không phải là người hướng dẫn");
+      throw new UnauthorizationException("Người dùng không phải là giảng viên");
     }
     ApiMessageDto<StudentTaskProgressDetailDto> apiMessageDto = new ApiMessageDto<>();
     StudentTaskProgress studentTaskProgress = studentTaskProgressRepository.findById(id)

@@ -1,0 +1,96 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet author="Authentication" id="1783224544556-1">
+        <createTable tableName="db_it_dream_job_post">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="db_it_dream_job_postPK"/>
+            </column>
+            <column name="title" type="VARCHAR(255)"/>
+            <column name="content" type="TEXT"/>
+            <column name="address" type="VARCHAR(255)"/>
+            <column name="province_id" type="BIGINT"/>
+            <column name="ward_id" type="BIGINT"/>
+            <column name="date" type="datetime"/>
+            <column name="end_date" type="datetime"/>
+            <column name="image" type="TEXT"/>
+            <column name="job_url" type="VARCHAR(255)"/>
+            <column name="notice" type="VARCHAR(255)"/>
+            <column name="role_type" type="INT"/>
+            <column name="type" type="INT"/>
+            <column name="educator_id" type="BIGINT"/>
+            <column name="status" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="Authentication" id="1783224544556-2">
+        <createTable tableName="db_it_dream_nation">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="db_it_dream_nationPK"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="kind" type="INT"/>
+            <column name="parent_id" type="BIGINT"/>
+            <column name="status" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="Authentication" id="1783224544556-3">
+        <createTable tableName="db_it_dream_simulation_job">
+            <column name="job_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="simulation_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="Authentication" id="1783224544556-4">
+        <addColumn tableName="db_it_dream_student">
+            <column name="save_jobs" type="TEXT"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="Authentication" id="1783224544556-5">
+        <addForeignKeyConstraint baseColumnNames="job_id" baseTableName="db_it_dream_simulation_job" constraintName="FK47o9eytmtpdvcshq0xjq6begj" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="db_it_dream_job_post" validate="true"/>
+    </changeSet>
+    <changeSet author="Authentication" id="1783224544556-6">
+        <addForeignKeyConstraint baseColumnNames="educator_id" baseTableName="db_it_dream_job_post" constraintName="FK4fa63ioe5p7sj23cogd1h0ace" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="db_it_dream_educator" validate="true"/>
+    </changeSet>
+    <changeSet author="Authentication" id="1783224544556-7">
+        <addForeignKeyConstraint baseColumnNames="ward_id" baseTableName="db_it_dream_job_post" constraintName="FK7p2bpn8awpkt9cm552spqh8op" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="db_it_dream_nation" validate="true"/>
+    </changeSet>
+    <changeSet author="Authentication" id="1783224544556-8">
+        <addForeignKeyConstraint baseColumnNames="province_id" baseTableName="db_it_dream_job_post" constraintName="FKdd3kl6pg3mw8pkie30smqn1oq" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="db_it_dream_nation" validate="true"/>
+    </changeSet>
+    <changeSet author="Authentication" id="1783224544556-9">
+        <addForeignKeyConstraint baseColumnNames="parent_id" baseTableName="db_it_dream_nation" constraintName="FKqgn145j3dciiih4hc3119gpgx" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="db_it_dream_nation" validate="true"/>
+    </changeSet>
+    <changeSet author="Authentication" id="1783224544556-10">
+        <addForeignKeyConstraint baseColumnNames="simulation_id" baseTableName="db_it_dream_simulation_job" constraintName="FKsuh33lx7ii2mea1kphqn09r0u" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="db_it_dream_simulation" validate="true"/>
+    </changeSet>
+</databaseChangeLog>
