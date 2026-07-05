@@ -17,7 +17,7 @@ public class UpdateProfileAdminForm {
     @Email
     @ApiModelProperty(name = "email")
     private String email;
-    @Phone
+//    @Phone
     @ApiModelProperty(name = "phone")
     private String phone;
     //    @Password(allowNull = true)

@@ -44,6 +44,7 @@ public interface JobPostMapper {
   @Mapping(source = "status", target = "status")
   @Mapping(source = "educator", target = "educator", qualifiedByName = "fromEntityToEducatorDto")
   @Mapping(source = "simulations", target = "simulations", qualifiedByName = "fromEntityToSimulationDtoList")
+  @Mapping(source = "notice", target = "notice")
   @BeanMapping(ignoreByDefault = true)
   @Named("fromEntityToJobPostAdminDto")
   JobPostAdminDto fromEntityToJobPostAdminDto(JobPost jobPost);
@@ -66,6 +67,7 @@ public interface JobPostMapper {
   @Mapping(source = "status", target = "status")
   @Mapping(source = "educator", target = "educator", qualifiedByName = "fromEducatorToProfileDto")
   @Mapping(source = "simulations", target = "simulations", qualifiedByName = "fromEntityToSimulationDisplayDtoList")
+  @Mapping(source = "notice", target = "notice")
   @BeanMapping(ignoreByDefault = true)
   @Named("fromEntityToJobPostDto")
   JobPostDto fromEntityToJobPostDto(JobPost jobPost);

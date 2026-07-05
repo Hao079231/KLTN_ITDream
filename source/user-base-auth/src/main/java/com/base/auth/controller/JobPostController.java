@@ -89,7 +89,7 @@ public class JobPostController extends ABasicController{
     if (form.getWardId() != null){
       Nation ward = nationRepository.findById(form.getWardId())
           .orElseThrow(() -> new NotFoundException("Địa chỉ xã / phường không tồn tại", ErrorCode.NATION_ERROR_NOT_FOUND));
-      jobPost.setProvince(ward);
+      jobPost.setWard(ward);
     }
 
     List<Simulation> simulations = new ArrayList<>();
@@ -170,6 +170,7 @@ public class JobPostController extends ABasicController{
   }
 
   @GetMapping(value = "/get/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+  @PreAuthorize("hasRole('JP_V')")
   public ApiMessageDto<JobPostAdminDto> get(@PathVariable("id") Long id){
     if (!isAdmin()){
       throw new UnauthorizationException("Người dùng không phải quản trị viên");
@@ -184,6 +185,7 @@ public class JobPostController extends ABasicController{
   }
 
   @GetMapping(value = "/educator-get/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+  @PreAuthorize("hasRole('JP_ED_V')")
   public ApiMessageDto<JobPostDto> getByEducator(@PathVariable("id") Long id){
     if (!isEducator()){
       throw new UnauthorizationException("Người dùng không phải giảng viên");
@@ -235,7 +237,7 @@ public class JobPostController extends ABasicController{
     if (form.getWardId() != null){
       Nation ward = nationRepository.findById(form.getWardId())
           .orElseThrow(() -> new NotFoundException("Địa chỉ xã / phường không tồn tại", ErrorCode.NATION_ERROR_NOT_FOUND));
-      jobPost.setProvince(ward);
+      jobPost.setWard(ward);
     }
 
     List<Simulation> simulations = new ArrayList<>();
@@ -269,16 +271,31 @@ public class JobPostController extends ABasicController{
   }
 
   @PutMapping(value = "/update-status", produces = MediaType.APPLICATION_JSON_VALUE)
-  @PreAuthorize("hasRole('JP_UST')")
+  @PreAuthorize("hasRole('JP_UST') or hasRole('JP_ED_U')")
   public ApiMessageDto<String> updateStatus(@Valid @RequestBody JobPostStatusForm form, BindingResult bindingResult){
-    if (!isAdmin()){
-      throw new UnauthorizationException("Người dùng không phải là quản trị viên");
-    }
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     JobPost jobPost = jobPostRepository.findById(form.getId())
         .orElseThrow(() -> new NotFoundException("Tin tuyển dụng không tồn tại", ErrorCode.JOB_POST_ERROR_NOT_FOUND));
-    jobPost.setStatus(form.getStatus());
-    jobPost.setNotice(form.getNotice());
+
+    if (isAdmin()){
+      jobPost.setStatus(form.getStatus());
+      jobPost.setNotice(form.getNotice());
+    } else if (isEducator()){
+      if (jobPost.getEducator() == null || !Objects.equals(jobPost.getEducator().getId(), getCurrentUser())){
+        throw new UnauthorizationException("Không được phép cập nhật trạng thái cơ hội việc làm này");
+      }
+      if (form.getStatus() != ITDreamConstant.STATUS_ACTIVE && form.getStatus() != 0){
+        throw new BadRequestException("Trạng thái không hợp lệ dành cho giảng viên");
+      }
+      if (jobPost.getStatus() != ITDreamConstant.STATUS_ACTIVE && jobPost.getStatus() != 0){
+        throw new BadRequestException("Không thể thay đổi trạng thái hiện tại của cơ hội việc làm này");
+      }
+      jobPost.setStatus(form.getStatus());
+      jobPost.setNotice(null);
+    } else {
+      throw new UnauthorizationException("Người dùng không có quyền thực hiện thao tác này");
+    }
+
     jobPostRepository.save(jobPost);
     apiMessageDto.setMessage("Cập nhật trạng thái tin tuyển dụng thành công");
     return apiMessageDto;
@@ -314,7 +331,7 @@ public class JobPostController extends ABasicController{
     List<Long> jobPostIds = new ArrayList<>();
     for (Long jobPostId : form.getJobPostIds()){
       JobPost jobPost = jobPostRepository.findById(jobPostId).orElse(null);
-      if (jobPost != null){
+      if (jobPost != null && jobPost.getStatus() == ITDreamConstant.JOB_POST_STATUS_ACTIVE){
         jobPostIds.add(jobPostId);
       }
     }
@@ -334,7 +351,17 @@ public class JobPostController extends ABasicController{
     Student student = studentRepository.findById(getCurrentUser())
         .orElseThrow(() -> new NotFoundException("Học viên không tồn tại", ErrorCode.USER_ERROR_NOT_FOUND));
     ListSavedJobDto listSavedJobDto = new ListSavedJobDto();
-    listSavedJobDto.setJobPostIds(JsonUtils.convertJsonStringToClass(student.getSaveJobs(), Long.class));
+    List<Long> savedJobIds = JsonUtils.convertJsonStringToClass(student.getSaveJobs(), Long.class);
+    List<Long> activeSavedJobIds = new ArrayList<>();
+    if (savedJobIds != null) {
+      for (Long jobPostId : savedJobIds) {
+        JobPost jobPost = jobPostRepository.findById(jobPostId).orElse(null);
+        if (jobPost != null && jobPost.getStatus() == ITDreamConstant.JOB_POST_STATUS_ACTIVE) {
+          activeSavedJobIds.add(jobPostId);
+        }
+      }
+    }
+    listSavedJobDto.setJobPostIds(activeSavedJobIds);
     apiMessageDto.setData(listSavedJobDto);
     apiMessageDto.setMessage("Lấy danh sách tin tuyển dụng quan tâm thành công");
     return apiMessageDto;

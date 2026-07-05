@@ -13,6 +13,7 @@ import com.base.auth.exception.UnauthorizationException;
 import com.base.auth.form.simulation.CreateSimulationForm;
 import com.base.auth.form.simulation.RequestSimulationIdForm;
 import com.base.auth.form.simulation.UpdateSimulationForm;
+import com.base.auth.form.simulation.UpdateSimulationStatusForm;
 import com.base.auth.form.RequestProcessVideoMessageForm;
 import com.base.auth.mapper.SimulationMapper;
 import com.base.auth.model.Simulation;
@@ -387,6 +388,37 @@ public class SimulationController extends ABasicController{
     simulationService.deleteFileSimulation(simulation);
     simulationService.deleteAllBySimulation(simulation);
     apiMessageDto.setMessage("Xóa mô phỏng thành công");
+    return apiMessageDto;
+  }
+
+  @PutMapping(value = "/update-status", produces = MediaType.APPLICATION_JSON_VALUE)
+  @PreAuthorize("hasRole('SI_UST') or hasRole('SI_ED_U')")
+  public ApiMessageDto<String> updateStatus(@Valid @RequestBody UpdateSimulationStatusForm form, BindingResult bindingResult){
+    ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
+    Simulation simulation = simulationRepository.findById(form.getId())
+        .orElseThrow(() -> new NotFoundException("Mô phỏng không tồn tại", ErrorCode.SIMULATION_ERROR_NOT_FOUND));
+
+    if (isAdmin()){
+      simulation.setStatus(form.getStatus());
+      simulation.setNotice(form.getNotice());
+    } else if (isEducator()){
+      if (simulation.getEducator() == null || !Objects.equals(simulation.getEducator().getId(), getCurrentUser())){
+        throw new UnauthorizationException("Không được phép cập nhật trạng thái mô phỏng này");
+      }
+      if (form.getStatus() != ITDreamConstant.SIMULATION_STATUS_ACTIVE && form.getStatus() != 0){
+        throw new BadRequestException("Trạng thái không hợp lệ dành cho giảng viên");
+      }
+      if (simulation.getStatus() != ITDreamConstant.SIMULATION_STATUS_ACTIVE && simulation.getStatus() != 0){
+        throw new BadRequestException("Không thể thay đổi trạng thái hiện tại của mô phỏng này");
+      }
+      simulation.setStatus(form.getStatus());
+      simulation.setNotice(null);
+    } else {
+      throw new UnauthorizationException("Người dùng không có quyền thực hiện thao tác này");
+    }
+    
+    simulationRepository.save(simulation);
+    apiMessageDto.setMessage("Cập nhật trạng thái mô phỏng thành công");
     return apiMessageDto;
   }
 }

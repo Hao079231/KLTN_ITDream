@@ -16,7 +16,7 @@ public class UpdateProfileEducatorForm {
   @NotEmpty(message = "Họ và tên không được để trống")
   private String fullname;
   @ApiModelProperty(name = "phone")
-  @Phone
+//  @Phone
   private String phone;
   @ApiModelProperty(name = "birthday")
   @Past(message = "Ngày sinh phải ở trong quá khứ")

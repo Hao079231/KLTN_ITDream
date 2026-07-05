@@ -37,4 +37,6 @@ public class JobPostAdminDto extends ABasicAdminDto {
   private List<SimulationDto> simulations;
 
   private EducatorDto educator;
+
+  private String notice;
 }

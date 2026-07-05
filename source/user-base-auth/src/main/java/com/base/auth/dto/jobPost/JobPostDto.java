@@ -40,4 +40,6 @@ public class JobPostDto {
   private List<SimulationDisplayDto> simulations;
 
   private ProfileEducatorDto educator;
+
+  private String notice;
 }
