@@ -1,6 +1,7 @@
 package com.base.auth.repository;
 
 import com.base.auth.model.JobPost;
+import java.util.Date;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -17,4 +18,15 @@ public interface JobPostRepository extends JpaRepository<JobPost, Long>, JpaSpec
   void deleteSimulationJobByJobId(@Param("jobId") Long jobId);
 
   List<JobPost> findAllByEducatorId(Long educatorId);
+
+  @Modifying
+  @Transactional
+  @Query("UPDATE JobPost j " +
+      "SET j.status = 0 " +
+      "WHERE j.status <> 0 " +
+      "AND ( " +
+      "      (j.type = 1 AND j.date <= :now) " +
+      "   OR (j.type = 2 AND j.endDate <= :now) " +
+      ")")
+  void expireJobPosts(@Param("now") Date now);
 }
