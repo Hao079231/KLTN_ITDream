@@ -87,7 +87,7 @@ public class ReviewSubmissionController extends ABasicController{
   @PreAuthorize("hasRole('RS_ED_C')")
   public ApiMessageDto<String> create(@Valid @RequestBody CreateReviewSubmissionForm form, BindingResult bindingResult){
     if (!isEducator()){
-      throw new UnauthorizationException("Người dùng không phải là người hướng dẫn");
+      throw new UnauthorizationException("Người dùng không phải là giảng viên");
     }
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     StudentSubmission studentSubmission = studentSubmissionRepository.findById(form.getStudentSubmissionId())
@@ -171,7 +171,7 @@ public class ReviewSubmissionController extends ABasicController{
   @PreAuthorize("hasRole('RS_ED_STV')")
   public ApiMessageDto<ReviewSubmissionDisplayDto> educatorGet(@PathVariable("id") Long id){
     if (!isEducator()){
-      throw new UnauthorizationException("Người dùng không phải là người hướng dẫn");
+      throw new UnauthorizationException("Người dùng không phải là giảng viên");
     }
     ApiMessageDto<ReviewSubmissionDisplayDto> apiMessageDto = new ApiMessageDto<>();
     ReviewSubmission reviewSubmission = reviewSubmissionRepository.findById(id)
@@ -186,7 +186,7 @@ public class ReviewSubmissionController extends ABasicController{
   @PreAuthorize("hasRole('RS_ED_U')")
   public ApiMessageDto<String> update(@Valid @RequestBody UpdateReviewSubmissionForm form, BindingResult bindingResult){
     if (!isEducator()){
-      throw new UnauthorizationException("Người dùng không phải là người hướng dẫn");
+      throw new UnauthorizationException("Người dùng không phải là giảng viên");
     }
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     ReviewSubmission reviewSubmission = reviewSubmissionRepository.findById(form.getId())
@@ -202,7 +202,7 @@ public class ReviewSubmissionController extends ABasicController{
   @Transactional
   public ApiMessageDto<String> delete(@PathVariable("id") Long id){
     if (!isEducator()){
-      throw new UnauthorizationException("Người dùng không phải là người hướng dẫn");
+      throw new UnauthorizationException("Người dùng không phải là giảng viên");
     }
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     ReviewSubmission reviewSubmission = reviewSubmissionRepository.findById(id)
@@ -225,13 +225,13 @@ public class ReviewSubmissionController extends ABasicController{
   @PreAuthorize("hasRole('RS_ED_CR')")
   public ApiMessageDto<String> completeReview(@Valid @RequestBody CreateCompleteReviewSubmissionForm form, BindingResult bindingResult) {
     if (!isEducator()) {
-      throw new UnauthorizationException("Người dùng không phải là người hướng dẫn");
+      throw new UnauthorizationException("Người dùng không phải là giảng viên");
     }
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Simulation simulation = simulationRepository.findById(form.getSimulationId())
         .orElseThrow(() -> new NotFoundException("Không tìm thấy mô phỏng", ErrorCode.SIMULATION_ERROR_NOT_FOUND));
     Educator educator = educatorRepository.findById(getCurrentUser())
-        .orElseThrow(() -> new NotFoundException("Không tìm thấy người hướng dẫn", ErrorCode.USER_ERROR_NOT_FOUND));
+        .orElseThrow(() -> new NotFoundException("Không tìm thấy giảng viên", ErrorCode.USER_ERROR_NOT_FOUND));
     Account account = accountRepository.findAccountByUsername(form.getStudentUsername());
     if (account == null){
       throw new NotFoundException("Không tìm thấy tài khoản", ErrorCode.ACCOUNT_ERROR_NOT_FOUND);

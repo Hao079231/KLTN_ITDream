@@ -50,6 +50,7 @@ public class SimulationService {
     achievementRepository.setNullBySimulationId(simulation.getId());
     feedbackRepository.deleteAllBySimulationId(simulation.getId());
     simulationEnrollmentRepository.deleteAllBySimulationId(simulation.getId());
+    simulationRepository.deleteSimulationJobBySimulationId(simulation.getId());
     simulationRepository.delete(simulation);
   }
 

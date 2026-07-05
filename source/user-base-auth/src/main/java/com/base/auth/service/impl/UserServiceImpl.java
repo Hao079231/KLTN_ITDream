@@ -173,7 +173,7 @@ public class UserServiceImpl implements UserDetailsService {
         }
 
         if(!Objects.equals(user.getKind(), ITDreamConstant.USER_KIND_EDUCATOR)){
-            throw new BadRequestException("Người dùng không phải là khoa chuyên môn");
+            throw new BadRequestException("Người dùng không phải là giảng viên");
         }
 
         boolean enabled = true;
@@ -251,7 +251,7 @@ public class UserServiceImpl implements UserDetailsService {
         }
 
         if(!Objects.equals(user.getKind(), ITDreamConstant.USER_KIND_EDUCATOR)){
-            throw new CustomOauthException("Người dùng không phải là khoa chuyên môn", ErrorCode.ACCOUNT_ERROR_NOT_ACTIVE);
+            throw new CustomOauthException("Người dùng không phải là giảng viên", ErrorCode.ACCOUNT_ERROR_NOT_ACTIVE);
         }
 
         requestParameters.put("email", user.getEmail());
