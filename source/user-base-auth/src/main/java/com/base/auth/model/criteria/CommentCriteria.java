@@ -1,6 +1,8 @@
 package com.base.auth.model.criteria;
 
+import com.base.auth.model.Account;
 import com.base.auth.model.Comment;
+import com.base.auth.model.SimulationEnrollment;
 import com.base.auth.model.Task;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +18,7 @@ import org.springframework.data.jpa.domain.Specification;
 public class CommentCriteria {
   @NotNull(message = "taskId is required")
   private Long taskId;
+  private Long userId;
 
   public Specification<Comment> getSpecification() {
     return (root, query, cb) -> {
@@ -24,12 +27,14 @@ public class CommentCriteria {
       Join<Comment, Comment> rootJoin = root.join("root", JoinType.LEFT);
       predicates.add(cb.equal(taskJoin.get("id"), taskId));
 
-      if (query.getResultType() != Long.class && query.getResultType() != long.class) {
-        Expression<Object> threadDate = cb.selectCase()
-            .when(cb.isNull(root.get("root")), root.get("createdDate"))
-            .otherwise(rootJoin.get("createdDate"));
+      // 2. Filters
+      if (getTaskId() != null) {
+        predicates.add(cb.equal(taskJoin.get("id"), getTaskId()));
+      }
 
-        query.orderBy(cb.desc(threadDate), cb.asc(root.get("createdDate")));
+      if (getUserId() != null) {
+        Join<Comment, Account> userJoin = root.join("user", JoinType.LEFT);
+        predicates.add(cb.equal(userJoin.get("id"), getUserId()));
       }
 
       return cb.and(predicates.toArray(new Predicate[0]));

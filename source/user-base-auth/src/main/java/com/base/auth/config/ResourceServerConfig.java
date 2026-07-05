@@ -47,7 +47,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .antMatchers("/v1/task/guest_list").permitAll()
                 .antMatchers("/v1/feedback/client_list").permitAll()
                 .antMatchers("/v1/organization/guest_list").permitAll()
-                .antMatchers("/v1/blog/student-list", "/v1/blog/student-get").permitAll()
+                .antMatchers("/v1/blog/student-list", "/v1/blog/student-get/**").permitAll()
                 .antMatchers("/**").authenticated()
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().exceptionHandling().accessDeniedHandler(new OAuth2AccessDeniedHandler());
