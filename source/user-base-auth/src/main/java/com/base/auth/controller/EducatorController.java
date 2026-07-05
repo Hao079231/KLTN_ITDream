@@ -18,6 +18,7 @@ import com.base.auth.mapper.AccountMapper;
 import com.base.auth.mapper.EducatorMapper;
 import com.base.auth.model.Account;
 import com.base.auth.model.Blog;
+import com.base.auth.model.JobPost;
 import com.base.auth.model.Organization;
 import com.base.auth.model.Simulation;
 import com.base.auth.model.Educator;
@@ -27,8 +28,10 @@ import com.base.auth.repository.AccountRepository;
 import com.base.auth.repository.BlogRepository;
 import com.base.auth.repository.EducatorRepository;
 import com.base.auth.repository.GroupRepository;
+import com.base.auth.repository.JobPostRepository;
 import com.base.auth.repository.OrganizationRepository;
 import com.base.auth.repository.SimulationRepository;
+import com.base.auth.service.JobPostService;
 import com.base.auth.service.SimulationService;
 import com.base.auth.utils.AESUtils;
 import java.util.Date;
@@ -88,6 +91,12 @@ public class EducatorController extends ABasicController{
 
   @Autowired
   BlogRepository blogRepository;
+
+  @Autowired
+  JobPostRepository jobPostRepository;
+
+  @Autowired
+  JobPostService jobPostService;
 
   @PostMapping(value = "/signup", produces= MediaType.APPLICATION_JSON_VALUE)
   public ApiMessageDto<OtpDto> create(@Valid @RequestBody SignUpEducatorForm signUpEducatorForm, BindingResult bindingResult)
@@ -153,7 +162,7 @@ public class EducatorController extends ABasicController{
     responseListDto.setTotalElements(listEducator.getTotalElements());
     responseListDto.setTotalPages(listEducator.getTotalPages());
     apiMessageDto.setData(responseListDto);
-    apiMessageDto.setMessage("Lấy danh sách tài khoản người hướng dẫn thành công");
+    apiMessageDto.setMessage("Lấy danh sách tài khoản giảng viên thành công");
     return apiMessageDto;
   }
 
@@ -166,9 +175,9 @@ public class EducatorController extends ABasicController{
     }
     ApiMessageDto<EducatorDto> apiMessageDto = new ApiMessageDto<>();
     Educator educator = educatorRepository.findById(id).orElseThrow(()
-        -> new NotFoundException("Không tìm thấy tài khoản người hướng dẫn", ErrorCode.USER_ERROR_NOT_FOUND));
+        -> new NotFoundException("Không tìm thấy tài khoản giảng viên", ErrorCode.USER_ERROR_NOT_FOUND));
     apiMessageDto.setData(educatorMapper.fromEntityToEducatorDto(educator));
-    apiMessageDto.setMessage("Lấy thông tin tài khoản người hướng dẫn thành công");
+    apiMessageDto.setMessage("Lấy thông tin tài khoản giảng viên thành công");
     return apiMessageDto;
   }
 
@@ -180,7 +189,7 @@ public class EducatorController extends ABasicController{
     }
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Educator educator = educatorRepository.findById(updateEducatorForm.getId()).orElseThrow(()
-        -> new NotFoundException("Không tìm thấy tài khoản người hướng dẫn", ErrorCode.USER_ERROR_NOT_FOUND));
+        -> new NotFoundException("Không tìm thấy tài khoản giảng viên", ErrorCode.USER_ERROR_NOT_FOUND));
 
     Account account = accountRepository.findById(educator.getAccount().getId()).orElseThrow(()
         -> new NotFoundException("Không tìm thấy tài khoản", ErrorCode.ACCOUNT_ERROR_NOT_FOUND));
@@ -226,7 +235,7 @@ public class EducatorController extends ABasicController{
     }
     accountMapper.fromUpdateEducatorFormToEntity(updateEducatorForm, account);
     accountRepository.save(account);
-    apiMessageDto.setMessage("Cập nhật tài khoản người hướng dẫn thành công");
+    apiMessageDto.setMessage("Cập nhật tài khoản giảng viên thành công");
     return apiMessageDto;
   }
 
@@ -239,7 +248,7 @@ public class EducatorController extends ABasicController{
     }
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Educator educator = educatorRepository.findById(id).orElseThrow(()
-        -> new NotFoundException("Không tìm thấy tài khoản người hướng dẫn", ErrorCode.USER_ERROR_NOT_FOUND));
+        -> new NotFoundException("Không tìm thấy tài khoản giảng viên", ErrorCode.USER_ERROR_NOT_FOUND));
 
     Account account = educator.getAccount();
     if (account == null){
@@ -253,6 +262,11 @@ public class EducatorController extends ABasicController{
     List<Simulation> simulations = simulationRepository.findAllByEducatorId(id);
     for (Simulation simulation : simulations){
       simulationService.deleteAllBySimulation(simulation);
+    }
+
+    List<JobPost> jobPosts = jobPostRepository.findAllByEducatorId(id);
+    for (JobPost jobPost : jobPosts) {
+      jobPostService.deleteAllByJobPost(jobPost);
     }
 
     List<Blog> blogs = blogRepository.findAllByEducatorId(id);
@@ -276,7 +290,7 @@ public class EducatorController extends ABasicController{
     simulationRepository.deleteAllByEducatorId(id);
     educatorRepository.delete(educator);
     accountRepository.delete(account);
-    apiMessageDto.setMessage("Xóa tài khoản người hướng dẫn thành công");
+    apiMessageDto.setMessage("Xóa tài khoản giảng viên thành công");
     return apiMessageDto;
   }
 
@@ -287,10 +301,10 @@ public class EducatorController extends ABasicController{
     Account account = accountRepository.findById(getCurrentUser()).orElseThrow(
         () -> new NotFoundException("Không tìm thấy tài khoản", ErrorCode.ACCOUNT_ERROR_NOT_FOUND));
     Educator educator = educatorRepository.findById(account.getId()).orElseThrow(
-        () -> new NotFoundException("Không tìm thấy tài khoản người hướng dẫn", ErrorCode.USER_ERROR_NOT_FOUND));
+        () -> new NotFoundException("Không tìm thấy tài khoản giảng viên", ErrorCode.USER_ERROR_NOT_FOUND));
     ProfileEducatorDto educatorDto = educatorMapper.fromEducatorToProfileDto(educator);
     apiMessageDto.setData(educatorDto);
-    apiMessageDto.setMessage("Lấy hồ sơ tài khoản người hướng dẫn thành công");
+    apiMessageDto.setMessage("Lấy hồ sơ tài khoản giảng viên thành công");
     return apiMessageDto;
   }
 
@@ -301,7 +315,7 @@ public class EducatorController extends ABasicController{
     Account currentAccount = accountRepository.findById(getCurrentUser()).orElseThrow(() ->
         new NotFoundException("Không tìm thấy tài khoản", ErrorCode.ACCOUNT_ERROR_NOT_FOUND));
     Educator currentUser = educatorRepository.findById(currentAccount.getId()).orElseThrow(() ->
-        new NotFoundException("Không tìm thấy tài khoản người hướng dẫn", ErrorCode.USER_ERROR_NOT_FOUND));
+        new NotFoundException("Không tìm thấy tài khoản giảng viên", ErrorCode.USER_ERROR_NOT_FOUND));
 
     if (!Objects.equals(currentAccount.getUsername(), updateEducatorForm.getUsername())){
       Boolean existUsername = accountRepository.existsByUsername(updateEducatorForm.getUsername());
@@ -330,7 +344,7 @@ public class EducatorController extends ABasicController{
     currentUser.setAccount(currentAccount);
     accountRepository.save(currentAccount);
     educatorRepository.save(currentUser);
-    apiMessageDto.setMessage("Cập nhật hồ sơ tài khoản người hướng dẫn thành công");
+    apiMessageDto.setMessage("Cập nhật hồ sơ tài khoản giảng viên thành công");
     return apiMessageDto;
   }
 
@@ -342,17 +356,17 @@ public class EducatorController extends ABasicController{
     }
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Educator educator = educatorRepository.findById(requestEducatorIdForm.getId()).orElseThrow(()
-        -> new NotFoundException("Không tìm thấy tài khoản người hướng dẫn", ErrorCode.USER_ERROR_NOT_FOUND));
+        -> new NotFoundException("Không tìm thấy tài khoản giảng viên", ErrorCode.USER_ERROR_NOT_FOUND));
 
     Account account = accountRepository.findById(educator.getAccount().getId()).orElseThrow(()
         -> new NotFoundException("Không tìm thấy tài khoản", ErrorCode.ACCOUNT_ERROR_NOT_FOUND));
 
     if (!Objects.equals(ITDreamConstant.STATUS_WAITING_APPROVE, account.getStatus())){
-      throw new BadRequestException("Không thể duyệt tài khoản người hướng dẫn", ErrorCode.USER_ERROR_NOT_APPROVE);
+      throw new BadRequestException("Không thể duyệt tài khoản giảng viên", ErrorCode.USER_ERROR_NOT_APPROVE);
     }
     account.setStatus(ITDreamConstant.STATUS_ACTIVE);
     accountRepository.save(account);
-    apiMessageDto.setMessage("Duyệt tài khoản người hướng dẫn thành công");
+    apiMessageDto.setMessage("Duyệt tài khoản giảng viên thành công");
     return apiMessageDto;
   }
 
@@ -364,17 +378,17 @@ public class EducatorController extends ABasicController{
     }
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     Educator educator = educatorRepository.findById(requestEducatorIdForm.getId()).orElseThrow(()
-        -> new NotFoundException("Không tìm thấy tài khoản người hướng dẫn", ErrorCode.USER_ERROR_NOT_FOUND));
+        -> new NotFoundException("Không tìm thấy tài khoản giảng viên", ErrorCode.USER_ERROR_NOT_FOUND));
 
     Account account = accountRepository.findById(educator.getAccount().getId()).orElseThrow(()
         -> new NotFoundException("Không tìm thấy tài khoản", ErrorCode.ACCOUNT_ERROR_NOT_FOUND));
 
     if (!Objects.equals(ITDreamConstant.STATUS_WAITING_APPROVE, account.getStatus())){
-      throw new BadRequestException("Không thể từ chối tài khoản người hướng dẫn", ErrorCode.USER_ERROR_NOT_REJECT);
+      throw new BadRequestException("Không thể từ chối tài khoản giảng viên", ErrorCode.USER_ERROR_NOT_REJECT);
     }
     account.setStatus(ITDreamConstant.STATUS_REJECT);
     accountRepository.save(account);
-    apiMessageDto.setMessage("Từ chối tài khoản người hướng dẫn thành công");
+    apiMessageDto.setMessage("Từ chối tài khoản giảng viên thành công");
     return apiMessageDto;
   }
 }

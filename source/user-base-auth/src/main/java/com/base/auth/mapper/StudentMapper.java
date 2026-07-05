@@ -4,7 +4,7 @@ import com.base.auth.dto.student.ProfileStudentDto;
 import com.base.auth.dto.student.StudentDto;
 import com.base.auth.dto.student.StudentPreferencesDto;
 import com.base.auth.model.Student;
-import com.base.auth.utils.JsonUitls;
+import com.base.auth.utils.JsonUtils;
 import java.util.List;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.IterableMapping;
@@ -36,7 +36,7 @@ public interface StudentMapper {
 
   @Named("fromEntityToStudentPreferencesDto")
   default List<StudentPreferencesDto> fromEntityToStudentPreferencesDto(String preferences){
-    return JsonUitls.convertJsonStringToClass(preferences, StudentPreferencesDto.class);
+    return JsonUtils.convertJsonStringToClass(preferences, StudentPreferencesDto.class);
   }
 
   @IterableMapping(elementTargetType = ProfileStudentDto.class,qualifiedByName = "fromStudentToProfileDto")

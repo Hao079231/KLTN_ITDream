@@ -64,6 +64,7 @@ public interface SimulationMapper {
   SimulationDisplayDto fromEntityToSimulationDisplayDto(Simulation simulation);
 
   @IterableMapping(elementTargetType = SimulationDisplayDto.class, qualifiedByName = "fromEntityToSimulationDisplayDto")
+  @Named("fromEntityToSimulationDisplayDtoList")
   List<SimulationDisplayDto> fromEntityToSimulationDisplayDtoList(List<Simulation> simulations);
 
   @Mapping(source = "id", target = "id")
@@ -83,6 +84,7 @@ public interface SimulationMapper {
   SimulationClientDto fromEntityToSimulationClientDto(Simulation simulation);
 
   @IterableMapping(elementTargetType = SimulationDto.class, qualifiedByName = "fromEntityToSimulationDto")
+  @Named("fromEntityToSimulationDtoList")
   List<SimulationDto> fromEntityToSimulationDtoList(List<Simulation> simulations);
 
   @Mapping(source = "title", target = "title")

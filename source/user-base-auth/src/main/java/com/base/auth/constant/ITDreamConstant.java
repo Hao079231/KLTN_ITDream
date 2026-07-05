@@ -79,6 +79,30 @@ public class ITDreamConstant {
     public static final Integer ORGANIZATION_TYPE_COMPANY = 2;
     public static final List<Integer> ORGANIZATION_TYPES = List.of(ORGANIZATION_TYPE_UNIVERSITY, ORGANIZATION_TYPE_COMPANY);
 
+    public static final Integer NATION_KIND_PROVINCE = 1;
+    public static final Integer NATION_KIND_WARD = 2;
+
+    public static final List<Integer> NATION_KINDS = List.of(NATION_KIND_PROVINCE, NATION_KIND_WARD);
+
+    public static final Integer JOB_POST_TYPE_EVENT = 1;
+    public static final Integer JOB_POST_TYPE_JOB = 2;
+    public static final Integer JOB_POST_TYPE_TALENT_NETWORK = 3;
+    public static final List<Integer> JOB_POST_TYPES = List.of(JOB_POST_TYPE_EVENT, JOB_POST_TYPE_JOB, JOB_POST_TYPE_TALENT_NETWORK);
+
+    public static final Integer JOB_POST_ROLE_TYPE_INTERNSHIP = 1;
+    public static final Integer JOB_POST_ROLE_TYPE_PART_TIMES = 2;
+    public static final Integer JOB_POST_ROLE_TYPE_FULL_TIMES = 3;
+    public static final Integer JOB_POST_ROLE_TYPE_INTERNSHIP_PART_TIMES = 4;
+    public static final Integer JOB_POST_ROLE_TYPE_INTERNSHIP_FULL_TIMES = 5;
+    public static final Integer JOB_POST_ROLE_TYPE_PART_TIMES_FULL_TIMES = 6;
+    public static final Integer JOB_POST_ROLE_TYPE_ALL = 7;
+    public static final List<Integer> JOB_POST_ROLE_TYPES = List.of(JOB_POST_ROLE_TYPE_INTERNSHIP, JOB_POST_ROLE_TYPE_PART_TIMES, JOB_POST_ROLE_TYPE_FULL_TIMES, JOB_POST_ROLE_TYPE_INTERNSHIP_PART_TIMES, JOB_POST_ROLE_TYPE_INTERNSHIP_FULL_TIMES, JOB_POST_ROLE_TYPE_PART_TIMES_FULL_TIMES, JOB_POST_ROLE_TYPE_ALL);
+
+    public static final Integer JOB_POST_STATUS_ACTIVE = 1;
+    public static final Integer JOB_POST_STATUS_HIDE = 0;
+    public static final Integer JOB_POST_STATUS_BLOCK = -1;
+    public static final List<Integer> JOB_POST_STATUSES = List.of(JOB_POST_STATUS_ACTIVE, JOB_POST_STATUS_HIDE, JOB_POST_STATUS_BLOCK);
+
     public static final Boolean READ = true;
 
     public static final String BACKEND_PROCESS_VIDEO_CMD = "BACKEND_PROCESS_VIDEO";
@@ -94,7 +118,6 @@ public class ITDreamConstant {
     public static final String PHONE_PATTERN = "^0\\d{9}$";
     public static final String FILE_PATH_PATTERN = "^https?://.*$";
     public static final String VIETNAM_HOTLINE_PATTERN = "^(0(2[0-9]{9}|[3|5|7|8|9][0-9]{8})|(1[8|9]00[0-9]{4,6}))$";
-
 
     public static final String NOTIFICATION_TYPE_REVIEW_SUBMISSION = "REVIEW_SUBMISSION";
 

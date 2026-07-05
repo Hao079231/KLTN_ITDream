@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class OrganizationClientDto {
+  private Long id;
   private String name;
   private String shortName;
   private String logoUrl;

@@ -158,7 +158,6 @@ public class ErrorCode {
     public static final String ORGANIZATION_ERROR_NOT_FOUND = "ORGANIZATION-ERROR-0000";
     public static final String ORGANIZATION_ERROR_EXIST = "ORGANIZATION-ERROR-0001";
 
-
     /**
      * Starting error code Blog
      * */
@@ -170,4 +169,19 @@ public class ErrorCode {
     public static final String BLOG_ERROR_SUBJECT_NOT_NULL = "BLOG-ERROR-0005";
     public static final String BLOG_ERROR_NAME_SUBJECT_EXIST = "BLOG-ERROR-0006";
     public static final String BLOG_ERROR_CATEGORY_PARENT_BOTH_NOT_NULL = "BLOG-ERROR-0007";
+
+    /**
+     * Starting error code Nation
+     * */
+    public static final String NATION_ERROR_NOT_FOUND = "NATION-ERROR-0000";
+    public static final String NATION_ERROR_EXIST = "NATION-ERROR-0001";
+    public static final String NATION_ERROR_NOT_PARENT = "NATION-ERROR-0002";
+    public static final String NATION_ERROR_NOT_PARENT_DISTRICT = "NATION-ERROR-0003";
+
+    /**
+     * Starting error code Job post
+     * */
+    public static final String JOB_POST_ERROR_NOT_FOUND = "JOB-POST-ERROR-0000";
+    public static final String JOB_POST_ERROR_EXIST = "JOB-POST-ERROR-0001";
+    public static final String JOB_POST_ERROR_DATE_NULL = "JOB-POST-ERROR-0002";
 }

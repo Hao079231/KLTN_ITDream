@@ -14,7 +14,7 @@ import org.mapstruct.ReportingPolicy;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE,
     nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
-    uses = {AccountMapper.class})
+    uses = {AccountMapper.class, OrganizationMapper.class})
 public interface EducatorMapper {
   @Mapping(source = "id",target = "id")
   @Mapping(source ="account",target = "account",qualifiedByName="fromAccountToDto")

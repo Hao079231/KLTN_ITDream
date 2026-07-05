@@ -46,6 +46,7 @@ public class NotificationController extends ABasicController{
   public ApiMessageDto<ResponseListDto<List<NotificationDisplayDto>>> listByStudent(NotificationCriteria criteria, Pageable pageable){
     ApiMessageDto<ResponseListDto<List<NotificationDisplayDto>>> apiMessageDto = new ApiMessageDto<>();
     ResponseListDto<List<NotificationDisplayDto>> responseListDto = new ResponseListDto<>();
+    criteria.setReceiverId(getCurrentUser());
     Page<Notification> notifications = notificationRepository.findAll(criteria.getSpecification(), pageable);
     responseListDto.setContent(notificationMapper.fromEntityToNotificationDisplayDtoList(notifications.getContent()));
     responseListDto.setTotalElements(notifications.getTotalElements());
@@ -69,8 +70,8 @@ public class NotificationController extends ABasicController{
     return apiMessageDto;
   }
 
-  @DeleteMapping(value = "/clear_all", produces = MediaType.APPLICATION_JSON_VALUE)
-  @PreAuthorize("hasRole('NO_ST_CA')")
+  @DeleteMapping(value = "/read", produces = MediaType.APPLICATION_JSON_VALUE)
+  @PreAuthorize("hasRole('NO_ST_R')")
   public ApiMessageDto<String> clearAll(){
     if (!isStudent()){
       throw new UnauthorizationException("Người dùng không phải là học viên");

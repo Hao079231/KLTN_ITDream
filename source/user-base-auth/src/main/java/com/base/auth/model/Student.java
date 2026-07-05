@@ -20,10 +20,15 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 public class Student{
   @Id
   private Long id;
+
   @OneToOne
   @MapsId
   @JoinColumn(name = "id")
   private Account account;
+
   @Column(columnDefinition = "TEXT")
   private String preferences;
+
+  @Column(columnDefinition = "TEXT",name = "save_jobs")
+  private String saveJobs;
 }
