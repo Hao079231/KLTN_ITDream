@@ -31,4 +31,5 @@ public class AccountDto {
     @ApiModelProperty(name = "status")
     private Integer status;
     private Boolean isSuperAdmin;
+    private Date createdDate;
 }
