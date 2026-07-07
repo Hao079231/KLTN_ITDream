@@ -89,7 +89,7 @@ public class JobPostController extends ABasicController{
     if (form.getWardId() != null){
       Nation ward = nationRepository.findById(form.getWardId())
           .orElseThrow(() -> new NotFoundException("Địa chỉ xã / phường không tồn tại", ErrorCode.NATION_ERROR_NOT_FOUND));
-      jobPost.setProvince(ward);
+      jobPost.setWard(ward);
     }
 
     List<Simulation> simulations = new ArrayList<>();
@@ -120,6 +120,10 @@ public class JobPostController extends ABasicController{
 
     if (form.getRoleType() == null){
       jobPost.setRoleType(null);
+    }
+
+    if (form.getContent() == null){
+      jobPost.setContent(null);
     }
 
     jobPostRepository.save(jobPost);

@@ -27,8 +27,11 @@ public class FeedbackCriteria {
       @Override
       public Predicate toPredicate(Root<Feedback> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
         List<Predicate> predicates = new ArrayList<>();
-        Join<Feedback, Simulation> simulationJoin = root.join("simulation", JoinType.INNER);
-        predicates.add(cb.equal(simulationJoin.get("id"), getSimulationId()));
+
+        if (getSimulationId() != null){
+          Join<Feedback, Simulation> simulationJoin = root.join("simulation", JoinType.INNER);
+          predicates.add(cb.equal(simulationJoin.get("id"), getSimulationId()));
+        }
 
         if (getStartDate() != null && getEndDate() != null) {
           predicates.add(cb.between(root.get("modifiedDate"), getStartDate(), getEndDate()));

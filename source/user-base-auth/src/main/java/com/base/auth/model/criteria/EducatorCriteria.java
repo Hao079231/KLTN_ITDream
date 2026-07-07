@@ -3,6 +3,7 @@ package com.base.auth.model.criteria;
 import com.base.auth.model.Account;
 import com.base.auth.model.Educator;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -21,6 +22,8 @@ public class EducatorCriteria {
   private String phone;
   private String email;
   private Integer status;
+  private Date startDate;
+  private Date endDate;
 
   public Specification<Educator> getSpecification() {
     return new Specification<Educator>() {
@@ -53,6 +56,14 @@ public class EducatorCriteria {
         {
           Join<Educator, Account> joinAccount = root.join("account",JoinType.INNER);
           predicates.add(cb.like(cb.lower(joinAccount.get("fullName")),"%"+ getFullName()+"%"));
+        }
+
+        if (getStartDate() != null && getEndDate() != null) {
+          predicates.add(cb.between(root.get("createdDate"), getStartDate(), getEndDate()));
+        } else if (getStartDate() != null) {
+          predicates.add(cb.greaterThanOrEqualTo(root.get("createdDate"), getStartDate()));
+        } else if (getEndDate() != null) {
+          predicates.add(cb.lessThanOrEqualTo(root.get("createdDate"), getEndDate()));
         }
 
         return cb.and(predicates.toArray(new Predicate[predicates.size()]));
