@@ -22,7 +22,7 @@ public class UpdateProfileStudentForm {
   @ApiModelProperty(name = "birthday")
   @Past(message = "Ngày sinh phải ở trong quá khứ")
   private Date birthday;
-  @Phone
+  @Phone(allowNull = true)
   private String phone;
   @ApiModelProperty(name = "avatarPath")
   private String avatarPath;

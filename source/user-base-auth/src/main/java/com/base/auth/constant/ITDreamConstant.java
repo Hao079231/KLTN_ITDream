@@ -31,10 +31,12 @@ public class ITDreamConstant {
     public static final Integer BLOG_STATUS_ACTIVE = 1;
     public static final Integer BLOG_STATUS_REJECT = -1;
 
+    public static final Integer SIMULATION_STATUS_INACTIVE = 0;
     public static final Integer SIMULATION_STATUS_ACTIVE = 1;
     public static final Integer SIMULATION_STATUS_WAITING_APPROVE = 2;
     public static final Integer SIMULATION_STATUS_WAITING_APPROVE_DELETE = 3;
     public static final Integer SIMULATION_STATUS_REJECT = -1;
+    public static final List<Integer> SIMULATION_STATUSES = List.of(SIMULATION_STATUS_INACTIVE, SIMULATION_STATUS_ACTIVE, SIMULATION_STATUS_WAITING_APPROVE, SIMULATION_STATUS_WAITING_APPROVE_DELETE, SIMULATION_STATUS_REJECT);
 
     public static final Integer STATE_SIMULATION_PROCESSING = 1;
     public static final Integer STATE_SIMULATION_DONE = 2;

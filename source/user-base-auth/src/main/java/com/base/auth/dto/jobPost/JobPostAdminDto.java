@@ -29,6 +29,8 @@ public class JobPostAdminDto extends ABasicAdminDto {
 
   private NationAdminDto ward;
 
+  private String notice;
+
   private Date date;
 
   private Date endDate;

@@ -118,6 +118,10 @@ public class JobPostController extends ABasicController{
       jobPost.setEndDate(null);
     }
 
+    if (form.getRoleType() == null){
+      jobPost.setRoleType(null);
+    }
+
     jobPostRepository.save(jobPost);
     apiMessageDto.setMessage("Tạo tin tuyển dụng thành công");
     return apiMessageDto;
@@ -170,6 +174,7 @@ public class JobPostController extends ABasicController{
   }
 
   @GetMapping(value = "/get/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+  @PreAuthorize("hasRole('JP_V')")
   public ApiMessageDto<JobPostAdminDto> get(@PathVariable("id") Long id){
     if (!isAdmin()){
       throw new UnauthorizationException("Người dùng không phải quản trị viên");
@@ -184,6 +189,7 @@ public class JobPostController extends ABasicController{
   }
 
   @GetMapping(value = "/educator-get/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+  @PreAuthorize("hasRole('JP_ED_V')")
   public ApiMessageDto<JobPostDto> getByEducator(@PathVariable("id") Long id){
     if (!isEducator()){
       throw new UnauthorizationException("Người dùng không phải giảng viên");
@@ -247,22 +253,29 @@ public class JobPostController extends ABasicController{
     }
     jobPost.setSimulations(simulations);
 
-    if (form.getType().equals(ITDreamConstant.JOB_POST_TYPE_EVENT)){
-      if (form.getDate() == null){
-        throw new BadRequestException("Đăng tin sự kiện phải có ngày tổ chức", ErrorCode.JOB_POST_ERROR_DATE_NULL);
+    if (!form.getType().equals(jobPost.getType())){
+      if (form.getType().equals(ITDreamConstant.JOB_POST_TYPE_EVENT)){
+        if (form.getDate() == null){
+          throw new BadRequestException("Đăng tin sự kiện phải có ngày tổ chức", ErrorCode.JOB_POST_ERROR_DATE_NULL);
+        }
+        jobPost.setDate(form.getDate());
+        jobPost.setEndDate(null);
+      } else if (form.getType().equals(ITDreamConstant.JOB_POST_TYPE_JOB)){
+        if (form.getEndDate() == null){
+          throw new BadRequestException("Đăng tin tuyển dụng phải có ngày kết thúc", ErrorCode.JOB_POST_ERROR_DATE_NULL);
+        }
+        jobPost.setDate(null);
+        jobPost.setEndDate(form.getEndDate());
+      } else {
+        jobPost.setDate(null);
+        jobPost.setEndDate(null);
       }
-      jobPost.setDate(form.getDate());
-      jobPost.setEndDate(null);
-    } else if (form.getType().equals(ITDreamConstant.JOB_POST_TYPE_JOB)){
-      if (form.getEndDate() == null){
-        throw new BadRequestException("Đăng tin tuyển dụng phải có ngày kết thúc", ErrorCode.JOB_POST_ERROR_DATE_NULL);
-      }
-      jobPost.setDate(null);
-      jobPost.setEndDate(form.getEndDate());
-    } else {
-      jobPost.setDate(null);
-      jobPost.setEndDate(null);
     }
+
+    if (form.getRoleType() == null && Objects.equals(form.getRoleType(), jobPost.getRoleType())){
+      jobPost.setRoleType(null);
+    }
+
     jobPostRepository.save(jobPost);
     apiMessageDto.setMessage("Cập nhật tin tuyển dụng thành công");
     return apiMessageDto;

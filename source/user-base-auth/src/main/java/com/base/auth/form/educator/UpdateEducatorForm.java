@@ -21,7 +21,7 @@ public class UpdateEducatorForm {
   @ApiModelProperty(name = "fulName")
   @NotEmpty(message = "Họ và tên không được để trống")
   private String fullName;
-  @Phone
+  @Phone(allowNull = true)
   @ApiModelProperty(name = "phone")
   private String phone;
   @Email

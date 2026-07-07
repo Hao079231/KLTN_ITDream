@@ -68,13 +68,13 @@ public class JobPostCriteria {
         }
 
         if (getProvinceId() != null) {
-          Join<JobPost, Nation> nationJoin = root.join("nation", JoinType.INNER);
-          predicates.add(cb.equal(nationJoin.get("id"), getProvinceId()));
+          Join<JobPost, Nation> provinceJoin = root.join("province", JoinType.INNER);
+          predicates.add(cb.equal(provinceJoin.get("id"), getProvinceId()));
         }
 
         if (getWardId() != null) {
-          Join<JobPost, Nation> nationJoin = root.join("nation", JoinType.INNER);
-          predicates.add(cb.equal(nationJoin.get("id"), getWardId()));
+          Join<JobPost, Nation> wardJoin = root.join("ward", JoinType.INNER);
+          predicates.add(cb.equal(wardJoin.get("id"), getWardId()));
         }
 
         if (getStatus() != null) {

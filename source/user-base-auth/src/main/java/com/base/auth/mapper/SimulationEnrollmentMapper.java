@@ -44,6 +44,7 @@ public interface SimulationEnrollmentMapper {
   List<SimulationEnrollmentDisplayDto> fromEntityToSimulationEnrollmentDisplayDtoList(List<SimulationEnrollment> simulationEnrollment);
 
   @Mapping(source = "id", target = "id")
+  @Mapping(source = "simulation", target = "simulation", qualifiedByName = "fromEntityToSimulationDisplayDto")
   @Mapping(source = "student", target = "student", qualifiedByName = "fromStudentToProfileDto")
   @Mapping(source = "reviewStatus", target = "reviewStatus")
   @BeanMapping(ignoreByDefault = true)
