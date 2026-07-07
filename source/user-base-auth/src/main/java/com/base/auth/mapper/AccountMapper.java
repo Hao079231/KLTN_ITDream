@@ -41,6 +41,7 @@ public interface AccountMapper {
     @Mapping(source = "avatarPath", target = "avatar")
     @Mapping(source = "status", target = "status")
     @Mapping(source = "isSuperAdmin", target = "isSuperAdmin")
+    @Mapping(source = "createdDate", target = "createdDate")
     @BeanMapping(ignoreByDefault = true)
     @Named("fromAccountToDto")
     AccountDto fromAccountToDto(Account account);

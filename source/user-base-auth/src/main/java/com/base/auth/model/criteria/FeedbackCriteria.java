@@ -1,5 +1,6 @@
 package com.base.auth.model.criteria;
 
+import com.base.auth.model.Educator;
 import com.base.auth.model.Simulation;
 import com.base.auth.model.Feedback;
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ import org.springframework.data.jpa.domain.Specification;
 @Data
 public class FeedbackCriteria {
   private Long simulationId;
+  private Long educatorId;
   private Date startDate;
   private Date endDate;
 
@@ -28,7 +30,15 @@ public class FeedbackCriteria {
       public Predicate toPredicate(Root<Feedback> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
         List<Predicate> predicates = new ArrayList<>();
         Join<Feedback, Simulation> simulationJoin = root.join("simulation", JoinType.INNER);
-        predicates.add(cb.equal(simulationJoin.get("id"), getSimulationId()));
+
+        if (getSimulationId() != null) {
+          predicates.add(cb.equal(simulationJoin.get("id"), getSimulationId()));
+        }
+
+        if (getEducatorId() != null) {
+          Join<Simulation, Educator> educatorJoin = simulationJoin.join("educator", JoinType.INNER);
+          predicates.add(cb.equal(educatorJoin.get("id"), getEducatorId()));
+        }
 
         if (getStartDate() != null && getEndDate() != null) {
           predicates.add(cb.between(root.get("modifiedDate"), getStartDate(), getEndDate()));

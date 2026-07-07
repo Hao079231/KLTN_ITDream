@@ -95,6 +95,9 @@ public class FeedbackController extends ABasicController{
   public ApiMessageDto<ResponseListDto<List<FeedbackDto>>> list(FeedbackCriteria criteria, Pageable pageable){
     ApiMessageDto<ResponseListDto<List<FeedbackDto>>> apiMessageDto = new ApiMessageDto<>();
     ResponseListDto<List<FeedbackDto>> responseListDto = new ResponseListDto<>();
+    if (isEducator()) {
+      criteria.setEducatorId(getCurrentUser());
+    }
     Page<Feedback> feedbacks = feedbackRepository.findAll(criteria.getSpecification(), pageable);
     List<FeedbackDto> feedbackDtos = feedbackMapper.fromEntityToFeedbackDtoList(feedbacks.getContent());
     responseListDto.setContent(feedbackDtos);

@@ -1,0 +1,126 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet author="Authentication" id="20260707180000-1">
+        <!-- 1. Create nation permission -->
+        <insert tableName="db_it_dream_permission">
+            <column name="id" valueNumeric="6778614941024301"/>
+            <column name="name" value="Create nation"/>
+            <column name="action" value="/v1/nation/create"/>
+            <column name="show_menu" valueBoolean="false"/>
+            <column name="description" value="Create nation"/>
+            <column name="name_group" value="Nation"/>
+            <column name="p_code" value="NA_C"/>
+            <column name="status" valueNumeric="1"/>
+            <column name="created_by" value="Admin"/>
+            <column name="created_date" valueDate="2026-07-07T18:00:00"/>
+            <column name="modified_by" value="Admin"/>
+            <column name="modified_date" valueDate="2026-07-07T18:00:00"/>
+        </insert>
+        <!-- 2. Update nation permission -->
+        <insert tableName="db_it_dream_permission">
+            <column name="id" valueNumeric="6778614941024302"/>
+            <column name="name" value="Update nation"/>
+            <column name="action" value="/v1/nation/update"/>
+            <column name="show_menu" valueBoolean="false"/>
+            <column name="description" value="Update nation"/>
+            <column name="name_group" value="Nation"/>
+            <column name="p_code" value="NA_U"/>
+            <column name="status" valueNumeric="1"/>
+            <column name="created_by" value="Admin"/>
+            <column name="created_date" valueDate="2026-07-07T18:00:00"/>
+            <column name="modified_by" value="Admin"/>
+            <column name="modified_date" valueDate="2026-07-07T18:00:00"/>
+        </insert>
+        <!-- 3. Delete nation permission -->
+        <insert tableName="db_it_dream_permission">
+            <column name="id" valueNumeric="6778614941024303"/>
+            <column name="name" value="Delete nation"/>
+            <column name="action" value="/v1/nation/delete"/>
+            <column name="show_menu" valueBoolean="false"/>
+            <column name="description" value="Delete nation"/>
+            <column name="name_group" value="Nation"/>
+            <column name="p_code" value="NA_D"/>
+            <column name="status" valueNumeric="1"/>
+            <column name="created_by" value="Admin"/>
+            <column name="created_date" valueDate="2026-07-07T18:00:00"/>
+            <column name="modified_by" value="Admin"/>
+            <column name="modified_date" valueDate="2026-07-07T18:00:00"/>
+        </insert>
+        <!-- 4. Get nation detail permission -->
+        <insert tableName="db_it_dream_permission">
+            <column name="id" valueNumeric="6778614941024304"/>
+            <column name="name" value="Get nation detail"/>
+            <column name="action" value="/v1/nation/get"/>
+            <column name="show_menu" valueBoolean="false"/>
+            <column name="description" value="Get nation detail"/>
+            <column name="name_group" value="Nation"/>
+            <column name="p_code" value="NA_V"/>
+            <column name="status" valueNumeric="1"/>
+            <column name="created_by" value="Admin"/>
+            <column name="created_date" valueDate="2026-07-07T18:00:00"/>
+            <column name="modified_by" value="Admin"/>
+            <column name="modified_date" valueDate="2026-07-07T18:00:00"/>
+        </insert>
+        <!-- 5. Get list nation permission -->
+        <insert tableName="db_it_dream_permission">
+            <column name="id" valueNumeric="6778614941024305"/>
+            <column name="name" value="Get list nation"/>
+            <column name="action" value="/v1/nation/list"/>
+            <column name="show_menu" valueBoolean="true"/>
+            <column name="description" value="Get list nation"/>
+            <column name="name_group" value="Nation"/>
+            <column name="p_code" value="NA_L"/>
+            <column name="status" valueNumeric="1"/>
+            <column name="created_by" value="Admin"/>
+            <column name="created_date" valueDate="2026-07-07T18:00:00"/>
+            <column name="modified_by" value="Admin"/>
+            <column name="modified_date" valueDate="2026-07-07T18:00:00"/>
+        </insert>
+    </changeSet>
+
+    <changeSet author="Authentication" id="20260707180000-2">
+        <!-- Map permissions to Role Super Admin (id=15) -->
+        <insert tableName="db_it_dream_permission_group">
+            <column name="group_id" valueNumeric="15"/>
+            <column name="permission_id" valueNumeric="6778614941024301"/>
+        </insert>
+        <insert tableName="db_it_dream_permission_group">
+            <column name="group_id" valueNumeric="15"/>
+            <column name="permission_id" valueNumeric="6778614941024302"/>
+        </insert>
+        <insert tableName="db_it_dream_permission_group">
+            <column name="group_id" valueNumeric="15"/>
+            <column name="permission_id" valueNumeric="6778614941024303"/>
+        </insert>
+        <insert tableName="db_it_dream_permission_group">
+            <column name="group_id" valueNumeric="15"/>
+            <column name="permission_id" valueNumeric="6778614941024304"/>
+        </insert>
+        <insert tableName="db_it_dream_permission_group">
+            <column name="group_id" valueNumeric="15"/>
+            <column name="permission_id" valueNumeric="6778614941024305"/>
+        </insert>
+
+        <!-- Map permissions to Role Admin (id=14) -->
+        <insert tableName="db_it_dream_permission_group">
+            <column name="group_id" valueNumeric="14"/>
+            <column name="permission_id" valueNumeric="6778614941024301"/>
+        </insert>
+        <insert tableName="db_it_dream_permission_group">
+            <column name="group_id" valueNumeric="14"/>
+            <column name="permission_id" valueNumeric="6778614941024302"/>
+        </insert>
+        <insert tableName="db_it_dream_permission_group">
+            <column name="group_id" valueNumeric="14"/>
+            <column name="permission_id" valueNumeric="6778614941024303"/>
+        </insert>
+        <insert tableName="db_it_dream_permission_group">
+            <column name="group_id" valueNumeric="14"/>
+            <column name="permission_id" valueNumeric="6778614941024304"/>
+        </insert>
+        <insert tableName="db_it_dream_permission_group">
+            <column name="group_id" valueNumeric="14"/>
+            <column name="permission_id" valueNumeric="6778614941024305"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>
