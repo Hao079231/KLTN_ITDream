@@ -325,7 +325,8 @@ public class EducatorController extends ABasicController{
       currentAccount.setUsername(updateEducatorForm.getUsername());
     }
 
-    if (!Objects.equals(currentAccount.getPhone(), updateEducatorForm.getPhone())){
+    if (StringUtils.isNotBlank(updateEducatorForm.getPhone())
+        && !Objects.equals(currentAccount.getPhone(), updateEducatorForm.getPhone())){
       Boolean existPhone = accountRepository.existsByPhone(updateEducatorForm.getPhone());
       if (existPhone){
         throw new BadRequestException("Số điện thoại đã tồn tại", ErrorCode.ACCOUNT_ERROR_PHONE_EXIST);

@@ -30,6 +30,8 @@ public class JobPostDto {
 
   private NationDto ward;
 
+  private String notice;
+
   private Date date;
 
   private Date endDate;

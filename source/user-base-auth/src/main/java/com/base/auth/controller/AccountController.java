@@ -213,7 +213,8 @@ public class AccountController extends ABasicController{
             account.setEmail(updateProfileAdminForm.getEmail());
         }
 
-        if (!Objects.equals(account.getPhone(), updateProfileAdminForm.getPhone())){
+        if (StringUtils.isNotBlank(updateProfileAdminForm.getPhone())
+            && !Objects.equals(account.getPhone(), updateProfileAdminForm.getPhone())){
             Boolean existPhone = accountRepository.existsByPhone(updateProfileAdminForm.getPhone());
             if (existPhone){
                 throw new BadRequestException("Số điện thoại đã tồn tại", ErrorCode.ACCOUNT_ERROR_PHONE_EXIST);

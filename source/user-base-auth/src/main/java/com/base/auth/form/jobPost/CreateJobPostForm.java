@@ -19,7 +19,6 @@ public class CreateJobPostForm {
   @ApiModelProperty(name = "title")
   private String title;
 
-  @NotEmpty(message = "Nội dung không được để trống")
   @ApiModelProperty(name = "content")
   private String content;
 

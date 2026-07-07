@@ -5,6 +5,7 @@ import com.base.auth.model.Simulation;
 import com.base.auth.model.SimulationEnrollment;
 import com.base.auth.model.Student;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -22,6 +23,8 @@ public class SimulationEnrollmentCriteria {
   private Long simulationId;
   private Integer status;
   private String username;
+  private Date startDate;
+  private Date endDate;
 
   public Specification<SimulationEnrollment> getSpecification() {
     return new Specification<SimulationEnrollment>() {
@@ -48,6 +51,15 @@ public class SimulationEnrollmentCriteria {
         if (getStatus() != null){
           predicates.add(cb.equal(root.get("status"), getStatus()));
         }
+
+        if (getStartDate() != null && getEndDate() != null) {
+          predicates.add(cb.between(root.get("modifiedDate"), getStartDate(), getEndDate()));
+        } else if (getStartDate() != null) {
+          predicates.add(cb.greaterThanOrEqualTo(root.get("modifiedDate"), getStartDate()));
+        } else if (getEndDate() != null) {
+          predicates.add(cb.lessThanOrEqualTo(root.get("modifiedDate"), getEndDate()));
+        }
+
         return cb.and(predicates.toArray(new Predicate[predicates.size()]));
       }
     };
