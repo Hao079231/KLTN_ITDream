@@ -29,4 +29,14 @@ public interface JobPostRepository extends JpaRepository<JobPost, Long>, JpaSpec
       "   OR (j.type = 2 AND j.endDate <= :now) " +
       ")")
   void expireJobPosts(@Param("now") Date now);
+
+  @Modifying
+  @Transactional
+  @Query("UPDATE JobPost j SET j.province = NULL WHERE j.province.id = :provinceId")
+  void setNullProvinceByProvinceId(@Param("provinceId") Long provinceId);
+
+  @Modifying
+  @Transactional
+  @Query("UPDATE JobPost j SET j.ward = NULL WHERE j.ward.id = :wardId")
+  void setNullWardByWardId(@Param("wardId") Long wardId);
 }

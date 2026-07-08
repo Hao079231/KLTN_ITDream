@@ -14,6 +14,7 @@ import com.base.auth.form.nation.UpdateNationForm;
 import com.base.auth.mapper.NationMapper;
 import com.base.auth.model.Nation;
 import com.base.auth.model.criteria.NationCriteria;
+import com.base.auth.repository.JobPostRepository;
 import com.base.auth.repository.NationRepository;
 import java.util.List;
 import javax.validation.Valid;
@@ -41,6 +42,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class NationController extends ABasicController{
   @Autowired
   NationRepository nationRepository;
+
+  @Autowired
+  JobPostRepository jobPostRepository;
 
   @Autowired
   NationMapper nationMapper;
@@ -162,7 +166,9 @@ public class NationController extends ABasicController{
 
     if (nation.getKind().equals(ITDreamConstant.NATION_KIND_PROVINCE)) {
       nationRepository.setNullChildrenByParentId(id);
-
+      jobPostRepository.setNullProvinceByProvinceId(id);
+    } else if (nation.getKind().equals(ITDreamConstant.NATION_KIND_WARD)){
+      jobPostRepository.setNullWardByWardId(id);
     }
 
     nationRepository.delete(nation);
