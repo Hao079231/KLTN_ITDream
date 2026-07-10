@@ -26,6 +26,7 @@ public interface TaskMapper {
   @Mapping(source = "description", target = "description")
   @Mapping(source = "content", target = "content")
   @Mapping(source = "kind", target = "kind")
+  @Mapping(source = "submissionType", target = "submissionType")
   @Mapping(source = "imagePath", target = "imagePath")
   @Mapping(source = "filePath", target = "filePath")
   @Mapping(source = "videoPath", target = "videoPath")
