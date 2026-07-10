@@ -1,5 +1,6 @@
 package com.base.auth.model.criteria;
 
+import com.base.auth.model.Account;
 import com.base.auth.model.Achievement;
 import com.base.auth.model.Simulation;
 import com.base.auth.model.Student;
@@ -35,7 +36,8 @@ public class AchievementCriteria {
 
         if (StringUtils.isNotEmpty(getFullName())){
           Join<Achievement, Student> studentJoin = root.join("student", JoinType.INNER);
-          predicates.add(cb.like(cb.lower(studentJoin.get("fullName")), "%" + getFullName().toLowerCase() + "%"));
+          Join<Student, Account> accountJoin = studentJoin.join("account", JoinType.INNER);
+          predicates.add(cb.like(cb.lower(accountJoin.get("fullName")), "%" + getFullName().toLowerCase() + "%"));
         }
 
         if (StringUtils.isNotEmpty(getTitle())){
