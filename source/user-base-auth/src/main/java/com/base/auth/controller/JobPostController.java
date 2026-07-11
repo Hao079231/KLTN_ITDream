@@ -245,7 +245,7 @@ public class JobPostController extends ABasicController{
     if (form.getWardId() != null){
       Nation ward = nationRepository.findById(form.getWardId())
           .orElseThrow(() -> new NotFoundException("Địa chỉ xã / phường không tồn tại", ErrorCode.NATION_ERROR_NOT_FOUND));
-      jobPost.setProvince(ward);
+      jobPost.setWard(ward);
     }
 
     List<Simulation> simulations = new ArrayList<>();
@@ -257,26 +257,24 @@ public class JobPostController extends ABasicController{
     }
     jobPost.setSimulations(simulations);
 
-    if (!form.getType().equals(jobPost.getType())){
-      if (form.getType().equals(ITDreamConstant.JOB_POST_TYPE_EVENT)){
-        if (form.getDate() == null){
-          throw new BadRequestException("Đăng tin sự kiện phải có ngày tổ chức", ErrorCode.JOB_POST_ERROR_DATE_NULL);
-        }
-        jobPost.setDate(form.getDate());
-        jobPost.setEndDate(null);
-      } else if (form.getType().equals(ITDreamConstant.JOB_POST_TYPE_JOB)){
-        if (form.getEndDate() == null){
-          throw new BadRequestException("Đăng tin tuyển dụng phải có ngày kết thúc", ErrorCode.JOB_POST_ERROR_DATE_NULL);
-        }
-        jobPost.setDate(null);
-        jobPost.setEndDate(form.getEndDate());
-      } else {
-        jobPost.setDate(null);
-        jobPost.setEndDate(null);
+    if (form.getType().equals(ITDreamConstant.JOB_POST_TYPE_EVENT)){
+      if (form.getDate() == null){
+        throw new BadRequestException("Đăng tin sự kiện phải có ngày tổ chức", ErrorCode.JOB_POST_ERROR_DATE_NULL);
       }
+      jobPost.setDate(form.getDate());
+      jobPost.setEndDate(null);
+    } else if (form.getType().equals(ITDreamConstant.JOB_POST_TYPE_JOB)){
+      if (form.getEndDate() == null){
+        throw new BadRequestException("Đăng tin tuyển dụng phải có ngày kết thúc", ErrorCode.JOB_POST_ERROR_DATE_NULL);
+      }
+      jobPost.setDate(null);
+      jobPost.setEndDate(form.getEndDate());
+    } else {
+      jobPost.setDate(null);
+      jobPost.setEndDate(null);
     }
 
-    if (form.getRoleType() == null && Objects.equals(form.getRoleType(), jobPost.getRoleType())){
+    if (form.getRoleType() == null && !Objects.equals(form.getRoleType(), jobPost.getRoleType())){
       jobPost.setRoleType(null);
     }
 
@@ -288,8 +286,8 @@ public class JobPostController extends ABasicController{
   @PutMapping(value = "/update-status", produces = MediaType.APPLICATION_JSON_VALUE)
   @PreAuthorize("hasRole('JP_UST')")
   public ApiMessageDto<String> updateStatus(@Valid @RequestBody JobPostStatusForm form, BindingResult bindingResult){
-    if (!isAdmin()){
-      throw new UnauthorizationException("Người dùng không phải là quản trị viên");
+    if (!isAdmin() && !isEducator()){
+      throw new UnauthorizationException("Người dùng không phải là quản trị viên hoặc giảng viên");
     }
     ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
     JobPost jobPost = jobPostRepository.findById(form.getId())
