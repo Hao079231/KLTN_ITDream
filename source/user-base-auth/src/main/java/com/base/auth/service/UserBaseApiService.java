@@ -40,53 +40,55 @@ public class UserBaseApiService {
                 return;
             }
 
-            // Chuẩn hóa separator cho mọi OS
-            String normalizedPath = filePath.replace("\\", "/");
+            // 1. Tự động xử lý separator cho cả Windows/Ubuntu
+            Path targetPath = Paths.get(filePath);
 
-            // Bỏ dấu / đầu nếu có
-            if (normalizedPath.startsWith("/")) {
-                normalizedPath = normalizedPath.substring(1);
+            // 2. Xử lý linh hoạt: Nếu là đường dẫn tương đối thì merge với base path,
+            // nếu đã là đường dẫn tuyệt đối (VD: /opt/uploads/...) thì giữ nguyên.
+            if (!targetPath.isAbsolute()) {
+                Path baseUploadPath = Paths.get(uploadDir, ITDreamConstant.DIRECTORY_GENERAL);
+                targetPath = baseUploadPath.resolve(targetPath).normalize();
+            } else {
+                targetPath = targetPath.normalize();
             }
 
-            Path relativePath = Paths.get(normalizedPath);
+            log.info("======> Resolved full path: {}", targetPath);
 
-            if (relativePath.getNameCount() < 2) {
-                log.warn("======> Invalid path format: {}", filePath);
+            if (!Files.exists(targetPath)) {
+                log.warn("======> Path not found: {}", targetPath);
                 return;
             }
 
-            String rootFolder = relativePath.getName(0).toString();
+            // 3. Phân tích cấu trúc thư mục (Bottom-up)
+            // Ví dụ: .../video/{accountId}/{folderId}/livestream.m3u8
+            Path parent1 = targetPath.getParent(); // {folderId} hoặc {accountId}
+            Path parent2 = parent1 != null ? parent1.getParent() : null; // {accountId} hoặc "video"
+            Path parent3 = parent2 != null ? parent2.getParent() : null; // "video" hoặc thư mục cha của nó
 
-            Path baseUploadPath = Paths.get(
-                uploadDir,
-                ITDreamConstant.DIRECTORY_GENERAL
-            );
-
-            Path fullPath = baseUploadPath.resolve(relativePath).normalize();
-
-            log.info("======> Resolved full path: {}", fullPath);
-
-            // Nếu đường dẫn đến video thì xóa folder chứa video
-            if ("video".equalsIgnoreCase(rootFolder)) {
-
-                // folder chứa file video (parent của file)
-                Path videoFolder = fullPath.getParent();
-
-                if (videoFolder != null && Files.exists(videoFolder)) {
-                    log.info("======> Deleting video folder: {}", videoFolder);
-                    deleteDirectory(videoFolder);
-                } else {
-                    log.warn("======> Video folder not found: {}", videoFolder);
+            // Trường hợp 1: Cấu trúc .../video/{accountId}/{filename.mp4}
+            // Lúc này parent2 chính là thư mục "video"
+            if (parent2 != null && "video".equalsIgnoreCase(parent2.getFileName().toString())) {
+                if (Files.isRegularFile(targetPath)) {
+                    Files.delete(targetPath);
+                    log.info("======> Deleted video file: {}", targetPath);
                 }
                 return;
             }
 
-            // Nếu đường dẫn chứa ảnh, file thì sẽ xóa ảnh, file
-            if (Files.exists(fullPath) && Files.isRegularFile(fullPath)) {
-                Files.delete(fullPath);
-                log.info("======> File deleted: {}", fullPath);
+            // Trường hợp 2: Cấu trúc .../video/{accountId}/{folderId}/livestream.m3u8
+            // Lúc này parent3 chính là thư mục "video"
+            if (parent3 != null && "video".equalsIgnoreCase(parent3.getFileName().toString())) {
+                log.info("======> Deleting livestream folder: {}", parent1);
+                deleteDirectory(parent1); // Xóa thư mục {folderId} (chứa các file con)
+                return;
+            }
+
+            // Trường hợp 3: Các loại file khác (ảnh, file doc,...)
+            if (Files.isRegularFile(targetPath)) {
+                Files.delete(targetPath);
+                log.info("======> File deleted: {}", targetPath);
             } else {
-                log.warn("======> File not found or not a file: {}", fullPath);
+                log.warn("======> Target is not a regular file: {}", targetPath);
             }
 
         } catch (Exception e) {
@@ -95,6 +97,8 @@ public class UserBaseApiService {
     }
 
     private void deleteDirectory(Path path) throws IOException {
+        if (path == null || !Files.exists(path)) return;
+
         Files.walk(path)
             .sorted(Comparator.reverseOrder())
             .map(Path::toFile)
